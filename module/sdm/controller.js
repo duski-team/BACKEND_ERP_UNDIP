@@ -1,6 +1,6 @@
 const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
-const pendidikan = require("./model");
+const sdm = require("./model");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
 
@@ -8,13 +8,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_pendidikan } = req.body
+        const { nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, status_sdm_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
-        pendidikan.findAll({ where: { nama_pendidikan } }).then(data => {
+        sdm.findAll({ where: { nama_usaha } }).then(data => {
             if (data.length) {
                 res.status(200).json({ status: 204, message: "data sudah ada" });
             } else {
-                pendidikan.create({ id: uuid_v4(), nama_pendidikan }).then(data2 => {
+                sdm.create({ id: uuid_v4(), nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, status_sdm_id, pendidikan_id, jenis_kerja_id, kompetensi_id }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses" });
                 })
             }
@@ -26,9 +26,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, nama_pendidikan } = req.body
+        const { id, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, status_sdm_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
-        pendidikan.update({ nama_pendidikan }, { where: { id } }).then(data => {
+        sdm.update({ nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, status_sdm_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -40,7 +40,7 @@ class Controller {
     static delete(req, res) {
         const { id } = req.body
 
-        pendidikan.destroy({ where: { id } }).then(data => {
+        sdm.destroy({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -50,7 +50,7 @@ class Controller {
     }
 
     static list(req, res) {
-        pendidikan.findAll({order:[['createdAt','DESC']]}).then(data => {
+        sdm.findAll({order:[['createdAt','DESC']]}).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(err);
@@ -61,7 +61,7 @@ class Controller {
     static detailsById(req, res) {
         const { id } = req.params
 
-        pendidikan.findAll({ where: { id } }).then(data => {
+        sdm.findAll({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(err);

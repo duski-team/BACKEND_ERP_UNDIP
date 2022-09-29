@@ -7,6 +7,7 @@ router.use("/statusSdm", require('./module/status_sdm/route'));
 router.use("/pendidikan", require('./module/pendidikan/route'));
 router.use("/jenisKerja", require('./module/jenis_kerja/route'));
 router.use("/kompetensi", require('./module/kompetensi/route'));
+router.use("/sdm", require('./module/sdm/route'));
 
 
 module.exports = router;

@@ -49,24 +49,28 @@ class Controller {
         })
     }
 
-    static list(req, res) {
-        sdm.findAll({order:[['createdAt','DESC']]}).then(data => {
+    static async list(req, res) {
+        try {
+            let data = await sq.query(`SELECT s.id as sdm_id , * FROM sdm s join tugas t on t.id = s.tugas_id join status_sdm ss on ss.id = s.status_sdm_id join pendidikan p on p.id = s.pendidikan_id join jenis_kerja jk on jk.id = s.jenis_kerja_id join kompetensi k on k.id = s.kompetensi_id WHERE s.deletedAt is null ORDER BY s.createdAt DESC`, s);
+
             res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
-    static detailsById(req, res) {
+    static async detailsById(req, res) {
         const { id } = req.params
 
-        sdm.findAll({ where: { id } }).then(data => {
+        try {
+            let data = await sq.query(`SELECT s.id as sdm_id , * FROM sdm s join tugas t on t.id = s.tugas_id join status_sdm ss on ss.id = s.status_sdm_id join pendidikan p on p.id = s.pendidikan_id join jenis_kerja jk on jk.id = s.jenis_kerja_id join kompetensi k on k.id = s.kompetensi_id WHERE s.deletedAt is null and s.id = '${id}'`, s);
+
             res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 }
 module.exports = Controller;

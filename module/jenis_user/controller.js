@@ -49,7 +49,7 @@ class Controller {
         })
     }
 
-    static async list (req,res){
+    static list (req,res){
         jenisUser.findAll({}).then(data =>{
             res.status(200).json({ status: 200, message: "sukses",data });
         }).catch(err=>{
@@ -58,7 +58,7 @@ class Controller {
         })
     }
 
-    static async detailsById (req,res){
+    static detailsById (req,res){
         const {id} = req.params
 
         jenisUser.findAll({where:{id}}).then(data =>{

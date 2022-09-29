@@ -50,7 +50,7 @@ class Controller {
     }
 
     static list (req,res){
-        layanan.findAll({}).then(data =>{
+        layanan.findAll({order:[['createdAt','DESC']]}).then(data =>{
             res.status(200).json({ status: 200, message: "sukses",data });
         }).catch(err =>{
             console.log(err);
@@ -58,7 +58,7 @@ class Controller {
         })
     }
 
-    static async detailsById (req,res){
+    static detailsById (req,res){
         const {id} = req.body
 
         layanan.findAll({where:{id}}).then(data =>{

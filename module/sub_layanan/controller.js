@@ -8,13 +8,13 @@ const s = {type:QueryTypes.SELECT};
 class Controller {
 
     static register (req,res){
-        const {nama_layanan}= req.body
+        const {nama_sub_layanan,layanan_id}= req.body
         
-        layanan.findAll({where:{nama_layanan}}).then(data =>{
+        layanan.findAll({where:{nama_sub_layanan,layanan_id}}).then(data =>{
             if(data.length){
                 res.status(200).json({ status: 204, message: "data sudah ada" });
             }else{
-                layanan.create({id:uuid_v4(),nama_layanan}).then(data2 =>{
+                layanan.create({id:uuid_v4(),nama_sub_layanan,layanan_id}).then(data2 =>{
                     res.status(200).json({ status: 200, message: "sukses" });
                 })
             }
@@ -26,9 +26,9 @@ class Controller {
     }
 
     static update (req,res){
-        const {id,nama_layanan}= req.body
+        const {id,nama_sub_layanan,layanan_id}= req.body
         
-        layanan.update({nama_layanan},{where:{id}}).then(data =>{
+        layanan.update({nama_sub_layanan,layanan_id},{where:{id}}).then(data =>{
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err =>{
             console.log(req.body);
@@ -49,24 +49,37 @@ class Controller {
         })
     }
 
-    static list (req,res){
-        layanan.findAll({}).then(data =>{
+    static async list (req,res){
+        try {
+            let data = await sq.query(`SELECT sl.id as sub_layanan_id,sl.*,l.* from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl.deletedAt  is NULL order by sl.createdAt desc`,s);
             res.status(200).json({ status: 200, message: "sukses",data });
-        }).catch(err =>{
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
+    }
+
+    static async listSubLayananByLayananId (req,res){
+        const {layanan_id} = req.body
+        try {
+            let data = await sq.query(`SELECT sl.id as sub_layanan_id,sl.*,l.* from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl.deletedAt  is NULL and sl.layanan_id = '${layanan_id}' order by sl.createdAt desc`,s);
+
+            res.status(200).json({ status: 200, message: "sukses",data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
     }
 
     static async detailsById (req,res){
-        const {id} = req.body
-
-        layanan.findAll({where:{id}}).then(data =>{
+        const {id} = req.params
+        try {
+            let data = await sq.query(`SELECT sl.id as sub_layanan_id,sl.*,l.* from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl.deletedAt  is NULL and sl.id = '${id}'`,s);
             res.status(200).json({ status: 200, message: "sukses",data });
-        }).catch(err =>{
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 }
 module.exports = Controller;

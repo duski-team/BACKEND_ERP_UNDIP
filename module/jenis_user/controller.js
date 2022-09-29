@@ -50,7 +50,7 @@ class Controller {
     }
 
     static list (req,res){
-        jenisUser.findAll({}).then(data =>{
+        jenisUser.findAll({order:[['createdAt','DESC']]}).then(data =>{
             res.status(200).json({ status: 200, message: "sukses",data });
         }).catch(err=>{
             console.log(err);

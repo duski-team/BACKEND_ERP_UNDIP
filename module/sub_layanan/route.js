@@ -5,6 +5,7 @@ router.post('/register',Controller.register);
 router.post('/update',Controller.update);
 router.post('/delete',Controller.delete);
 router.get('/list',Controller.list);
+router.post('/listSubLayananByLayananId',Controller.listSubLayananByLayananId);
 router.get('/detailsById/:id',Controller.detailsById);
 
 module.exports = router

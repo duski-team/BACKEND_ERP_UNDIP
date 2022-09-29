@@ -6,6 +6,7 @@ router.post('/register', upload, Controller.register);
 router.post('/update', upload, Controller.update);
 router.post('/delete', Controller.delete);
 router.get('/list', Controller.list);
+router.post('/listSubAkunSaldoAwalBySaldoAwalId', Controller.listSubAkunSaldoAwalBySaldoAwalId);
 router.get('/detailsById/:id', Controller.detailsById);
 
 module.exports = router

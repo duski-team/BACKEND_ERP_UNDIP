@@ -6,14 +6,13 @@ const morgan = require('morgan')
 const cors = require('cors')
 const routing = require('./index')
 
-app.set('view engine', 'ejs')
 
 app.use(morgan('dev'))
 app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.use(express.static('asset/file/'));
+// app.use(express.static('asset/file/'));
 
 app.use('/', routing);
 

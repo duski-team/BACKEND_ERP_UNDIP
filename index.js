@@ -8,6 +8,8 @@ router.use("/pendidikan", require('./module/pendidikan/route'));
 router.use("/jenisKerja", require('./module/jenis_kerja/route'));
 router.use("/kompetensi", require('./module/kompetensi/route'));
 router.use("/sdm", require('./module/sdm/route'));
+router.use("/penugasan", require('./module/penugasan/route'));
+router.use("/penugasanSdm", require('./module/penugasan_sdm/route'));
 
 
 module.exports = router;

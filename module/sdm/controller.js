@@ -10,7 +10,7 @@ class Controller {
     static register(req, res) {
         const { nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, status_sdm_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
-        sdm.findAll({ where: { nama_usaha } }).then(data => {
+        sdm.findAll({ where: { nik } }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`SELECT s.id as sdm_id , * FROM sdm s join tugas t on t.id = s.tugas_id join status_sdm ss on ss.id = s.status_sdm_id join pendidikan p on p.id = s.pendidikan_id join jenis_kerja jk on jk.id = s.jenis_kerja_id join kompetensi k on k.id = s.kompetensi_id WHERE s.deletedAt is null ORDER BY s.createdAt DESC`, s);
+            let data = await sq.query(`SELECT s.id as sdm_id, s.*, t.nama_tugas , ss.nama_status_sdm, p.nama_pendidikan ,jk.nama_jenis_kerja ,k.nama_kompetensi FROM sdm s join tugas t on t.id = s.tugas_id join status_sdm ss on ss.id = s.status_sdm_id join pendidikan p on p.id = s.pendidikan_id join jenis_kerja jk on jk.id = s.jenis_kerja_id join kompetensi k on k.id = s.kompetensi_id WHERE s.deletedAt is null ORDER BY s.createdAt DESC`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -64,7 +64,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`SELECT s.id as sdm_id , * FROM sdm s join tugas t on t.id = s.tugas_id join status_sdm ss on ss.id = s.status_sdm_id join pendidikan p on p.id = s.pendidikan_id join jenis_kerja jk on jk.id = s.jenis_kerja_id join kompetensi k on k.id = s.kompetensi_id WHERE s.deletedAt is null and s.id = '${id}'`, s);
+            let data = await sq.query(`SELECT s.id as sdm_id, s.*, t.nama_tugas , ss.nama_status_sdm, p.nama_pendidikan ,jk.nama_jenis_kerja ,k.nama_kompetensi FROM sdm s join tugas t on t.id = s.tugas_id join status_sdm ss on ss.id = s.status_sdm_id join pendidikan p on p.id = s.pendidikan_id join jenis_kerja jk on jk.id = s.jenis_kerja_id join kompetensi k on k.id = s.kompetensi_id WHERE s.deletedAt is null and s.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

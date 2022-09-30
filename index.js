@@ -20,6 +20,11 @@ router.use("/subSubKategori", require('./module/sub_sub_kategori/route'));
 router.use("/subAkunSaldoAwal", require('./module/subakun_saldo_awal/route'));
 router.use("/tugas", require('./module/tugas/route'));
 router.use("/users", require('./module/users/route'));
+router.use("/mJenisAset", require('./module/m_jenis_aset/route'));
+router.use("/tipePembayaran", require('./module/tipe_pembayaran/route'));
+router.use("/statusOrder", require('./module/status_order/route'));
+router.use("/jenisPembelian", require('./module/jenis_pembelian/route'));
+router.use("/statusVa", require('./module/status_va/route'));
 
 
 module.exports = router;

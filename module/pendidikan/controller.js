@@ -12,10 +12,10 @@ class Controller {
 
         pendidikan.findAll({ where: { nama_pendidikan } }).then(data => {
             if (data.length) {
-                res.status(200).json({ status: 204, message: "data sudah ada" });
+                res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
                 pendidikan.create({ id: uuid_v4(), nama_pendidikan }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses" });
+                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
         }).catch(err => {

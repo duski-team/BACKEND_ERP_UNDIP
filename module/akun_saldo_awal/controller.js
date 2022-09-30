@@ -12,10 +12,10 @@ class Controller {
 
         akunsaldoAwal.findAll({ where: { akun_id, nama_akun_saldo_awal } }).then(data => {
             if (data.length) {
-                res.status(200).json({ status: 204, message: "data sudah ada" });
+                res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
                 akunsaldoAwal.create({ id: uuid_v4(), akun_id, nama_akun_saldo_awal, saldo_awal }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses" });
+                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
         }).catch(err => {

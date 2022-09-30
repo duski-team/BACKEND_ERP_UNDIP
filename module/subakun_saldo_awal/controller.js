@@ -11,7 +11,7 @@ class Controller {
         const { nama_barang_akun,harga_satuan,tanggal_saldo_awal,jumlah,satuan,kondisi,keterangan,akun_saldo_awal_id } = req.body
 
         subAkunsaldoAwal.create({ id: uuid_v4(), nama_barang_akun,harga_satuan,tanggal_saldo_awal,jumlah,satuan,kondisi,keterangan,akun_saldo_awal_id }).then(data => {
-            res.status(200).json({ status: 200, message: "sukses" });
+            res.status(200).json({ status: 200, message: "sukses",data });
         }).catch(err => {
             console.log(req.body);
             console.log(err);

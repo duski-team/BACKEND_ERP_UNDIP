@@ -12,10 +12,10 @@ class Controller {
 
         kompetensi.findAll({ where: { nama_kompetensi } }).then(data => {
             if (data.length) {
-                res.status(200).json({ status: 204, message: "data sudah ada" });
+                res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
                 kompetensi.create({ id: uuid_v4(), nama_kompetensi }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses" });
+                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
         }).catch(err => {

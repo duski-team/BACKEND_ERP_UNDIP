@@ -12,10 +12,10 @@ class Controller {
 
         sdm.findAll({ where: { nama_usaha } }).then(data => {
             if (data.length) {
-                res.status(200).json({ status: 204, message: "data sudah ada" });
+                res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
                 sdm.create({ id: uuid_v4(), nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, status_sdm_id, pendidikan_id, jenis_kerja_id, kompetensi_id }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses" });
+                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
         }).catch(err => {

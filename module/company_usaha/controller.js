@@ -22,10 +22,10 @@ class Controller {
         }
         companyUsaha.findAll({ where: { nama_usaha } }).then(data => {
             if (data.length) {
-                res.status(200).json({ status: 204, message: "data sudah ada" });
+                res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
                 companyUsaha.create({ id: uuid_v4(), nama_usaha, nama_pengelola, ktp_passport, code, Row, email, phone_no, location, header, motive, details, icon, logo_usaha }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses" });
+                    res.status(200).json({ status: 200, message: "sukses", data: data2 });
                 })
             }
         }).catch(err => {

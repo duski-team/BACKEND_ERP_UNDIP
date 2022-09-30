@@ -12,10 +12,10 @@ class Controller {
         
         users.findAll({where:{email,username}}).then(data =>{
             if(data.length){
-                res.status(200).json({ status: 204, message: "data sudah ada" });
+                res.status(201).json({ status: 204, message: "data sudah ada" });
             }else{
                 users.create({id:uuid_v4(),email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority,profil_image}).then(data2 =>{
-                    res.status(200).json({ status: 200, message: "sukses" });
+                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
         }).catch(err =>{

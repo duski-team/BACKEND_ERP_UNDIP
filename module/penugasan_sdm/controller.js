@@ -10,8 +10,8 @@ class Controller {
     static register(req, res) {
         const { tanggal_tugas, status_penugasan, total_kerja, sdm_id, penugasan_id } = req.body
 
-        penugasanSdm.create({ id: uuid_v4(), tanggal_tugas, status_penugasan, total_kerja, sdm_id, penugasan_id }).then(data2 => {
-            res.status(200).json({ status: 200, message: "sukses" });
+        penugasanSdm.create({ id: uuid_v4(), tanggal_tugas, status_penugasan, total_kerja, sdm_id, penugasan_id }).then(data => {
+            res.status(200).json({ status: 200, message: "sukses",data });
         }).catch(err => {
             console.log(req.body);
             console.log(err);

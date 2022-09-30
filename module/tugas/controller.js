@@ -12,10 +12,10 @@ class Controller {
 
         tugas.findAll({ where: { nama_tugas } }).then(data => {
             if (data.length) {
-                res.status(200).json({ status: 204, message: "data sudah ada" });
+                res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
                 tugas.create({ id: uuid_v4(), nama_tugas }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses" });
+                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
         }).catch(err => {

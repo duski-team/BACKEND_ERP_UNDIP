@@ -8,7 +8,15 @@ const s = {type:QueryTypes.SELECT};
 class Controller {
 
     static register (req,res){
-        const {email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority,profil_image}= req.body
+        const {email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority}= req.body
+
+        let profil_image = "";
+
+        if (req.files) {
+            if (req.files.file1) {
+                profil_image = req.files.file1[0].filename;
+            }
+        }
         
         users.findAll({where:{email,username}}).then(data =>{
             if(data.length){
@@ -26,9 +34,16 @@ class Controller {
     }
 
     static update (req,res){
-        const {id,email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority,profil_image}= req.body
+        const {id,email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority}= req.body
         
-        users.update({email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority,profil_image},{where:{id}}).then(data =>{
+        if (req.files) {
+            if (req.files.file1) {
+                let profil_image = req.files.file1[0].filename;
+                users.update({profil_image},{where:{id}})
+            }
+        }
+
+        users.update({email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority},{where:{id}}).then(data =>{
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err =>{
             console.log(req.body);

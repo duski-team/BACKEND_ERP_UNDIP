@@ -45,7 +45,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`SELECT p.id as penugasan_id, * FROM penugasan p join sdm s on s.id = p.sdm_id WHERE p.deletedAt is null and s.deletedAt is null ORDER BY p.createdAt DESC`, s);
+            let data = await sq.query(`SELECT ps.id as penugasan_sdm_id, ps.*, s.*, p.uraian_penugasan ,p.tanggal_penugasan ,p.instruksi ,p.status ,p.sdm_id as sdm_id_penugasan FROM penugasan_sdm ps join sdm s on s.id = ps.sdm_id join penugasan p on p.id = ps.penugasan_id WHERE ps.deletedAt is null and s.deletedAt is null and p.deletedAt is null ORDER BY ps.createdAt DESC`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -58,7 +58,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`SELECT p.id as penugasan_id, * FROM penugasan p join sdm s on s.id = p.sdm_id WHERE p.deletedAt is null and s.deletedAt is null and p.id = '${id}'`, s);
+            let data = await sq.query(`SELECT ps.id as penugasan_sdm_id, ps.*, s.*, p.uraian_penugasan ,p.tanggal_penugasan ,p.instruksi ,p.status ,p.sdm_id as sdm_id_penugasan FROM penugasan_sdm ps join sdm s on s.id = ps.sdm_id join penugasan p on p.id = ps.penugasan_id WHERE ps.deletedAt is null and s.deletedAt is null and p.deletedAt is null and ps.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

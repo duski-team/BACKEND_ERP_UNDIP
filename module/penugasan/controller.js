@@ -45,7 +45,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`SELECT p.id as penugasan_id, * FROM penugasan p join sdm s on s.id = p.sdm_id WHERE p.deletedAt is null and s.deletedAt is null ORDER BY p.createdAt DESC`, s);
+            let data = await sq.query(`SELECT p.id as penugasan_id, p.*, s.* FROM penugasan p join sdm s on s.id = p.sdm_id WHERE p.deletedAt is null and s.deletedAt is null ORDER BY p.createdAt DESC`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -58,7 +58,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`SELECT p.id as penugasan_id, * FROM penugasan p join sdm s on s.id = p.sdm_id WHERE p.deletedAt is null and s.deletedAt is null and p.id = '${id}'`, s);
+            let data = await sq.query(`SELECT p.id as penugasan_id, p.*, s.* FROM penugasan p join sdm s on s.id = p.sdm_id WHERE p.deletedAt is null and s.deletedAt is null and p.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

@@ -1,6 +1,6 @@
 const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
-const subKategori = require("./model");
+const subSubKategori = require("./model");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
 
@@ -8,14 +8,14 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_sub_sub_kategori,sub_kategori_id } = req.body
+        const { nama_sub_sub_kategori, sub_kategori_id } = req.body
 
-        subKategori.findAll({ where: { nama_sub_sub_kategori,sub_kategori_id } }).then(data => {
+        subSubKategori.findAll({ where: { nama_sub_sub_kategori, sub_kategori_id } }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                subKategori.create({ id: uuid_v4(), nama_kategori,sub_kategori_id }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses",data:data2 });
+                subSubKategori.create({ id: uuid_v4(), nama_sub_sub_kategori, sub_kategori_id }).then(data2 => {
+                    res.status(200).json({ status: 200, message: "sukses", data: data2 });
                 })
             }
         }).catch(err => {
@@ -26,9 +26,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, nama_sub_sub_kategori,sub_kategori_id } = req.body
+        const { id, nama_sub_sub_kategori, sub_kategori_id } = req.body
 
-        subKategori.update({nama_sub_sub_kategori,sub_kategori_id}, { where: { id } }).then(data => {
+        subSubKategori.update({ nama_sub_sub_kategori, sub_kategori_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -40,7 +40,7 @@ class Controller {
     static delete(req, res) {
         const { id } = req.body
 
-        subKategori.destroy({ where: { id } }).then(data => {
+        subSubKategori.destroy({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -50,39 +50,39 @@ class Controller {
     }
 
     static async list(req, res) {
-       try {
-            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL order by ssk.createdAt desc`,s);
+        try {
+            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL order by ssk.createdAt desc`, s);
 
-            res.status(200).json({ status: 200, message: "sukses",data });
-       } catch (err) {
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-       }
+        }
     }
 
     static async listSubSubKategoriBySubKategoriId(req, res) {
-        const {sub_kategori_id} = req.body
-       try {
-            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL and ssk.sub_kategori_id = '${sub_kategori_id}' order by ssk.createdAt desc`,s);
+        const { sub_kategori_id } = req.body
+        try {
+            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL and ssk.sub_kategori_id = '${sub_kategori_id}' order by ssk.createdAt desc`, s);
 
-            res.status(200).json({ status: 200, message: "sukses",data });
-       } catch (err) {
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-       }
+        }
     }
 
     static async detailsById(req, res) {
         const { id } = req.params
 
-         try {
-            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL and ssk.id ='${id}'`,s);
-            
-            res.status(200).json({ status: 200, message: "sukses",data });
-       } catch (err) {
+        try {
+            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL and ssk.id ='${id}'`, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-       }
+        }
     }
 }
 module.exports = Controller;

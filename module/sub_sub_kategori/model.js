@@ -16,7 +16,7 @@ const subSubKategori = sq.define('sub_sub_kategori', {
         freezeTableName: true
     });
 
-    subSubKategori.belongsTo(subKategori,{foreignKey:'sub_kategori_id'})
-    subKategori.hasMany(subSubKategori,{foreignKey:'sub_kategori_id'})
-    
-module.exports = subKategori
+subSubKategori.belongsTo(subKategori, { foreignKey: 'sub_kategori_id' })
+subKategori.hasMany(subSubKategori, { foreignKey: 'sub_kategori_id' })
+
+module.exports = subSubKategori

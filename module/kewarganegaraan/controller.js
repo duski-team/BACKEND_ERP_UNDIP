@@ -59,7 +59,7 @@ class Controller {
     }
 
     static detailsById (req,res){
-        const {id} = req.body
+        const {id} = req.params
 
         kewarganegaraan.findAll({where:{id}}).then(data =>{
             res.status(200).json({ status: 200, message: "sukses",data });

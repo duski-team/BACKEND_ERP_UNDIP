@@ -26,6 +26,7 @@ router.use("/subLayanan", require('./module/sub_layanan/route'));
 router.use("/subSubKategori", require('./module/sub_sub_kategori/route'));
 router.use("/subAkunSaldoAwal", require('./module/subakun_saldo_awal/route'));
 router.use("/tipePembayaran", require('./module/tipe_pembayaran/route'));
+router.use("/trxPembelian", require('./module/trx_pembelian/route'));
 router.use("/tugas", require('./module/tugas/route'));
 router.use("/users", require('./module/users/route'));
 

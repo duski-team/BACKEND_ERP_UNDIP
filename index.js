@@ -12,6 +12,7 @@ router.use("/kewarganegaraan", require('./module/kewarganegaraan/route'));
 router.use("/kompetensi", require('./module/kompetensi/route'));
 router.use("/layanan", require('./module/layanan/route'));
 router.use("/mJenisAset", require('./module/m_jenis_aset/route'));
+router.use("/order", require('./module/order/route'));
 router.use("/pembelian", require('./module/pembelian/route'));
 router.use("/pendidikan", require('./module/pendidikan/route'));
 router.use("/penggunaanAset", require('./module/penggunaan_aset/route'));

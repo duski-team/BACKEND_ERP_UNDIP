@@ -7,31 +7,31 @@ const trxPembelian = sq.define('trx_pembelian', {
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    status_persetujuan_trxp: {
+    status_persetujuan_txp: {
         type: DataTypes.INTEGER
     },
-    persetujuan_manajer_trxp: {
+    persetujuan_manajer_txp: {
         type: DataTypes.INTEGER
     },
-    tgl_persetujuan_manajer_trxp: {
+    tgl_persetujuan_manajer_txp: {
         type: DataTypes.DATE
     },
-    jumlah_trxp: {
+    jumlah_txp: {
         type: DataTypes.INTEGER
     },
-    satuan_trxp: {
+    satuan_txp: {
         type: DataTypes.INTEGER
     },
-    harga_satuan_trxp: {
+    harga_satuan_txp: {
         type: DataTypes.INTEGER
     },
-    harga_total_trxp: {
+    harga_total_txp: {
         type: DataTypes.INTEGER
     },
-    persetujuan_akuntan_trxp: {
+    persetujuan_akuntan_txp: {
         type: DataTypes.INTEGER
     },
-    tgl_persetujuan_akuntan_trxp: {
+    tgl_persetujuan_akuntan_txp: {
         type: DataTypes.DATE
     }
 },

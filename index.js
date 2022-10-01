@@ -4,6 +4,7 @@ router.use("/akunSaldoAwal", require('./module/akun_saldo_awal/route'));
 router.use("/companyUsaha", require('./module/company_usaha/route'));
 router.use("/jenisKerja", require('./module/jenis_kerja/route'));
 router.use("/jenisPembelian", require('./module/jenis_pembelian/route'));
+router.use("/jenisPengeluaranKas", require('./module/jenis_pengeluaran_kas/route'));
 router.use("/jenisPenggunaan", require('./module/jenis_penggunaan/route'));
 router.use("/jenisUser", require('./module/jenis_user/route'));
 router.use("/kategori", require('./module/kategori/route'));
@@ -27,6 +28,7 @@ router.use("/subSubKategori", require('./module/sub_sub_kategori/route'));
 router.use("/subAkunSaldoAwal", require('./module/subakun_saldo_awal/route'));
 router.use("/tipePembayaran", require('./module/tipe_pembayaran/route'));
 router.use("/trxPembelian", require('./module/trx_pembelian/route'));
+router.use("/trxPengeluaranKas", require('./module/trx_pengeluaran_kas/route'));
 router.use("/tugas", require('./module/tugas/route'));
 router.use("/users", require('./module/users/route'));
 

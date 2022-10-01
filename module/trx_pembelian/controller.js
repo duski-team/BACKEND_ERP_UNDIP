@@ -8,9 +8,9 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { status_persetujuan_trxp,persetujuan_manajer_trxp,tgl_persetujuan_manajer_trxp,jumlah_trxp,satuan_trxp,harga_satuan_trxp,harga_total_trxp,persetujuan_akuntan_trxp,tgl_persetujuan_akuntan_trxp,pembelian_id} = req.body
+        const { status_persetujuan_txp,persetujuan_manajer_txp,tgl_persetujuan_manajer_txp,jumlah_txp,satuan_txp,harga_satuan_txp,harga_total_txp,persetujuan_akuntan_txp,tgl_persetujuan_akuntan_txp,pembelian_id} = req.body
 
-        trxPembelian.create({ id: uuid_v4(), status_persetujuan_trxp,persetujuan_manajer_trxp,tgl_persetujuan_manajer_trxp,jumlah_trxp,satuan_trxp,harga_satuan_trxp,harga_total_trxp,persetujuan_akuntan_trxp,tgl_persetujuan_akuntan_trxp,pembelian_id }).then(data => {
+        trxPembelian.create({ id: uuid_v4(), status_persetujuan_txp,persetujuan_manajer_txp,tgl_persetujuan_manajer_txp,jumlah_txp,satuan_txp,harga_satuan_txp,harga_total_txp,persetujuan_akuntan_txp,tgl_persetujuan_akuntan_txp,pembelian_id }).then(data => {
             res.status(200).json({ status: 200, message: "sukses",data });
         }).catch(err => {
             console.log(req.body);
@@ -20,9 +20,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, status_persetujuan_trxp,persetujuan_manajer_trxp,tgl_persetujuan_manajer_trxp,jumlah_trxp,satuan_trxp,harga_satuan_trxp,harga_total_trxp,persetujuan_akuntan_trxp,tgl_persetujuan_akuntan_trxp,pembelian_id } = req.body
+        const { id, status_persetujuan_txp,persetujuan_manajer_txp,tgl_persetujuan_manajer_txp,jumlah_txp,satuan_txp,harga_satuan_txp,harga_total_txp,persetujuan_akuntan_txp,tgl_persetujuan_akuntan_txp,pembelian_id } = req.body
 
-        trxPembelian.update({ status_persetujuan_trxp,persetujuan_manajer_trxp,tgl_persetujuan_manajer_trxp,jumlah_trxp,satuan_trxp,harga_satuan_trxp,harga_total_trxp,persetujuan_akuntan_trxp,tgl_persetujuan_akuntan_trxp,pembelian_id }, { where: { id } }).then(data => {
+        trxPembelian.update({ status_persetujuan_txp,persetujuan_manajer_txp,tgl_persetujuan_manajer_txp,jumlah_txp,satuan_txp,harga_satuan_txp,harga_total_txp,persetujuan_akuntan_txp,tgl_persetujuan_akuntan_txp,pembelian_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

@@ -28,7 +28,7 @@ class Controller {
     static update(req, res) {
         const { id, nama_coa3,kode_coa3,coa2_id } = req.body
 
-        coa3.update({ nama_coa3,kode_coa3,coa2_id }, { where: { id } }).then(data => {
+        coa3.update({ nama_coa3,kode_coa3 }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

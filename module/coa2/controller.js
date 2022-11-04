@@ -10,7 +10,7 @@ class Controller {
     static register(req, res) {
         const { nama_coa2,kode_coa2,coa1_id } = req.body
 
-        coa2.findAll({ where: { nama_coa2,kode_coa2,coa1_id } }).then(async data => {
+        coa2.findAll({ where: { nama_coa2,kode_coa2 } }).then(async data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {

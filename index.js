@@ -32,6 +32,9 @@ router.use("/trxPembelian", require('./module/trx_pembelian/route'));
 router.use("/trxPengeluaranKas", require('./module/trx_pengeluaran_kas/route'));
 router.use("/tugas", require('./module/tugas/route'));
 router.use("/users", require('./module/users/route'));
+router.use("/coa1", require('./module/coa1/route'));
+router.use("/coa2", require('./module/coa2/route'));
+router.use("/coa3", require('./module/coa3/route'));
 
 
 module.exports = router;

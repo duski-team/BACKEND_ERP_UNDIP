@@ -35,6 +35,9 @@ router.use("/users", require('./module/users/route'));
 router.use("/coa1", require('./module/coa1/route'));
 router.use("/coa2", require('./module/coa2/route'));
 router.use("/coa3", require('./module/coa3/route'));
+router.use("/coa4", require('./module/coa4/route'));
+router.use("/coa5", require('./module/coa5/route'));
+router.use("/coa6", require('./module/coa6/route'));
 
 
 module.exports = router;

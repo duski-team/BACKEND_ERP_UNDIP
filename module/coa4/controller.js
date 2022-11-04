@@ -1,6 +1,6 @@
 const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
-const coa3 = require("./model");
+const coa4 = require("./model");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
 
@@ -8,13 +8,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_coa3, kode_coa3, coa2_id } = req.body
+        const { nama_coa4, kode_coa4, coa3_id } = req.body
 
-        coa3.findAll({ where: { nama_coa3, kode_coa3, coa2_id } }).then(async data => {
+        coa4.findAll({ where: { nama_coa4, kode_coa4, coa3_id } }).then(async data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                await coa3.create({ id: uuid_v4(), nama_coa3, kode_coa3, coa2_id }).then(data2 => {
+                await coa4.create({ id: uuid_v4(), nama_coa4, kode_coa4, coa3_id }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses", data: data2 });
                 })
             }
@@ -26,9 +26,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, nama_coa3, kode_coa3, coa2_id } = req.body
+        const { id, nama_coa4, kode_coa4, coa3_id } = req.body
 
-        coa3.update({ nama_coa3, kode_coa3, coa2_id }, { where: { id } }).then(data => {
+        coa4.update({ nama_coa4, kode_coa4, coa3_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -40,7 +40,7 @@ class Controller {
     static delete(req, res) {
         const { id } = req.body
 
-        coa3.destroy({ where: { id } }).then(data => {
+        coa4.destroy({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -51,7 +51,7 @@ class Controller {
 
     static list(req, res) {
 
-        coa3.findAll({ order: [['createdAt', 'DESC']] }).then(data => {
+        coa4.findAll({ order: [['createdAt', 'DESC']] }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(err);
@@ -62,7 +62,7 @@ class Controller {
     static detailsById(req, res) {
         const { id } = req.params
 
-        coa3.findAll({ where: { id } }).then(data => {
+        coa4.findAll({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(err);

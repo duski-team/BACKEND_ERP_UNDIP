@@ -18,7 +18,7 @@ pool_akses.belongsTo(users,{foreignKey:"user_id"})
 users.hasMany(pool_akses,{foreignKey:"user_id"})
 
 
-pool_akses.belongsTo(master_akses,{foreignKey:"master_akses"})
-master_akses.hasMany(pool_akses,{foreignKey:"master_akses"})
+pool_akses.belongsTo(master_akses,{foreignKey:"master_akses_id"})
+master_akses.hasMany(pool_akses,{foreignKey:"master_akses_id"})
 
 module.exports = pool_akses

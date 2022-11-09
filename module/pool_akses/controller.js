@@ -49,24 +49,26 @@ class Controller {
         })
     }
 
-    static list(req, res) {
-        pool_akses.findAll({order:[['createdAt','DESC']]}).then(data => {
-            res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+    static async list(req, res) {
+       try {
+        let data = await sq.query(`select pa.id as pool_akses_id,* from pool_akses pa join user u on u.id = pa.user_id join master_akses on ma.id = pa.master_akses_id where pa."deletedAt" isnull`,s)
+        res.status(200).json({ status: 200, message: "sukses",data });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 500, message: "gagal", data: err });
+       }
     }
 
-    static detailsById(req, res) {
+    static async detailsById(req, res) {
         const { id } = req.params
 
-        pool_akses.findAll({ where: { id } }).then(data => {
-            res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        try {
+            let data = await sq.query(`select pa.id as pool_akses_id,* from pool_akses pa join user u on u.id = pa.user_id join master_akses on ma.id = pa.master_akses_id where pa."deletedAt" isnull and pa.id = '${id}'`,s)
+            res.status(200).json({ status: 200, message: "sukses",data });
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+           }
     }
 }
 module.exports = Controller;

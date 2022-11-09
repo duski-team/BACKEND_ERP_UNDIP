@@ -69,5 +69,14 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         })
     }
+
+    static async listAll(req, res) {
+        try {
+            // let data = await 
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 module.exports = Controller;

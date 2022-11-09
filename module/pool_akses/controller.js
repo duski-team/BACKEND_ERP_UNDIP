@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
        try {
-        let data = await sq.query(`select pa.id as pool_akses_id,* from pool_akses pa join user u on u.id = pa.user_id join master_akses on ma.id = pa.master_akses_id where pa."deletedAt" isnull`,s)
+        let data = await sq.query(`select pa.id as pool_akses_id,* from pool_akses pa join users u on u.id = pa.user_id join master_akses ma on ma.id = pa.master_akses_id where pa."deletedAt" isnull`,s)
         res.status(200).json({ status: 200, message: "sukses",data });
     } catch (err) {
         console.log(err);
@@ -63,7 +63,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select pa.id as pool_akses_id,* from pool_akses pa join user u on u.id = pa.user_id join master_akses on ma.id = pa.master_akses_id where pa."deletedAt" isnull and pa.id = '${id}'`,s)
+            let data = await sq.query(`select pa.id as pool_akses_id,* from pool_akses pa join users u on u.id = pa.user_id join master_akses ma on ma.id = pa.master_akses_id where pa."deletedAt" isnull and pa.id = '${id}'`,s)
             res.status(200).json({ status: 200, message: "sukses",data });
         } catch (err) {
             console.log(err);

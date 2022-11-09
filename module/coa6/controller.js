@@ -49,25 +49,28 @@ class Controller {
         })
     }
 
-    static list(req, res) {
+    static async list(req, res) {
+        try {
+            let data = await sq.query(`select c.id as "coa6_id", * from coa6 c join coa5 c2 on c2.id = c.coa5_id where c."deletedAt" isnull and c2."deletedAt" isnull order by c."createdAt" desc `, s);
 
-        coa6.findAll({ order: [['createdAt', 'DESC']] }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
-    static detailsById(req, res) {
+    static async detailsById(req, res) {
         const { id } = req.params
 
-        coa6.findAll({ where: { id } }).then(data => {
+        try {
+            let data = await sq.query(`select c.id as "coa6_id", * from coa6 c join coa5 c2 on c2.id = c.coa5_id where c."deletedAt" isnull and c2."deletedAt" isnull and c.id = '${id}'`, s);
+
             res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
     static async listAll(req, res) {

@@ -45,7 +45,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`SELECT *,ssa.id as subakun_saldo_awal_id from subakun_saldo_awal ssa join akun_saldo_awal asa on asa.id = ssa.akun_saldo_awal_id where ssa.deletedAt is NULL order by ssa.createdAt desc`,s);
+            let data = await sq.query(`SELECT *,ssa.id as subakun_saldo_awal_id from subakun_saldo_awal ssa join akun_saldo_awal asa on asa.id = ssa.akun_saldo_awal_id where ssa."deletedAt" isnull order by ssa."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -57,7 +57,7 @@ class Controller {
     static async listSubAkunSaldoAwalBySaldoAwalId(req, res) {
         const {akun_saldo_awal_id} = req.body
         try {
-            let data = await sq.query(`SELECT *,ssa.id as subakun_saldo_awal_id from subakun_saldo_awal ssa join akun_saldo_awal asa on asa.id = ssa.akun_saldo_awal_id where ssa.deletedAt is NULL and ssa.akun_saldo_awal_id = '${akun_saldo_awal_id}' order by ssa.createdAt desc`,s);
+            let data = await sq.query(`SELECT *,ssa.id as subakun_saldo_awal_id from subakun_saldo_awal ssa join akun_saldo_awal asa on asa.id = ssa.akun_saldo_awal_id where ssa."deletedAt" isnull and ssa.akun_saldo_awal_id = '${akun_saldo_awal_id}' order by ssa."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -70,7 +70,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`SELECT *,ssa.id as subakun_saldo_awal_id from subakun_saldo_awal ssa join akun_saldo_awal asa on asa.id = ssa.akun_saldo_awal_id where ssa.deletedAt is NULL and ssa.id ='${id}'`,s);
+            let data = await sq.query(`SELECT *,ssa.id as subakun_saldo_awal_id from subakun_saldo_awal ssa join akun_saldo_awal asa on asa.id = ssa.akun_saldo_awal_id where ssa."deletedAt" isnull and ssa.id ='${id}'`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

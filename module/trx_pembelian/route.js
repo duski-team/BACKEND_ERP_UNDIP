@@ -1,11 +1,12 @@
 const Controller = require('./controller');
 const router = require('express').Router();
+const authentification = require('../../middleware/authentification');
 
-router.post('/register', Controller.register);
-router.post('/update', Controller.update);
-router.post('/delete', Controller.delete);
-router.get('/list', Controller.list);
-router.post('/listTrxPembelianByPembelianId', Controller.listTrxPembelianByPembelianId);
-router.get('/detailsById/:id', Controller.detailsById);
+router.post('/register', authentification, Controller.register);
+router.post('/update', authentification, Controller.update);
+router.post('/delete', authentification, Controller.delete);
+router.get('/list', authentification, Controller.list);
+router.post('/listTrxPembelianByPembelianId', authentification, Controller.listTrxPembelianByPembelianId);
+router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

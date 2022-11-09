@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select p.id as produk_id,p.*,ssa.*,k.*,sk.*,ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p.deletedAt is NULL order by p.createdAt desc`,s)
+            let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull order by p."createdAt" desc`,s)
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -63,7 +63,7 @@ class Controller {
     static async listProdukBySubAkunSaldoAwalId(req, res) {
         const {subakun_saldo_awal_id} = req.body
         try {
-            let data = await sq.query(`select p.id as produk_id,p.*,ssa.*,k.*,sk.*,ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p.deletedAt is NULL and p.subakun_saldo_awal_id = '${subakun_saldo_awal_id}' order by p.createdAt desc`,s)
+            let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.subakun_saldo_awal_id = '${subakun_saldo_awal_id}' order by p."createdAt" desc`,s)
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -75,7 +75,7 @@ class Controller {
     static async listProdukByKategoriId(req, res) {
         const {kategori_id} = req.body
         try {
-            let data = await sq.query(`select p.id as produk_id,p.*,ssa.*,k.*,sk.*,ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p.deletedAt is NULL and p.kategori_id = '${kategori_id}' order by p.createdAt desc`,s)
+            let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.kategori_id = '${kategori_id}' order by p."createdAt" desc`,s)
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -87,7 +87,7 @@ class Controller {
     static async listProdukBySubKategoriId(req, res) {
         const {sub_kategori_id} = req.body
         try {
-            let data = await sq.query(`select p.id as produk_id,p.*,ssa.*,k.*,sk.*,ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p.deletedAt is NULL and p.sub_kategori_id = '${sub_kategori_id}' order by p.createdAt desc`,s)
+            let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.sub_kategori_id = '${sub_kategori_id}' order by p."createdAt" desc`,s)
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -99,7 +99,7 @@ class Controller {
     static async listProdukBySubSubKategoriId(req, res) {
         const {sub_sub_kategori_id} = req.body
         try {
-            let data = await sq.query(`select p.id as produk_id,p.*,ssa.*,k.*,sk.*,ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p.deletedAt is NULL and p.sub_sub_kategori_id = '${sub_sub_kategori_id}' order by p.createdAt desc`,s)
+            let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.sub_sub_kategori_id = '${sub_sub_kategori_id}' order by p."createdAt" desc`,s)
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -112,7 +112,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select p.id as produk_id,p.*,ssa.*,k.*,sk.*,ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p.deletedAt is NULL and p.id = '${id}'`,s)
+            let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.id = '${id}'`,s)
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

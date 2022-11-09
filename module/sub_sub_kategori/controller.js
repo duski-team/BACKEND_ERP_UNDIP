@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL order by ssk.createdAt desc`, s);
+            let data = await sq.query(`select *, ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk."deletedAt" isnull order by ssk."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -63,7 +63,7 @@ class Controller {
     static async listSubSubKategoriBySubKategoriId(req, res) {
         const { sub_kategori_id } = req.body
         try {
-            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL and ssk.sub_kategori_id = '${sub_kategori_id}' order by ssk.createdAt desc`, s);
+            let data = await sq.query(`select *, ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk."deletedAt" isnull and ssk.sub_kategori_id = '${sub_kategori_id}' order by ssk."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -76,7 +76,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select *,ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk.deletedAt is NULL and ssk.id ='${id}'`, s);
+            let data = await sq.query(`select *, ssk.id as sub_sub_kategori_id from sub_sub_kategori ssk join sub_kategori sk on sk.id = ssk.sub_kategori_id where ssk."deletedAt" isnull and ssk.id ='${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

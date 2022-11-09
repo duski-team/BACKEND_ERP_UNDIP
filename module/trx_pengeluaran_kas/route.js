@@ -1,13 +1,14 @@
 const Controller = require('./controller');
 const router = require('express').Router();
+const authentification = require('../../middleware/authentification');
 
-router.post('/register', Controller.register);
-router.post('/update', Controller.update);
-router.post('/delete', Controller.delete);
-router.get('/list', Controller.list);
-router.post('/listTrxPengeluaranKasByJenisPengeluaranKasId', Controller.listTrxPengeluaranKasByJenisPengeluaranKasId);
-router.post('/listTrxPengeluaranKasByPenugasanSdmId', Controller.listTrxPengeluaranKasByPenugasanSdmId);
-router.post('/listTrxPengeluaranKasByTrxPembelianId', Controller.listTrxPengeluaranKasByTrxPembelianId);
-router.get('/detailsById/:id', Controller.detailsById);
+router.post('/register', authentification, Controller.register);
+router.post('/update', authentification, Controller.update);
+router.post('/delete', authentification, Controller.delete);
+router.get('/list', authentification, Controller.list);
+router.post('/listTrxPengeluaranKasByJenisPengeluaranKasId', authentification, Controller.listTrxPengeluaranKasByJenisPengeluaranKasId);
+router.post('/listTrxPengeluaranKasByPenugasanSdmId', authentification, Controller.listTrxPengeluaranKasByPenugasanSdmId);
+router.post('/listTrxPengeluaranKasByTrxPembelianId', authentification, Controller.listTrxPengeluaranKasByTrxPembelianId);
+router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

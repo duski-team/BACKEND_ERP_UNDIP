@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select pa.id as penggunaan_aset_id,pa.*,u.*,jp.* from penggunaan_aset pa join users u on u.id = pa.users_id join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id where pa.deletedAt is NULL order by pa.createdAt desc`,s);
+            let data = await sq.query(`select pa.id as penggunaan_aset_id, pa.*, u.*, jp.* from penggunaan_aset pa join users u on u.id = pa.users_id join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id where pa."deletedAt" isnull order by pa."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -63,7 +63,7 @@ class Controller {
     static async listPenggunaanAsetByUserId(req, res) {
         const {users_id} = req.body
         try {
-            let data = await sq.query(`select pa.id as penggunaan_aset_id,pa.*,u.*,jp.* from penggunaan_aset pa join users u on u.id = pa.users_id join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id where pa.deletedAt is NULL and pa.users_id = '${users_id}' order by pa.createdAt desc`,s);
+            let data = await sq.query(`select pa.id as penggunaan_aset_id, pa.*, u.*, jp.* from penggunaan_aset pa join users u on u.id = pa.users_id join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id where pa."deletedAt" isnull and pa.users_id = '${users_id}' order by pa."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -75,7 +75,7 @@ class Controller {
     static async listPenggunaanAsetByJenisPenggunaanId(req, res) {
         const {jenis_penggunaan_id} = req.body
         try {
-            let data = await sq.query(`select pa.id as penggunaan_aset_id,pa.*,u.*,jp.* from penggunaan_aset pa join users u on u.id = pa.users_id join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id where pa.deletedAt is NULL and pa.jenis_penggunaan_id = '${jenis_penggunaan_id}' order by pa.createdAt desc`,s);
+            let data = await sq.query(`select pa.id as penggunaan_aset_id, pa.*, u.*, jp.* from penggunaan_aset pa join users u on u.id = pa.users_id join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id where pa."deletedAt" isnull and pa.jenis_penggunaan_id = '${jenis_penggunaan_id}' order by pa."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -88,7 +88,8 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select pa.id as penggunaan_aset_id,pa.*,u.*,jp.* from penggunaan_aset pa join users u on u.id = pa.users_id join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id where pa.deletedAt is NULL and pa.id = '${id}'`,s);
+            let data = await sq.query(`select pa.id as penggunaan_aset_id, pa.*, u.*, jp.* from penggunaan_aset pa join users u on u.id = pa.users_id join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id where pa."deletedAt" isnull and pa.id = '${id}'`,s);
+            
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
             console.log(err);

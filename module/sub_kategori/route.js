@@ -1,12 +1,13 @@
 const Controller = require('./controller');
 const router = require('express').Router();
 const upload = require('../../helper/upload');
+const authentification = require('../../middleware/authentification');
 
-router.post('/register', upload, Controller.register);
-router.post('/update', upload, Controller.update);
-router.post('/delete', Controller.delete);
-router.get('/list', Controller.list);
-router.post('/list', Controller.listSubKategoriByKategoriId);
-router.get('/detailsById/:id', Controller.detailsById);
+router.post('/register', authentification, upload, Controller.register);
+router.post('/update', authentification, upload, Controller.update);
+router.post('/delete', authentification, Controller.delete);
+router.get('/list', authentification, Controller.list);
+router.post('/list', authentification, Controller.listSubKategoriByKategoriId);
+router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

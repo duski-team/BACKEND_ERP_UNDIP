@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
        try {
-            let data = await sq.query(`select *,sk.id as sub_kategori_id from sub_kategori sk join kategori k on k.id = sk.kategori_id where sk.deletedAt is NULL order by sk.createdAt desc`,s);
+            let data = await sq.query(`select *, sk.id as sub_kategori_id from sub_kategori sk join kategori k on k.id = sk.kategori_id where sk."deletedAt" isnull order by sk."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses",data });
        } catch (err) {
@@ -63,7 +63,7 @@ class Controller {
     static async listSubKategoriByKategoriId(req, res) {
         const {kategori_id} =req.body
        try {
-            let data = await sq.query(`select *,sk.id as sub_kategori_id from sub_kategori sk join kategori k on k.id = sk.kategori_id where sk.deletedAt is NULL and sk.kategori_id='${kategori_id}' order by sk.createdAt desc`,s);
+            let data = await sq.query(`select *, sk.id as sub_kategori_id from sub_kategori sk join kategori k on k.id = sk.kategori_id where sk."deletedAt" isnull and sk.kategori_id='${kategori_id}' order by sk."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses",data });
        } catch (err) {
@@ -76,7 +76,7 @@ class Controller {
         const { id } = req.params
 
          try {
-            let data = await sq.query(`select *,sk.id as sub_kategori_id from sub_kategori sk join kategori k on k.id = sk.kategori_id where sk.deletedAt is NULL and sk.id = '${id}'`,s);
+            let data = await sq.query(`select *, sk.id as sub_kategori_id from sub_kategori sk join kategori k on k.id = sk.kategori_id where sk."deletedAt" isnull and sk.id = '${id}'`,s);
             
             res.status(200).json({ status: 200, message: "sukses",data });
        } catch (err) {

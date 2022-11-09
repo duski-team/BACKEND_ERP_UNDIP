@@ -51,7 +51,7 @@ class Controller {
 
     static async list (req,res){
         try {
-            let data = await sq.query(`SELECT *,sl.id as sub_layanan_id from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl.deletedAt  is NULL order by sl.createdAt desc`,s);
+            let data = await sq.query(`SELECT *, sl.id as sub_layanan_id from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl."deletedAt" isnull order by sl."createdAt" desc`,s);
             res.status(200).json({ status: 200, message: "sukses",data });
         } catch (err) {
             console.log(err);
@@ -62,7 +62,7 @@ class Controller {
     static async listSubLayananByLayananId (req,res){
         const {layanan_id} = req.body
         try {
-            let data = await sq.query(`SELECT *,sl.id as sub_layanan_id from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl.deletedAt  is NULL and sl.layanan_id = '${layanan_id}' order by sl.createdAt desc`,s);
+            let data = await sq.query(`SELECT *, sl.id as sub_layanan_id from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl."deletedAt" isnull and sl.layanan_id = '${layanan_id}' order by sl."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses",data });
         } catch (err) {
@@ -74,7 +74,7 @@ class Controller {
     static async detailsById (req,res){
         const {id} = req.params
         try {
-            let data = await sq.query(`SELECT *,sl.id as sub_layanan_id from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl.deletedAt  is NULL and sl.id = '${id}'`,s);
+            let data = await sq.query(`SELECT *, sl.id as sub_layanan_id from sub_layanan sl join layanan l on l.id = sl.layanan_id WHERE sl."deletedAt" isnull and sl.id = '${id}'`,s);
             res.status(200).json({ status: 200, message: "sukses",data });
         } catch (err) {
             console.log(err);

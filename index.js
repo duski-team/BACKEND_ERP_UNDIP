@@ -40,6 +40,7 @@ router.use("/coa5", require('./module/coa5/route'));
 router.use("/coa6", require('./module/coa6/route'));
 router.use("/master_akses", require('./module/master_akses/route'));
 router.use("/pool_akses", require('./module/pool_akses/route'));
+router.use("/test", require('./module/test/route'));
 
 
 module.exports = router;

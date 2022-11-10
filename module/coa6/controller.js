@@ -86,6 +86,19 @@ class Controller {
         }
     }
 
+    static async listCoa6ByCoa5IdCompanyId(req, res) {
+        const { coa5_id, company_id } = req.body
+
+        try {
+            let data = await sq.query(`select c.id as "coa6_id", * from coa6 c join coa5 c2 on c2.id = c.coa5_id where c."deletedAt" isnull and c2."deletedAt" isnull and c.coa5_id = '${coa5_id}' and c2.company_id = '${company_id}' order by c."createdAt" asc `, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
     static async listAll(req, res) {
         try {
             // let data = await 

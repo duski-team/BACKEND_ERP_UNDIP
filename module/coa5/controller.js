@@ -8,13 +8,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_coa5, kode_coa5, coa4_id } = req.body
+        const { nama_coa5, kode_coa5, coa4_id, company_id } = req.body
 
         coa5.findAll({ where: { nama_coa5, kode_coa5 } }).then(async data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                await coa5.create({ id: uuid_v4(), nama_coa5, kode_coa5, coa4_id }).then(data2 => {
+                await coa5.create({ id: uuid_v4(), nama_coa5, kode_coa5, coa4_id, company_id }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses", data: data2 });
                 })
             }
@@ -26,9 +26,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, nama_coa5, kode_coa5, coa4_id } = req.body
+        const { id, nama_coa5, kode_coa5, coa4_id, company_id } = req.body
 
-        coa5.update({ nama_coa5, kode_coa5, coa4_id }, { where: { id } }).then(data => {
+        coa5.update({ nama_coa5, kode_coa5, coa4_id, company_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

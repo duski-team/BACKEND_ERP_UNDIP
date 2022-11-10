@@ -96,7 +96,7 @@ class Controller {
     static async listUserByCompanyId (req,res){
         const {company_id} = req.body
         try {
-            let data = await sq.query(`SELECT u.id as user_id,* FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u.deletedAt IS NULL and and u.company_id = '${company_id}' order by u.createdAt desc`,s);
+            let data = await sq.query(`SELECT u.id as user_id, * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses",data });
         } catch (err) {

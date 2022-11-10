@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select c.id as "coa2_id", * from coa2 c join coa1 c2 on c2.id = c.coa1_id where c."deletedAt" isnull and c2."deletedAt" isnull order by c."createdAt" desc`, s);
+            let data = await sq.query(`select c.id as "coa2_id", * from coa2 c join coa1 c2 on c2.id = c.coa1_id where c."deletedAt" isnull and c2."deletedAt" isnull order by c."createdAt" asc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -64,7 +64,20 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select c.id as "coa2_id", * from coa2 c join coa1 c2 on c2.id = c.coa1_id where c."deletedAt" isnull and c2."deletedAt" isnull and c2.id = '${id}'`, s);
+            let data = await sq.query(`select c.id as "coa2_id", * from coa2 c join coa1 c2 on c2.id = c.coa1_id where c."deletedAt" isnull and c2."deletedAt" isnull and c.id = '${id}'`, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async listCoa2ByCoa1Id(req, res) {
+        const { coa1_id } = req.body
+
+        try {
+            let data = await sq.query(`select c.id as "coa2_id", * from coa2 c join coa1 c2 on c2.id = c.coa1_id where c."deletedAt" isnull and c2."deletedAt" isnull and c.coa1_id = '${coa1_id}' order by c."createdAt" asc `, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

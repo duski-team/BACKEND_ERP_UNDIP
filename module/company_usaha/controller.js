@@ -20,7 +20,7 @@ class Controller {
                 logo_usaha = req.files.file2[0].filename;
             }
         }
-        
+
         companyUsaha.findAll({ where: {[Op.or]:[{nama_usaha},{code}]} }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
@@ -88,6 +88,18 @@ class Controller {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
         })
+    }
+
+    static async cekCompany (req,res){
+        const {nama_usaha,code} = req.body
+        try {
+            let data = await sq.query(`select * from company_usaha cu where cu."deletedAt" isnull and cu.nama_usaha ilike '%${nama_usaha}%' or cu.code ilike '%${code}%'`,s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
     }
 }
 module.exports = Controller;

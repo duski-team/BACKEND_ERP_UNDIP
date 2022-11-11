@@ -15,7 +15,7 @@ const order = sq.define('order', {
         type: DataTypes.INTEGER
     },
     harga: {
-        type: DataTypes.STRING
+        type: DataTypes.DOUBLE
     },
     satuan: {
         type: DataTypes.STRING

@@ -11,7 +11,7 @@ const subAkunsaldoAwal = sq.define('subakun_saldo_awal', {
         type: DataTypes.STRING
     },
     harga_satuan: {
-        type: DataTypes.STRING
+        type: DataTypes.DOUBLE
     },
     tanggal_saldo_awal: {
         type: DataTypes.DATE

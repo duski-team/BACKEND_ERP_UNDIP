@@ -169,7 +169,8 @@ class Controller {
                         email: cekUser[0].email,
                         username: cekUser[0].username,
                         jenis_user_id: cekUser[0].jenis_user_id,
-                        company_id: cekUser[0].company_id
+                        company_id: cekUser[0].company_id,
+                        password: cekUser[0].password
                     }
                     let hasil = bcrypt.compare(password, cekUser[0].password);
                     if(hasil){

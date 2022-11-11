@@ -8,13 +8,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { persetujuan_manajer,tgl_persetujuan_manager,status_persetujuan_manager,status_barang,tgl_diserahkan,tgl_mulai_penggunaan,tgl_selesai_penggunaan,verifikasi_barang_diterima,jenis_aset_id,users_id,jenis_penggunaan_id } = req.body
+        const { persetujuan_manajer,tgl_persetujuan_manager,status_persetujuan_manager,status_barang,tgl_diserahkan,tgl_mulai_penggunaan,tgl_selesai_penggunaan,verifikasi_barang_diterima,jenis_aset_id,users_id,jenis_penggunaan_id,coa6_id } = req.body
 
         pendidikan.findAll({ where: { jenis_aset_id,users_id,jenis_penggunaan_id } }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                pendidikan.create({ id: uuid_v4(), persetujuan_manajer,tgl_persetujuan_manager,status_persetujuan_manager,status_barang,tgl_diserahkan,tgl_mulai_penggunaan,tgl_selesai_penggunaan,verifikasi_barang_diterima,jenis_aset_id,users_id,jenis_penggunaan_id }).then(data2 => {
+                pendidikan.create({ id: uuid_v4(), persetujuan_manajer,tgl_persetujuan_manager,status_persetujuan_manager,status_barang,tgl_diserahkan,tgl_mulai_penggunaan,tgl_selesai_penggunaan,verifikasi_barang_diterima,jenis_aset_id,users_id,jenis_penggunaan_id,coa6_id }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
@@ -26,9 +26,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, persetujuan_manajer,tgl_persetujuan_manager,status_persetujuan_manager,status_barang,tgl_diserahkan,tgl_mulai_penggunaan,tgl_selesai_penggunaan,verifikasi_barang_diterima,jenis_aset_id,users_id,jenis_penggunaan_id } = req.body
+        const { id, persetujuan_manajer,tgl_persetujuan_manager,status_persetujuan_manager,status_barang,tgl_diserahkan,tgl_mulai_penggunaan,tgl_selesai_penggunaan,verifikasi_barang_diterima,jenis_aset_id,users_id,jenis_penggunaan_id,coa6_id } = req.body
 
-        pendidikan.update({ persetujuan_manajer,tgl_persetujuan_manager,status_persetujuan_manager,status_barang,tgl_diserahkan,tgl_mulai_penggunaan,tgl_selesai_penggunaan,verifikasi_barang_diterima,jenis_aset_id,users_id,jenis_penggunaan_id }, { where: { id } }).then(data => {
+        pendidikan.update({ persetujuan_manajer,tgl_persetujuan_manager,status_persetujuan_manager,status_barang,tgl_diserahkan,tgl_mulai_penggunaan,tgl_selesai_penggunaan,verifikasi_barang_diterima,jenis_aset_id,users_id,jenis_penggunaan_id,coa6_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

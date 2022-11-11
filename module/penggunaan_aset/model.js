@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const {sq} = require('../../config/connection');
 const users = require('../users/model');
 const jenisPenggunaan = require('../jenis_penggunaan/model');
+const coa6= require('../coa6/model')
 
 const penggunaanAset = sq.define('penggunaan_aset', {
     id: {
@@ -46,5 +47,8 @@ const penggunaanAset = sq.define('penggunaan_aset', {
 
     penggunaanAset.belongsTo(jenisPenggunaan,{foreignKey:'jenis_penggunaan_id'})
     jenisPenggunaan.hasMany(penggunaanAset,{foreignKey:'jenis_penggunaan_id'})
+
+    penggunaanAset.belongsTo(coa6,{foreignKey:'coa6_id'})
+    coa6.hasMany(penggunaanAset,{foreignKey:'coa6_id'})
 
 module.exports = penggunaanAset

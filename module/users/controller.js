@@ -7,7 +7,6 @@ const coa5 = require("../coa5/model")
 const coa6 = require("../coa6/model")
 const { QueryTypes, Op } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
-const { QueryTypes, Op, where } = require('sequelize');
 const bcrypt = require('../../helper/bcrypt');
 const jwt = require('../../helper/jwt');
 const { token } = require('morgan');
@@ -41,7 +40,7 @@ createSuperUser()
 class Controller {
 
     static async register(req, res) {
-        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, nama_usaha, location, code } = req.body
+        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, nama_usaha, location, code, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
         const t = await sq.transaction();
 
@@ -60,8 +59,8 @@ class Controller {
                     }
                 }
                 let encryptedPassword = bcrypt.hashPassword(password);
-                let perusahan_id = await company.create({id:uuid_v4(),nama_usaha,location,code},{transaction:t})
-                let data = await users.create({id:uuid_v4(),email,username,firstname,lastname,phone_no,password:encryptedPassword,register_token,resetpassword_token,variant,priority,profil_image,jenis_user_id,company_id:perusahan_id.id},{transaction:t})
+                let perusahan_id = await company.create({ id: uuid_v4(), nama_usaha, location, code }, { transaction: t })
+                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password: encryptedPassword, register_token, resetpassword_token, variant, priority, profil_image, jenis_user_id, company_id: perusahan_id.id, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { transaction: t })
                 await t.commit();
 
                 res.status(200).json({ status: 200, message: "sukses", data });
@@ -75,7 +74,7 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id } = req.body
+        const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
         if (req.files) {
             if (req.files.file1) {
@@ -84,7 +83,7 @@ class Controller {
             }
         }
 
-        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id }, { where: { id } }).then(data => {
+        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -153,32 +152,33 @@ class Controller {
         }
     }
 
-    static async login (req,res){
-        const {username,password,code} = req.body
+    static async login(req, res) {
+        const { username, password, code } = req.body
 
         try {
-            let perusahan_id = await company.findAll({where:{code}})
+            let perusahan_id = await company.findAll({ where: { code } })
 
-            if(perusahan_id.length==0){
-                res.status(201).json({ status: 204, message: "Perusahaan Code Tidak Terdaftar"});
-            }else{
+            if (perusahan_id.length == 0) {
+                res.status(201).json({ status: 204, message: "Perusahaan Code Tidak Terdaftar" });
+            } else {
                 console.log(perusahan_id[0].id);
-                let cekUser = await users.findAll({where:{username,company_id:perusahan_id[0].id}});
+                let cekUser = await users.findAll({ where: { username, company_id: perusahan_id[0].id } });
 
-                if(cekUser.length == 0){
-                    res.status(201).json({ status: 204, message: "User Tidak Terdaftar"});
-                }else{
+                if (cekUser.length == 0) {
+                    res.status(201).json({ status: 204, message: "User Tidak Terdaftar" });
+                } else {
                     let dataToken = {
                         id: cekUser[0].id,
                         email: cekUser[0].email,
                         username: cekUser[0].username,
                         jenis_user_id: cekUser[0].jenis_user_id,
-                        company_id: cekUser[0].company_id
+                        company_id: cekUser[0].company_id,
+                        password: cekUser[0].password
                     }
                     let hasil = bcrypt.compare(password, cekUser[0].password);
-                    if(hasil){
-                        res.status(200).json({status: 200,message: "sukses",token: jwt.generateToken(dataToken),data:dataToken});
-                    }else{
+                    if (hasil) {
+                        res.status(200).json({ status: 200, message: "sukses", token: jwt.generateToken(dataToken), data: dataToken });
+                    } else {
                         res.status(201).json({ status: 204, message: "Password Salah" });
                     }
                 }
@@ -189,29 +189,29 @@ class Controller {
         }
     }
 
-    static async cekEmailUsername (req,res){
-        const {username,email} = req.body
+    static async cekEmailUsername(req, res) {
+        const { username, email } = req.body
         try {
-            let data = await sq.query(`select * from users u where u."deletedAt" isnull and u.username ilike '%${username}%' or u.email ilike '%${email}%'`,s);
+            let data = await sq.query(`select * from users u where u."deletedAt" isnull and u.username ilike '%${username}%' or u.email ilike '%${email}%'`, s);
 
-            res.status(200).json({ status: 200, message: "sukses",data });
+            res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
 
-    static async listUserAdminCompany(req,res){
-        const {status_users} = req.body
+    static async listUserAdminCompany(req, res) {
+        const { status_users } = req.body
         try {
-            let isi =''
-            if(status_users){
-                isi+=`and u.status_users =${status_users}`
+            let isi = ''
+            if (status_users) {
+                isi += `and u.status_users =${status_users}`
             }
             let data = await sq.query(`select u.id as user_id, * from users u join company_usaha cu on cu.id = u.company_id join jenis_user ju on ju.id = u.jenis_user_id 
-            where u."deletedAt" isnull and ju.nama_jenis_user ilike 'admin_company' ${isi}`,s);
+            where u."deletedAt" isnull and ju.nama_jenis_user ilike 'admin_company' ${isi}`, s);
 
-            res.status(200).json({ status: 200, message: "sukses",data });
+            res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
@@ -243,7 +243,7 @@ class Controller {
                 }
                 // console.log(cekCoa5);
                 // console.log(cekCoa6);
-                await users.update({ status_user: 2 }, { where: { id }, transaction: t })
+                await users.update({ status_users: 2 }, { where: { id }, transaction: t })
                 await coa5.bulkCreate(cekCoa5, { transaction: t })
                 await coa6.bulkCreate(cekCoa6, { transaction: t })
                 await t.commit()

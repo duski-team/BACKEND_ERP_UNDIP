@@ -242,7 +242,7 @@ class Controller {
                 }
                 // console.log(cekCoa5);
                 // console.log(cekCoa6);
-                await users.update({ status_user: 2 }, { where: { id }, transaction: t })
+                await users.update({ status_users: 2 }, { where: { id }, transaction: t })
                 await coa5.bulkCreate(cekCoa5, { transaction: t })
                 await coa6.bulkCreate(cekCoa6, { transaction: t })
                 await t.commit()

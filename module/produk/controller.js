@@ -7,40 +7,22 @@ const s = { type: QueryTypes.SELECT };
 
 class Controller {
 
-    // static register(req, res) {
-    //     const { nama_produk, kode_produk, satuan_produk, harga_jual, stock, spesifikasi } = req.body
-
-    //     let gambar = "";
-    //     if (req.files) {
-    //         if (req.files.file1) {
-    //             gambar = req.files.file2[0].filename;
-    //         }
-    //     }
-
-    //     produk.findAll({ where: { nama_produk, kode_produk } }).then(data => {
-    //         if (data.length) {
-    //             res.status(201).json({ status: 204, message: "data sudah ada" });
-    //         } else {
-    //             produk.create({ id: uuid_v4(), nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasi }).then(data2 => {
-    //                 res.status(200).json({ status: 200, message: "sukses", data: data2 });
-    //             })
-    //         }
-    //     }).catch(err => {
-    //         console.log(req.body);
-    //         console.log(err);
-    //         res.status(500).json({ status: 500, message: "gagal", data: err });
-    //     })
-    // }
-
     static register(req, res) {
-        const { nama_produk,kode_produk,satuan_produk,harga_jual,stock,gambar,spesifikasi } = req.body
+        const { nama_produk, kode_produk, satuan_produk, harga_jual, stock, spesifikasi } = req.body
 
-        produk.findAll({ where: { nama_produk,kode_produk } }).then(data => {
+        let gambar = "";
+        if (req.files) {
+            if (req.files.file1) {
+                gambar = req.files.file1[0].filename;
+            }
+        }
+
+        produk.findAll({ where: { nama_produk, kode_produk } }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                produk.create({ id: uuid_v4(), nama_produk,kode_produk,satuan_produk,harga_jual,stock,gambar,spesifikasi }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
+                produk.create({ id: uuid_v4(), nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasi }).then(data2 => {
+                    res.status(200).json({ status: 200, message: "sukses", data: data2 });
                 })
             }
         }).catch(err => {
@@ -51,9 +33,16 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasi } = req.body
+        const { id, nama_produk, kode_produk, satuan_produk, harga_jual, stock, spesifikasi } = req.body
 
-        produk.update({ nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasi }, { where: { id } }).then(data => {
+        if (req.files) {
+            if (req.files.file1) {
+                let gambar = req.files.file1[0].filename;
+                produk.update({ gambar }, { where: { id } });
+            }
+        }
+
+        produk.update({ nama_produk, kode_produk, satuan_produk, harga_jual, stock, spesifikasi }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

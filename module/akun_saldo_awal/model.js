@@ -13,7 +13,7 @@ const akunsaldoAwal = sq.define('akun_saldo_awal', {
         type: DataTypes.STRING
     },
     saldo_awal: {
-        type: DataTypes.STRING
+        type: DataTypes.DOUBLE
     }
 },
     {

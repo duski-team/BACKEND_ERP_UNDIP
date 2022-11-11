@@ -20,10 +20,10 @@ const produk = sq.define('produk', {
         type: DataTypes.STRING
     },
     harga_jual: {
-        type: DataTypes.STRING
+        type: DataTypes.DOUBLE
     },
     stock: {
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER
     },
     gambar: {
         type: DataTypes.JSON

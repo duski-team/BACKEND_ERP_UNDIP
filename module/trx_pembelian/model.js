@@ -20,13 +20,13 @@ const trxPembelian = sq.define('trx_pembelian', {
         type: DataTypes.INTEGER
     },
     satuan_txp: {
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
     },
     harga_satuan_txp: {
-        type: DataTypes.INTEGER
+        type: DataTypes.DOUBLE
     },
     harga_total_txp: {
-        type: DataTypes.INTEGER
+        type: DataTypes.DOUBLE
     },
     persetujuan_akuntan_txp: {
         type: DataTypes.INTEGER

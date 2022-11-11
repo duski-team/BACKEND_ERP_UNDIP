@@ -43,7 +43,7 @@ const users = sq.define('users', {
     },
     status_users: {
         type: DataTypes.SMALLINT,
-        default: 1  // 0 : Ditolak || 1 : Default || 2 : Accept
+        defaultValue: 1  // 0 : Ditolak || 1 : Default || 2 : Accept
     }
 },
     {

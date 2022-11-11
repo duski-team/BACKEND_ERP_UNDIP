@@ -7,39 +7,26 @@ const s = { type: QueryTypes.SELECT };
 
 class Controller {
 
-    // static register(req, res) {
-    //     const { nama_produk, kode_produk, satuan_produk, harga_jual, stock, spesifikasi } = req.body
-
-    //     let gambar = "";
-    //     if (req.files) {
-    //         if (req.files.file1) {
-    //             gambar = req.files.file2[0].filename;
-    //         }
-    //     }
-
-    //     produk.findAll({ where: { nama_produk, kode_produk } }).then(data => {
-    //         if (data.length) {
-    //             res.status(201).json({ status: 204, message: "data sudah ada" });
-    //         } else {
-    //             produk.create({ id: uuid_v4(), nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasi }).then(data2 => {
-    //                 res.status(200).json({ status: 200, message: "sukses", data: data2 });
-    //             })
-    //         }
-    //     }).catch(err => {
-    //         console.log(req.body);
-    //         console.log(err);
-    //         res.status(500).json({ status: 500, message: "gagal", data: err });
-    //     })
-    // }
-
     static register(req, res) {
-        const { nama_produk,kode_produk,satuan_produk,harga_jual,stock,gambar,spesifikasi } = req.body
+        const { nama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan } = req.body
 
-        produk.findAll({ where: { nama_produk,kode_produk } }).then(data => {
-            if (data.length) {
+        let gambar = "";
+        let spesifikasi= "";
+
+        if (req.files) {
+            if (req.files.file1) {
+                gambar = req.files.file1[0].filename;
+            }
+            if (req.files.file2) {
+                spesifikasi = req.files.file2[0].filename;
+            }
+        }
+
+        produk.findAll({ where: { nama_persediaan,kode_persediaan } }).then(async data => {
+            if (data.length>0) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                produk.create({ id: uuid_v4(), nama_produk,kode_produk,satuan_produk,harga_jual,stock,gambar,spesifikasi }).then(data2 => {
+                await produk.create({ id: uuid_v4(), nama_produk,kode_produk,satuan_produk,harga_jual,stock,gambar,spesifikasinama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,gambar,spesifikasi,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
@@ -50,16 +37,32 @@ class Controller {
         })
     }
 
-    static update(req, res) {
-        const { id, nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasi } = req.body
+    static async update(req, res) {
+        const { id, nama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan } = req.body
 
-        produk.update({ nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasi }, { where: { id } }).then(data => {
+        const t = await sq.transaction();
+
+        try {
+            if (req.files) {
+                if (req.files.file1) {
+                    let gambar = req.files.file1[0].filename;
+                    await produk.update({gambar},{where:{id},transaction:t})
+                }
+                if (req.files.file2) {
+                    let spesifikasi = req.files.file2[0].filename;
+                    await produk.update({spesifikasi},{where:{id},transaction:t})
+                }
+            }
+            await produk.update({ nama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan }, { where: { id },transaction:t})
+            await t.commit();
+
             res.status(200).json({ status: 200, message: "sukses" });
-        }).catch(err => {
+        } catch (err) {
+            await t.rollback();
             console.log(req.body);
             console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
     }
 
     static delete(req, res) {
@@ -85,19 +88,19 @@ class Controller {
         }
     }
 
-    static async listProdukBySubAkunSaldoAwalId(req, res) {
-        const { subakun_saldo_awal_id } = req.body
-        try {
-            let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.subakun_saldo_awal_id = '${subakun_saldo_awal_id}' order by p."createdAt" desc`, s)
+    // static async listPersediaanBySubAkunSaldoAwalId(req, res) {
+    //     const { subakun_saldo_awal_id } = req.body
+    //     try {
+    //         let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.subakun_saldo_awal_id = '${subakun_saldo_awal_id}' order by p."createdAt" desc`, s)
 
-            res.status(200).json({ status: 200, message: "sukses", data });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        }
-    }
+    //         res.status(200).json({ status: 200, message: "sukses", data });
+    //     } catch (err) {
+    //         console.log(err);
+    //         res.status(500).json({ status: 500, message: "gagal", data: err });
+    //     }
+    // }
 
-    static async listProdukByKategoriId(req, res) {
+    static async listPersediaanByKategoriId(req, res) {
         const { kategori_id } = req.body
         try {
             let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.kategori_id = '${kategori_id}' order by p."createdAt" desc`, s)
@@ -109,7 +112,7 @@ class Controller {
         }
     }
 
-    static async listProdukBySubKategoriId(req, res) {
+    static async listPersediaanBySubKategoriId(req, res) {
         const { sub_kategori_id } = req.body
         try {
             let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.sub_kategori_id = '${sub_kategori_id}' order by p."createdAt" desc`, s)
@@ -121,7 +124,7 @@ class Controller {
         }
     }
 
-    static async listProdukBySubSubKategoriId(req, res) {
+    static async listPersediaanBySubSubKategoriId(req, res) {
         const { sub_sub_kategori_id } = req.body
         try {
             let data = await sq.query(`select p.id as produk_id, p.*, ssa.*, k.*, sk.*, ssk.* from produk p join subakun_saldo_awal ssa on ssa.id = p.subakun_saldo_awal_id join kategori k on k.id = p.kategori_id join sub_kategori sk on sk.id = p.sub_kategori_id join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id where p."deletedAt" isnull and p.sub_sub_kategori_id = '${sub_sub_kategori_id}' order by p."createdAt" desc`, s)

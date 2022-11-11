@@ -18,7 +18,7 @@ router.use("/pendidikan", require('./module/pendidikan/route'));
 router.use("/penggunaanAset", require('./module/penggunaan_aset/route'));
 router.use("/penugasan", require('./module/penugasan/route'));
 router.use("/penugasanSdm", require('./module/penugasan_sdm/route'));
-router.use("/produk", require('./module/produk/route'));
+router.use("/persediaan", require('./module/persediaan/route'));
 router.use("/sdm", require('./module/sdm/route'));
 router.use("/statusOrder", require('./module/status_order/route'));
 router.use("/statusSdm", require('./module/status_sdm/route'));

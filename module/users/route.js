@@ -1,5 +1,5 @@
-const Controller = require( './controller' );
-const router = require( 'express' ).Router();
+const Controller = require('./controller');
+const router = require('express').Router();
 const authentification = require('../../middleware/authentification')
 
 router.post('/register',Controller.register);
@@ -10,5 +10,6 @@ router.get('/detailsById/:id',authentification,Controller.detailsById);
 router.post('/login',Controller.login);
 router.post('/cekEmailUsername',Controller.cekEmailUsername);
 router.post('/listUserAdminCompany',authentification,Controller.listUserAdminCompany);
+router.post('/aceptedUser',authentification,Controller.aceptedUser);
 
 module.exports = router

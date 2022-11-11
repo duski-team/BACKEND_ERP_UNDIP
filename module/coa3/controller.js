@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select c.id as "coa3_id", * from coa3 c join coa2 c2 on c2.id = c.coa2_id where c2."deletedAt" isnull and c."deletedAt" isnull order by c."createdAt" asc`, s);
+            let data = await sq.query(`select c.id as "coa3_id", * from coa3 c join coa2 c2 on c2.id = c.coa2_id where c2."deletedAt" isnull and c."deletedAt" isnull order by c.kode_coa3`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -77,7 +77,7 @@ class Controller {
         const { coa2_id } = req.body
 
         try {
-            let data = await sq.query(`select c.id as "coa3_id", * from coa3 c join coa2 c2 on c2.id = c.coa2_id where c2."deletedAt" isnull and c."deletedAt" isnull and c.coa2_id = '${coa2_id}' order by c."createdAt" asc `, s);
+            let data = await sq.query(`select c.id as "coa3_id", * from coa3 c join coa2 c2 on c2.id = c.coa2_id where c2."deletedAt" isnull and c."deletedAt" isnull and c.coa2_id = '${coa2_id}' order by c.kode_coa3`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

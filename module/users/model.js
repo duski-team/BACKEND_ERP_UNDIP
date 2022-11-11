@@ -40,6 +40,10 @@ const users = sq.define('users', {
     },
     profil_image: {
         type: DataTypes.STRING
+    },
+    status_users: {
+        type: DataTypes.SMALLINT,
+        default: 1  // 0 : Ditolak || 1 : Default || 2 : Accept
     }
 },
     {

@@ -9,9 +9,6 @@ const penggunaanAset = sq.define('penggunaan_aset', {
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    persetujuan_manajer: {
-        type: DataTypes.STRING
-    },
     tgl_persetujuan_manager: {
         type: DataTypes.DATE
     },
@@ -33,9 +30,9 @@ const penggunaanAset = sq.define('penggunaan_aset', {
     verifikasi_barang_diterima: {
         type: DataTypes.INTEGER
     },
-    jenis_aset_id: {
-        type: DataTypes.STRING
-    }
+    // jenis_aset_id: {
+    //     type: DataTypes.STRING
+    // }
 },
     {
         paranoid: true,

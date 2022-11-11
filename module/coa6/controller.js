@@ -77,7 +77,7 @@ class Controller {
         const { kode_coa5 } = req.body
 
         try {
-            let data = await sq.query(`select c.id as "coa6_id", * from coa6 c join coa5 c2 on c2.id = c.coa5_id where c."deletedAt" isnull and c2."deletedAt" isnull and c2.kode_coa5 = '${kode_coa5}' order by order by c.kode_coa6`, s);
+            let data = await sq.query(`select c.id as "coa6_id", * from coa6 c join coa5 c2 on c2.id = c.coa5_id where c."deletedAt" isnull and c2."deletedAt" isnull and c2.kode_coa5 = '${kode_coa5}' order by c.kode_coa6`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

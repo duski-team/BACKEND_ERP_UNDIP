@@ -7,7 +7,6 @@ const coa5 = require("../coa5/model")
 const coa6 = require("../coa6/model")
 const { QueryTypes, Op } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
-const { QueryTypes, Op, where } = require('sequelize');
 const bcrypt = require('../../helper/bcrypt');
 const jwt = require('../../helper/jwt');
 const { token } = require('morgan');

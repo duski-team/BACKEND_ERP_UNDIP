@@ -1,7 +1,7 @@
 const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
 const companyUsaha = require("./model");
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, Op } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
 
 
@@ -20,7 +20,8 @@ class Controller {
                 logo_usaha = req.files.file2[0].filename;
             }
         }
-        companyUsaha.findAll({ where: { nama_usaha } }).then(data => {
+        
+        companyUsaha.findAll({ where: {[Op.or]:[{nama_usaha},{code}]} }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {

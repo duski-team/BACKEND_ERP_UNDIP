@@ -51,7 +51,7 @@ class Controller {
 
     static list(req, res) {
         
-        coa1.findAll({order:[['createdAt','ASC']]}).then(data => {
+        coa1.findAll({order:[['kode_coa1','ASC']]}).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(err);

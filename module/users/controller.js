@@ -2,6 +2,7 @@ require('dotenv').config({})
 const {sq} = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
 const users = require("./model");
+const company = require("../company_usaha/model")
 const { QueryTypes, Op } = require('sequelize');
 const s = {type:QueryTypes.SELECT};
 const bcrypt = require('../../helper/bcrypt');
@@ -9,13 +10,24 @@ const jwt = require('../../helper/jwt');
 
 async function createSuperUser(){
     let encryptedPassword = bcrypt.hashPassword(process.env.ADMIN);
+    await company.findOrCreate({
+        where:{id:"UNDIP"},
+        defaults:{
+            id:"UNDIP",
+            nama_usaha: "MASTER",
+            nama_pengelola: "UNDIP",
+            code: "UNDIP"
+        }
+
+    })
     await users.findOrCreate({
         where:{username:"erp_admin"},
         defaults:{
             id:"superadmin",
             username:"erp_admin",
             email:"admin@gmail.com",
-            password: encryptedPassword
+            password: encryptedPassword,
+            company_id: "UNDIP"
         }
     })
 }
@@ -24,31 +36,34 @@ createSuperUser()
 
 class Controller {
 
-    static register (req,res){
-        const {email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority,jenis_user_id,company_id}= req.body
+    static  async register (req,res){
+        const {email,username,firstname,lastname,phone_no,password,register_token,resetpassword_token,variant,priority,jenis_user_id,nama_usaha,location,code}= req.body
 
-        let profil_image = "";
+        try {
+            let cekCompany = await company.findAll({where:{[Op.or]:[{nama_usaha},{code}]}});
+            let cekUser = await users.findAll({where:{[Op.or]:[{email},{username}]}});
 
-        if (req.files) {
-            if (req.files.file1) {
-                profil_image = req.files.file1[0].filename;
-            }
-        }
-        
-        users.findAll({where:{[Op.or]:[{email},{username}]}}).then(async data =>{
-            if(data.length){
-                res.status(201).json({ status: 204, message: "email/username sudah terdaftar" });
+            if(cekCompany.length>0 || cekUser.length>0){
+                res.status(201).json({ status: 204, message: "data sudah ada" });
             }else{
+                let profil_image = "";
+
+                if (req.files) {
+                    if (req.files.file1) {
+                        profil_image = req.files.file1[0].filename;
+                    }
+                }
                 let encryptedPassword = bcrypt.hashPassword(password);
-                await users.create({id:uuid_v4(),email,username,firstname,lastname,phone_no,password:encryptedPassword,register_token,resetpassword_token,variant,priority,profil_image,jenis_user_id,company_id}).then(data2 =>{
-                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
-                })
+                let perusahan_id = await company.create({id:uuid_v4(),nama_usaha,location,code})
+                let data = await users.create({id:uuid_v4(),email,username,firstname,lastname,phone_no,password:encryptedPassword,register_token,resetpassword_token,variant,priority,profil_image,jenis_user_id,company_id:perusahan_id[0].id})
+
+                res.status(200).json({ status: 200, message: "sukses",data });
             }
-        }).catch(err =>{
+        } catch (err) {
             console.log(req.body);
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
     static update (req,res){

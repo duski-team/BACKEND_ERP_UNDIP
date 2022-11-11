@@ -73,11 +73,11 @@ class Controller {
         }
     }
 
-    static async listCoa3ByCoa2Id(req, res) {
-        const { coa2_id } = req.body
+    static async listCoa3ByKodeCoa2(req, res) {
+        const { kode_coa2 } = req.body
 
         try {
-            let data = await sq.query(`select c.id as "coa3_id", * from coa3 c join coa2 c2 on c2.id = c.coa2_id where c2."deletedAt" isnull and c."deletedAt" isnull and c.coa2_id = '${coa2_id}' order by c.kode_coa3`, s);
+            let data = await sq.query(`select c.id as "coa3_id", * from coa3 c join coa2 c2 on c2.id = c.coa2_id where c2."deletedAt" isnull and c."deletedAt" isnull and c2.kode_coa2 = '${kode_coa2}' order by c.kode_coa3`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

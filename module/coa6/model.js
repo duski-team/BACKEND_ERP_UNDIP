@@ -12,6 +12,9 @@ const coa6 = sq.define('coa6', {
     },
     kode_coa6: {
         type: DataTypes.STRING
+    },
+    nominal_coa6: {
+        type: DataTypes.DOUBLE
     }
 },
     {

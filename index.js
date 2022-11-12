@@ -8,6 +8,8 @@ const router = require("express").Router();
 // router.use("/master_akses", require('./module/master_akses_DELETE/route'));
 // router.use("/subAkunSaldoAwal", require('./module/subakun_saldo_awal_DELETE/route'));
 // router.use("/akunSaldoAwal", require('./module/akun_saldo_awal_DELETE/route'));
+
+router.use("/akunSaldoAwal", require('./module/akun_saldo_awal/route'));
 router.use("/companyUsaha", require('./module/company_usaha/route'));
 router.use("/jenisKerja", require('./module/jenis_kerja/route'));
 router.use("/jenisPembelian", require('./module/jenis_pembelian/route'));
@@ -41,6 +43,7 @@ router.use("/coa4", require('./module/coa4/route'));
 router.use("/coa5", require('./module/coa5/route'));
 router.use("/coa6", require('./module/coa6/route'));
 router.use("/test", require('./module/test/route'));
+router.use("/masterSatuan", require('./module/master_satuan/route'));
 
 
 module.exports = router;

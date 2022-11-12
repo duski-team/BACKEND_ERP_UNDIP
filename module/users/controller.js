@@ -40,7 +40,7 @@ createSuperUser()
 class Controller {
 
     static async register(req, res) {
-        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, nama_usaha, location, code, nik, alamat, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, nama_usaha, location, code, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
         const t = await sq.transaction();
 
@@ -60,7 +60,7 @@ class Controller {
                 }
                 let encryptedPassword = bcrypt.hashPassword(password);
                 let perusahan_id = await company.create({ id: uuid_v4(), nama_usaha, location, code }, { transaction: t })
-                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password: encryptedPassword, register_token, resetpassword_token, variant, priority, profil_image, jenis_user_id, company_id: perusahan_id.id, nik, alamat, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { transaction: t })
+                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password: encryptedPassword, register_token, resetpassword_token, variant, priority, profil_image, jenis_user_id, company_id: perusahan_id.id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { transaction: t })
                 await t.commit();
 
                 res.status(200).json({ status: 200, message: "sukses", data });
@@ -74,7 +74,7 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+        const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
         if (req.files) {
             if (req.files.file1) {
@@ -83,7 +83,7 @@ class Controller {
             }
         }
 
-        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } }).then(data => {
+        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -191,7 +191,14 @@ class Controller {
     static async cekEmailUsername(req, res) {
         const { username, email } = req.body
         try {
-            let data = await sq.query(`select * from users u where u."deletedAt" isnull and u.username ilike '%${username}%' or u.email ilike '%${email}%'`, s);
+            let isi = ''
+            if (username) {
+                isi += ` and u.username ilike '%${username}%' `
+            }
+            if (email) {
+                isi += ` and u.email ilike '%${email}%' `
+            }
+            let data = await sq.query(`select * from users u where u."deletedAt" isnull ${isi}`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

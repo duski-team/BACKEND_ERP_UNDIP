@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const {sq} = require('../../config/connection');
-const produk = require('../persediaan/model');
+const persediaan = require('../persediaan/model');
 const jenisAssetPembelian = require('../m_jenis_aset/model');
 
 const pembelian = sq.define('pembelian', {
@@ -23,8 +23,8 @@ const pembelian = sq.define('pembelian', {
         freezeTableName: true
     });
     
-    pembelian.belongsTo(produk,{foreignKey:'produk_id'})
-    produk.hasMany(pembelian,{foreignKey:'produk_id'})
+    pembelian.belongsTo(persediaan,{foreignKey:'persediaan_id'})
+    persediaan.hasMany(pembelian,{foreignKey:'persediaan_id'})
 
     pembelian.belongsTo(jenisAssetPembelian,{foreignKey:'jenis_asset_pembelian_id'})
     jenisAssetPembelian.hasMany(pembelian,{foreignKey:'jenis_asset_pembelian_id'})

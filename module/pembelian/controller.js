@@ -8,9 +8,9 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { jumlah_pembelian,tanggal_pembelian,status_pembelian,produk_id,jenis_asset_pembelian_id } = req.body
+        const { jumlah_pembelian,tanggal_pembelian,status_pembelian,persediaan_id,jenis_asset_pembelian_id } = req.body
 
-        pembelian.create({ id: uuid_v4(), jumlah_pembelian,tanggal_pembelian,status_pembelian,produk_id,jenis_asset_pembelian_id }).then(data => {
+        pembelian.create({ id: uuid_v4(), jumlah_pembelian,tanggal_pembelian,status_pembelian,persediaan_id,jenis_asset_pembelian_id }).then(data => {
             res.status(200).json({ status: 200, message: "sukses",data });
         }).catch(err => {
             console.log(req.body);
@@ -20,9 +20,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, jumlah_pembelian,tanggal_pembelian,status_pembelian,produk_id,jenis_asset_pembelian_id } = req.body
+        const { id, jumlah_pembelian,tanggal_pembelian,status_pembelian,persediaan_id,jenis_asset_pembelian_id } = req.body
 
-        pembelian.update({ jumlah_pembelian,tanggal_pembelian,status_pembelian,produk_id,jenis_asset_pembelian_id }, { where: { id } }).then(data => {
+        pembelian.update({ jumlah_pembelian,tanggal_pembelian,status_pembelian,persediaan_id,jenis_asset_pembelian_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

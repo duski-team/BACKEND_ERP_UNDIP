@@ -161,7 +161,6 @@ class Controller {
             if (perusahan_id.length == 0) {
                 res.status(201).json({ status: 204, message: "Perusahaan Code Tidak Terdaftar" });
             } else {
-                console.log(perusahan_id[0].id);
                 let cekUser = await users.findAll({ where: { username, company_id: perusahan_id[0].id } });
 
                 if (cekUser.length == 0) {

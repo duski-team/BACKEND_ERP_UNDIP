@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-const { DataTypes } = require('sequelize');
-const { sq } = require('../../config/connection');
-const tugas = require('../tugas_DELETE/DELETE/model');
-const statusSdm = require('../status_sdm/model');
-const pendidikan = require('../pendidikan/model');
-const jenisKerja = require('../jenis_kerja/model');
-const kompetensi = require('../kompetensi/model');
-=======
 // const { DataTypes } = require('sequelize');
 // const { sq } = require('../../config/connection');
 // const tugas = require('../tugas/model');
@@ -14,7 +5,6 @@ const kompetensi = require('../kompetensi/model');
 // const pendidikan = require('../pendidikan/model');
 // const jenisKerja = require('../jenis_kerja/model');
 // const kompetensi = require('../kompetensi/model');
->>>>>>> db60cf782501c7d08bb7d1a841a8e022ef19f2bf
 
 // const sdm = sq.define('sdm', {
 //     id: {

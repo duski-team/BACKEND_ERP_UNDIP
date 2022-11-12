@@ -23,8 +23,8 @@ const pembelian = sq.define('pembelian', {
         freezeTableName: true
     });
     
-    // pembelian.belongsTo(persediaan,{foreignKey:'persediaan_id'})
-    // persediaan.hasMany(pembelian,{foreignKey:'persediaan_id'})
+    pembelian.belongsTo(persediaan,{foreignKey:'persediaan_id'})
+    persediaan.hasMany(pembelian,{foreignKey:'persediaan_id'})
 
     pembelian.belongsTo(jenisAssetPembelian,{foreignKey:'jenis_asset_pembelian_id'})
     jenisAssetPembelian.hasMany(pembelian,{foreignKey:'jenis_asset_pembelian_id'})

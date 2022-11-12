@@ -52,7 +52,7 @@ const users = sq.define('users', {
     nik: {
         type: DataTypes.STRING
     },
-    alamat: {
+    alamat_users: {
         type: DataTypes.STRING
     },
     waktu_masuk: {

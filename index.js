@@ -9,7 +9,6 @@ const router = require("express").Router();
 // router.use("/subAkunSaldoAwal", require('./module/subakun_saldo_awal_DELETE/route'));
 // router.use("/akunSaldoAwal", require('./module/akun_saldo_awal_DELETE/route'));
 
-router.use("/akunSaldoAwal", require('./module/akun_saldo_awal/route'));
 router.use("/companyUsaha", require('./module/company_usaha/route'));
 router.use("/jenisKerja", require('./module/jenis_kerja/route'));
 router.use("/jenisPembelian", require('./module/jenis_pembelian/route'));

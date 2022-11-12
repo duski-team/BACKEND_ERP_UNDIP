@@ -10,11 +10,11 @@ class Controller {
     static register(req, res) {
         const { nama_master_satuan } = req.body
 
-        masterSatuan.findAll({ where: { nama_master_satuan } }).then(data => {
-            if (data.length) {
+        masterSatuan.findAll({ where: { nama_master_satuan } }).then(async data => {
+            if (data.length>0) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                masterSatuan.create({ id: uuid_v4(), nama_master_satuan }).then(data2 => {
+                await masterSatuan.create({ id: uuid_v4(), nama_master_satuan }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }

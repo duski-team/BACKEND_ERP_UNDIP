@@ -49,16 +49,10 @@ const users = sq.define('users', {
         type: DataTypes.SMALLINT,
         defaultValue: 1  // 0 : Ditolak || 1 : Default || 2 : Accept
     },
-    nama_sdm: {
-        type: DataTypes.STRING
-    },
     nik: {
         type: DataTypes.STRING
     },
     alamat: {
-        type: DataTypes.STRING
-    },
-    telp: {
         type: DataTypes.STRING
     },
     waktu_masuk: {

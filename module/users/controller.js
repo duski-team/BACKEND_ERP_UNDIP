@@ -192,7 +192,14 @@ class Controller {
     static async cekEmailUsername(req, res) {
         const { username, email } = req.body
         try {
-            let data = await sq.query(`select * from users u where u."deletedAt" isnull and u.username ilike '%${username}%' or u.email ilike '%${email}%'`, s);
+            let isi = ''
+            if (username) {
+                isi += ` and u.username ilike '%${username}%' `
+            }
+            if (email) {
+                isi += ` and u.email ilike '%${email}%' `
+            }
+            let data = await sq.query(`select * from users u where u."deletedAt" isnull ${isi}`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

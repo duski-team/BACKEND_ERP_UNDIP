@@ -30,7 +30,7 @@ router.use("/subAkunSaldoAwal", require('./module/subakun_saldo_awal/route'));
 router.use("/tipePembayaran", require('./module/tipe_pembayaran/route'));
 router.use("/trxPembelian", require('./module/trx_pembelian/route'));
 router.use("/trxPengeluaranKas", require('./module/trx_pengeluaran_kas/route'));
-router.use("/tugas", require('./module/tugas/route'));
+// router.use("/tugas", require('./module/tugas_DELETE/route'));
 router.use("/users", require('./module/users/route'));
 router.use("/coa1", require('./module/coa1/route'));
 router.use("/coa2", require('./module/coa2/route'));

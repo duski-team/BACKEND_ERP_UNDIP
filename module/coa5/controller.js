@@ -51,7 +51,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select c.id as "coa5_id", * from coa5 c join coa4 c2 on c2.id = c.coa4_id where c."deletedAt" isnull and c2."deletedAt" isnull order by c.kode_coa5 `, s);
+            let data = await sq.query(`select c.id as "coa5_id", * from coa5 c join coa4 c2 on c2.id = c.coa4_id where c."deletedAt" isnull and c2."deletedAt" isnull and c.company_id = '${req.dataUsers.company_id}' order by c.kode_coa5 `, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

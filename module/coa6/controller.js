@@ -99,9 +99,24 @@ class Controller {
         }
     }
 
-    static async listAll(req, res) {
+    static async listPersediaanBarangJual(req, res) {
         try {
-            // let data = await 
+            //coa6 by coa 4
+            let data = await sq.query(`select * from coa6 c where c."deletedAt" isnull and c.coa5_id in (select c2.id from coa5 c2 join coa4 c3 on c3.id = c2.coa4_id where c2."deletedAt" isnull and c3.kode_coa4 = '1.1.4.1' and c2.company_id= '${req.dataUsers.company_id}') order by c.kode_coa6`,s); 
+            
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async listPersediaanBarangHabisPakai(req, res) {
+        try {
+            //coa6 by coa 4
+            let data = await sq.query(`select * from coa6 c where c."deletedAt" isnull and c.coa5_id in (select c2.id from coa5 c2 join coa4 c3 on c3.id = c2.coa4_id where c2."deletedAt" isnull and c3.kode_coa4 = '1.1.4.2' and c2.company_id= '${req.dataUsers.company_id}') order by c.kode_coa6`,s); 
+            
+            res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });

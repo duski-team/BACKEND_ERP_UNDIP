@@ -12,27 +12,30 @@ const jwt = require('../../helper/jwt');
 const { token } = require('morgan');
 
 async function createSuperUser() {
-    let encryptedPassword = bcrypt.hashPassword(process.env.ADMIN);
-    await company.findOrCreate({
-        where: { id: "UNDIP" },
-        defaults: {
-            id: "UNDIP",
-            nama_usaha: "MASTER",
-            nama_pengelola: "UNDIP",
-            code: "UNDIP"
-        }
-
-    })
-    await users.findOrCreate({
-        where: { username: "erp_admin" },
-        defaults: {
-            id: "superadmin",
-            username: "erp_admin",
-            email: "admin@gmail.com",
-            password: encryptedPassword,
-            company_id: "UNDIP"
-        }
-    })
+    try {
+        let encryptedPassword = bcrypt.hashPassword(process.env.ADMIN);
+        await company.findOrCreate({
+            where: { id: "UNDIP" },
+            defaults: {
+                id: "UNDIP",
+                nama_usaha: "MASTER",
+                nama_pengelola: "UNDIP",
+                code: "UNDIP"
+            }
+        })
+        await users.findOrCreate({
+            where: { username: "erp_admin" },
+            defaults: {
+                id: "superadmin",
+                username: "erp_admin",
+                email: "admin@gmail.com",
+                password: encryptedPassword,
+                company_id: "UNDIP"
+            }
+        })
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 createSuperUser()

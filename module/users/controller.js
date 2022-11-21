@@ -1,4 +1,3 @@
-require('dotenv').config({})
 const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
 const users = require("./model");

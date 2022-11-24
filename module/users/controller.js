@@ -108,7 +108,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`SELECT u.id as user_id, * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" ISNULL order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -120,7 +120,7 @@ class Controller {
     static async listUserByCompanyId(req, res) {
         const { company_id } = req.body
         try {
-            let data = await sq.query(`SELECT u.id as user_id, * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -132,7 +132,7 @@ class Controller {
     static async listUserByJenisUserId(req, res) {
         const { jenis_user_id } = req.body
         try {
-            let data = await sq.query(`SELECT u.id as user_id * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" ISNULL and and u.jenis_user_id = '${jenis_user_id}' order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.jenis_user_id = '${jenis_user_id}' order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -145,7 +145,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`SELECT u.id as user_id, * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" ISNULL and u.id = '${id}'`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -216,8 +216,8 @@ class Controller {
             if (status_users) {
                 isi += `and u.status_users =${status_users}`
             }
-            let data = await sq.query(`select u.id as user_id, * from users u join company_usaha cu on cu.id = u.company_id join jenis_user ju on ju.id = u.jenis_user_id 
-            where u."deletedAt" isnull and ju.nama_jenis_user ilike 'admin_company' ${isi}`, s);
+
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and ju.nama_jenis_user ilike 'admin_company' ${isi} order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

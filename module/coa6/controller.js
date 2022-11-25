@@ -122,5 +122,17 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async listCoa6ByKodeCoa1(req, res) {
+        const {kode_coa1} = req.body;
+        try {
+            let data = await sq.query(`select c.id as coa6_id,c.*,c2.company_id,c6.kode_coa1 from coa6 c join coa5 c2 on c2.id = c.coa5_id join coa4 c3 on c3.id = c2.coa4_id join coa3 c4 on c4.id = c3.coa3_id join coa2 c5 on c5.id = c4.coa2_id join coa1 c6 on c6.id = c5.coa1_id where c."deletedAt" isnull and c2.company_id = '${req.dataUsers.company_id}' and c6.kode_coa1 = '${kode_coa1}'`,s); 
+            
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 module.exports = Controller;

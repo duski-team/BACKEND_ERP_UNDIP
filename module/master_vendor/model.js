@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sq } = require('../../config/connection');
+const companyUsaha = require('../company_usaha/model');
 
 const masterVendor = sq.define('master_vendor', {
     id: {
@@ -20,5 +21,8 @@ const masterVendor = sq.define('master_vendor', {
         paranoid: true,
         freezeTableName: true
     });
+
+masterVendor.belongsTo(companyUsaha, { foreignKey: 'company_id' })
+companyUsaha.hasMany(masterVendor, { foreignKey: 'company_id' })
 
 module.exports = masterVendor

@@ -8,13 +8,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_vendor, alamat_vendor, no_hp_vendor } = req.body
+        const { nama_vendor, alamat_vendor, no_hp_vendor, company_id } = req.body
 
         masterVendor.findAll({ where: { nama_vendor } }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                masterVendor.create({ id: uuid_v4(), nama_vendor, alamat_vendor, no_hp_vendor }).then(data2 => {
+                masterVendor.create({ id: uuid_v4(), nama_vendor, alamat_vendor, no_hp_vendor, company_id }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses", data: data2 });
                 })
             }
@@ -26,9 +26,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, nama_vendor, alamat_vendor, no_hp_vendor } = req.body
+        const { id, nama_vendor, alamat_vendor, no_hp_vendor, company_id } = req.body
 
-        masterVendor.update({ nama_vendor, alamat_vendor, no_hp_vendor }, { where: { id } }).then(data => {
+        masterVendor.update({ nama_vendor, alamat_vendor, no_hp_vendor, company_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -49,24 +49,27 @@ class Controller {
         })
     }
 
-    static list(req, res) {
-        masterVendor.findAll({ order: [['createdAt', 'DESC']] }).then(data => {
+    static async list(req, res) {
+        try {
+            let data = await sq.query(`select mv.id as "master_vendor_id", * from master_vendor mv join company_usaha cu on cu.id = mv.company_id where cu."deletedAt" isnull and mv."deletedAt" isnull order by mv."createdAt" desc`, s)
+
             res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
-    static detailsById(req, res) {
+    static async detailsById(req, res) {
         const { id } = req.params
+        try {
+            let data = await sq.query(`select mv.id as "master_vendor_id", * from master_vendor mv join company_usaha cu on cu.id = mv.company_id where cu."deletedAt" isnull and mv."deletedAt" isnull and mv.id = '${id}'`, s)
 
-        masterVendor.findAll({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 }
 

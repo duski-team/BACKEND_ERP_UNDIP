@@ -1,6 +1,6 @@
 // const { DataTypes } = require('sequelize');
 // const { sq } = require('../../config/connection');
-// const akunSaldoAwal = require('../akun_saldo_awal/model');
+// const akunSaldoAwal = require('../DELETE_akun_saldo_awal/model');
 
 // const subAkunsaldoAwal = sq.define('subakun_saldo_awal', {
 //     id: {

@@ -1,7 +1,7 @@
 // const { DataTypes } = require('sequelize');
 // const { sq } = require('../../config/connection');
 // const users=require('../users/model')
-// const master_akses=require('../master_akses/model')
+// const master_akses=require('../DELETE_master_akses/model')
 
 // const pool_akses = sq.define('pool_akses', {
 //     id: {

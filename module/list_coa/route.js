@@ -4,7 +4,7 @@ const authentification = require('../../middleware/authentification');
 
 //! COA1
 //! COA2
-router.post('/register', authentification, Controller.register);
+// router.post('/register', authentification, Controller.register);
 //! COA3
 //! COA4
 //! COA5

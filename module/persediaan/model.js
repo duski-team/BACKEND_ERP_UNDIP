@@ -28,9 +28,6 @@ const persediaan = sq.define('persediaan', {
     gambar: {
         type: DataTypes.STRING
     },
-    spesifikasi: {
-        type: DataTypes.STRING
-    },
     stock_rusak: {
         type: DataTypes.INTEGER
     },

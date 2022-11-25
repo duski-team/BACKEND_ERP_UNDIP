@@ -1,6 +1,6 @@
 // const { DataTypes } = require('sequelize');
 // const { sq } = require('../../config/connection');
-// const sdm = require('../sdm/model');
+// const sdm = require('../DELETE_sdm/model');
 
 // const penugasan = sq.define('penugasan', {
 //     id: {

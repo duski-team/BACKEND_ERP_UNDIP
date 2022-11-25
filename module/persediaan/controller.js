@@ -22,8 +22,8 @@ class Controller {
             if (data.length > 0) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                await produk.create({ id: uuid_v4(), nama_produk,kode_produk,satuan_produk,harga_jual,stock,gambar,spesifikasinama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,gambar,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
+                await produk.create({ id: uuid_v4(), nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasinama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, gambar, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id }).then(data2 => {
+                    res.status(200).json({ status: 200, message: "sukses", data: data2 });
                 })
             }
         }).catch(err => {

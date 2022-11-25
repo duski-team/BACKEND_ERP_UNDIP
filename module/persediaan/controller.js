@@ -8,10 +8,10 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan } = req.body
+        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
 
         let gambar = "";
-        let spesifikasi= "";
+        let spesifikasi = "";
 
         if (req.files) {
             if (req.files.file1) {
@@ -22,12 +22,12 @@ class Controller {
             }
         }
 
-        produk.findAll({ where: { nama_persediaan,kode_persediaan } }).then(async data => {
-            if (data.length>0) {
+        produk.findAll({ where: { nama_persediaan, kode_persediaan } }).then(async data => {
+            if (data.length > 0) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                await produk.create({ id: uuid_v4(), nama_produk,kode_produk,satuan_produk,harga_jual,stock,gambar,spesifikasinama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,gambar,spesifikasi,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses",data: data2 });
+                await produk.create({ id: uuid_v4(), nama_produk, kode_produk, satuan_produk, harga_jual, stock, gambar, spesifikasinama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, gambar, spesifikasi, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id }).then(data2 => {
+                    res.status(200).json({ status: 200, message: "sukses", data: data2 });
                 })
             }
         }).catch(err => {
@@ -38,7 +38,7 @@ class Controller {
     }
 
     static async update(req, res) {
-        const { id, nama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan } = req.body
+        const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
 
         const t = await sq.transaction();
 
@@ -46,14 +46,14 @@ class Controller {
             if (req.files) {
                 if (req.files.file1) {
                     let gambar = req.files.file1[0].filename;
-                    await produk.update({gambar},{where:{id},transaction:t})
+                    await produk.update({ gambar }, { where: { id }, transaction: t })
                 }
                 if (req.files.file2) {
                     let spesifikasi = req.files.file2[0].filename;
-                    await produk.update({spesifikasi},{where:{id},transaction:t})
+                    await produk.update({ spesifikasi }, { where: { id }, transaction: t })
                 }
             }
-            await produk.update({ nama_persediaan,kode_persediaan,satuan_persedian,harga_jual,stock_awal,stock_rusak,harga_satuan,tanggal_saldo_awal,kondisi,keterangan }, { where: { id },transaction:t})
+            await produk.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id }, { where: { id }, transaction: t })
             await t.commit();
 
             res.status(200).json({ status: 200, message: "sukses" });

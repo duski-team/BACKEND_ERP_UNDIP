@@ -44,6 +44,7 @@ router.use("/coa6", require('./module/coa6/route'));
 router.use("/test", require('./module/test/route'));
 router.use("/masterSatuan", require('./module/master_satuan/route'));
 router.use("/list_coa", require('./module/list_coa/route'));
+router.use("/masterVendor", require('./module/master_vendor/route'));
 
 
 module.exports = router;

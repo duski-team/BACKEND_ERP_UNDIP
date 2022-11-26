@@ -46,6 +46,7 @@ router.use("/masterSatuan", require('./module/master_satuan/route'));
 router.use("/list_coa", require('./module/list_coa/route'));
 router.use("/masterVendor", require('./module/master_vendor/route'));
 router.use("/jenisPenjualan", require('./module/jenis_penjualan/route'));
+router.use("/generalLedger", require('./module/general_ledger/route'));
 
 
 module.exports = router;

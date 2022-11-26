@@ -56,11 +56,10 @@ class Controller {
                         gambar = req.files.file1[0].filename;
                     }
                 }
-                let persetujuan = moment().format();
                 let totalBarang = stock - stock_rusak
                 
                 let data = await persediaan.create({ id:uuid_v4(), nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar },{transaction:t});
-                await trxPembelian.create({id:uuid_v4(),tgl_persetujuan_manajer_txp:persetujuan,jumlah_txp:totalBarang,satuan_txp:satuan_persedian,tgl_persetujuan_akuntan_txp:persetujuan,status_persetujuan_txp:3,harga_satuan_txp:0,harga_total_txp:0},{transaction:t})
+                await trxPembelian.create({id:uuid_v4(),tgl_persetujuan_manajer_txp:tanggal_saldo_awal,jumlah_txp:totalBarang,satuan_txp:satuan_persedian,tgl_persetujuan_akuntan_txp:tanggal_saldo_awal,status_persetujuan_txp:3,harga_satuan_txp:0,harga_total_txp:0},{transaction:t})
                 await t.commit();
 
                 res.status(200).json({ status: 200, message: "sukses",data });

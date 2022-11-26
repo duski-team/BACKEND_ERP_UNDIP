@@ -4,6 +4,7 @@ const upload = require('../../helper/upload');
 const authentification = require('../../middleware/authentification');
 
 router.post('/register', authentification,upload, Controller.register);
+router.post('/registerSaldoAwal', authentification,upload, Controller.registerSaldoAwal);
 router.post('/update', authentification,upload, Controller.update);
 router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);

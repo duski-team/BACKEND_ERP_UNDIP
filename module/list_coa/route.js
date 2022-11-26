@@ -4,7 +4,7 @@ const authentification = require('../../middleware/authentification');
 
 //! COA1
 //! COA2
-// router.post('/register', authentification, Controller.register);
+router.get('/listCoa6ByAssetTetap', authentification, Controller.listCoa6ByAssetTetap);
 //! COA3
 //! COA4
 //! COA5

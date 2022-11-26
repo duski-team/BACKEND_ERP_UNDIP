@@ -1,38 +1,80 @@
 const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
-const produk = require("./model");
+const persediaan = require("./model");
+const trxPembelian = require("../trx_pembelian/model");
 const { QueryTypes } = require('sequelize');
+const moment = require('moment');
 const s = { type: QueryTypes.SELECT };
 
 
 class Controller {
 
-    static register(req, res) {
+    static async register(req, res) {
         const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
 
-        let gambar = "";
 
-        if (req.files) {
-            if (req.files.file1) {
-                gambar = req.files.file1[0].filename;
-            }
-        }
+        try {
+            const cekPersediaan = await persediaan.findAll({ where: { nama_persediaan, kode_persediaan } });
 
-        produk.findAll({ where: { nama_persediaan, kode_persediaan } }).then(async data => {
-            if (data.length > 0) {
+            if(cekPersediaan.length>0){
                 res.status(201).json({ status: 204, message: "data sudah ada" });
-            } else {
-                await produk.create({ id: uuid_v4(), nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar }).then(data2 => {
-                    res.status(200).json({ status: 200, message: "sukses", data: data2 });
-                })
+            }else{
+                let gambar = "";
+
+                if (req.files) {
+                    if (req.files.file1) {
+                        gambar = req.files.file1[0].filename;
+                    }
+                }
+                let pembelian_id = uuid_v4();
+                let data = await persediaan.create({ id:pembelian_id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar });
+
+                res.status(200).json({ status: 200, message: "sukses",data });
             }
-        }).catch(err => {
+        } catch (err) {
             console.log(req.body);
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
+    static async registerSaldoAwal(req, res) {
+        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
+
+        const t = await sq.transaction();
+
+        try {
+            const cekPersediaan = await persediaan.findAll({ where: { nama_persediaan, kode_persediaan } });
+
+            if(cekPersediaan.length>0){
+                res.status(201).json({ status: 204, message: "data sudah ada" });
+            }else{
+                let gambar = "";
+
+                if (req.files) {
+                    if (req.files.file1) {
+                        gambar = req.files.file1[0].filename;
+                    }
+                }
+                let pembelian_id = uuid_v4();
+                let persetujuan = moment().format();
+                let totalBarang = stock_awal - stock_rusak
+                
+                let data = await persediaan.create({ id:pembelian_id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar },{transaction:t});
+
+                await trxPembelian.create({id:uuid_v4(),pembelian_id,tgl_persetujuan_manajer_txp:persetujuan,jumlah_txp:totalBarang,satuan_txp:satuan_persedian,tgl_persetujuan_akuntan_txp:persetujuan,status_persetujuan_txp:2,harga_satuan_txp,harga_total_txp})
+                await t.commit();
+
+                res.status(200).json({ status: 200, message: "sukses",data });
+            }
+        } catch (err) {
+            await t.rollback();
+            console.log(req.body);
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+    
     static async update(req, res) {
         const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
 
@@ -42,10 +84,10 @@ class Controller {
             if (req.files) {
                 if (req.files.file1) {
                     let gambar = req.files.file1[0].filename;
-                    await produk.update({ gambar }, { where: { id }, transaction: t })
+                    await persediaan.update({ gambar }, { where: { id }, transaction: t })
                 }
             }
-            await produk.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id }, { where: { id }, transaction: t })
+            await persediaan.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id }, { where: { id }, transaction: t })
             await t.commit();
 
             res.status(200).json({ status: 200, message: "sukses" });
@@ -60,7 +102,7 @@ class Controller {
     static delete(req, res) {
         const { id } = req.body
 
-        produk.destroy({ where: { id } }).then(data => {
+        persediaan.destroy({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

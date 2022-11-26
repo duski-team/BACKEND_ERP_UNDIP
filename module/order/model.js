@@ -3,7 +3,7 @@ const { sq } = require('../../config/connection');
 const persediaan = require('../persediaan/model');
 const tipePembayaran = require('../tipe_pembayaran/model');
 const statusOrder = require('../status_order/model');
-const jenisPembelian = require('../jenis_pembelian/model');
+const jenisPenjualan = require('../jenis_penjualan/model');
 const statusVa = require('../status_va/model');
 const users = require('../users/model');
 
@@ -54,8 +54,8 @@ tipePembayaran.hasMany(order, { foreignKey: 'tipe_pembayaran_id' })
 order.belongsTo(statusOrder, { foreignKey: 'status_order_id' })
 statusOrder.hasMany(order, { foreignKey: 'status_order_id' })
 
-order.belongsTo(jenisPembelian, { foreignKey: 'jenis_pembelian_id' })
-jenisPembelian.hasMany(order, { foreignKey: 'jenis_pembelian_id' })
+order.belongsTo(jenisPenjualan, { foreignKey: 'jenis_penjualann_id' })
+jenisPenjualan.hasMany(order, { foreignKey: 'jenis_penjualann_id' })
 
 order.belongsTo(statusVa, { foreignKey: 'status_va_id' })
 statusVa.hasMany(order, { foreignKey: 'status_va_id' })

@@ -45,7 +45,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select p.id as pembelian_id, p2.*, mja.* from pembelian p join persediaan p2 on p2.id = p.persediaan_id join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id where p."deletedAt" isnull order by p."createdAt" desc`, s);
+            let data = await sq.query(`select p.id as pembelian_id,p.*,p2.*, mja.* from pembelian p join persediaan p2 on p2.id = p.persediaan_id join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id where p."deletedAt" isnull order by p."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -57,7 +57,7 @@ class Controller {
     static async listPembelianByPersediaanId(req, res) {
         const { persediaan_id } = req.body
         try {
-            let data = await sq.query(`select p.id as pembelian_id, p2.*, mja.* from pembelian p join persediaan p2 on p2.id = p.persediaan_id join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id where p."deletedAt" isnull and p.persediaan_id = '${persediaan_id}' order by p."createdAt" desc`, s);
+            let data = await sq.query(`select p.id as pembelian_id,p.*,p2.*, mja.* from pembelian p join persediaan p2 on p2.id = p.persediaan_id join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id where p."deletedAt" isnull and p.persediaan_id = '${persediaan_id}' order by p."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -69,7 +69,7 @@ class Controller {
     static async listPembelianByJenisAsetPembelianId(req, res) {
         const { jenis_asset_pembelian_id } = req.body
         try {
-            let data = await sq.query(`select p.id as pembelian_id, p2.*, mja.* from pembelian p join persediaan p2 on p2.id = p.persediaan_id join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id where p."deletedAt" isnull and p.jenis_asset_pembelian_id = '${jenis_asset_pembelian_id}' order by p."createdAt" desc`, s);
+            let data = await sq.query(`select p.id as pembelian_id,p.*,p2.*, mja.* from pembelian p join persediaan p2 on p2.id = p.persediaan_id join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id where p."deletedAt" isnull and p.jenis_asset_pembelian_id = '${jenis_asset_pembelian_id}' order by p."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -82,7 +82,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select p.id as pembelian_id, p2.*, mja.* from pembelian p join persediaan p2 on p2.id = p.persediaan_id join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id where p."deletedAt" isnull and p.id = '${id}'`, s);
+            let data = await sq.query(`select p.id as pembelian_id,p.*,p2.*, mja.* from pembelian p join persediaan p2 on p2.id = p.persediaan_id join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id where p."deletedAt" isnull and p.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

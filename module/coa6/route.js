@@ -7,8 +7,10 @@ router.post('/update', authentification, Controller.update);
 router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
-router.post('/listCoa6ByCoa5Id', authentification, Controller.listCoa6ByCoa5Id);
+router.post('/listCoa6ByKodeCoa5', authentification, Controller.listCoa6ByKodeCoa5);
 router.post('/listCoa6ByCoa5IdCompanyId', authentification, Controller.listCoa6ByCoa5IdCompanyId);
-// router.get('/listAll', Controller.list);
+router.post('/listCoa6ByKodeCoa1', authentification, Controller.listCoa6ByKodeCoa1);
+router.get('/listPersediaanBarangJual', authentification, Controller.listPersediaanBarangJual);
+router.get('/listPersediaanBarangHabisPakai', authentification, Controller.listPersediaanBarangHabisPakai);
 
 module.exports = router

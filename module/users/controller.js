@@ -1,4 +1,3 @@
-require('dotenv').config({})
 const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
 const users = require("./model");
@@ -12,27 +11,30 @@ const jwt = require('../../helper/jwt');
 const { token } = require('morgan');
 
 async function createSuperUser() {
-    let encryptedPassword = bcrypt.hashPassword(process.env.ADMIN);
-    await company.findOrCreate({
-        where: { id: "UNDIP" },
-        defaults: {
-            id: "UNDIP",
-            nama_usaha: "MASTER",
-            nama_pengelola: "UNDIP",
-            code: "UNDIP"
-        }
-
-    })
-    await users.findOrCreate({
-        where: { username: "erp_admin" },
-        defaults: {
-            id: "superadmin",
-            username: "erp_admin",
-            email: "admin@gmail.com",
-            password: encryptedPassword,
-            company_id: "UNDIP"
-        }
-    })
+    try {
+        let encryptedPassword = bcrypt.hashPassword(process.env.ADMIN);
+        await company.findOrCreate({
+            where: { id: "UNDIP" },
+            defaults: {
+                id: "UNDIP",
+                nama_usaha: "MASTER",
+                nama_pengelola: "UNDIP",
+                code: "UNDIP"
+            }
+        })
+        await users.findOrCreate({
+            where: { username: "erp_admin" },
+            defaults: {
+                id: "superadmin",
+                username: "erp_admin",
+                email: "admin@gmail.com",
+                password: encryptedPassword,
+                company_id: "UNDIP"
+            }
+        })
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 createSuperUser()
@@ -40,7 +42,7 @@ createSuperUser()
 class Controller {
 
     static async register(req, res) {
-        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, nama_usaha, location, code, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, nama_usaha, location, code, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
         const t = await sq.transaction();
 
@@ -60,7 +62,7 @@ class Controller {
                 }
                 let encryptedPassword = bcrypt.hashPassword(password);
                 let perusahan_id = await company.create({ id: uuid_v4(), nama_usaha, location, code }, { transaction: t })
-                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password: encryptedPassword, register_token, resetpassword_token, variant, priority, profil_image, jenis_user_id, company_id: perusahan_id.id, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { transaction: t })
+                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password: encryptedPassword, register_token, resetpassword_token, variant, priority, profil_image, jenis_user_id, company_id: perusahan_id.id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id }, { transaction: t })
                 await t.commit();
 
                 res.status(200).json({ status: 200, message: "sukses", data });
@@ -74,7 +76,7 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+        const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
         if (req.files) {
             if (req.files.file1) {
@@ -83,7 +85,7 @@ class Controller {
             }
         }
 
-        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nama_sdm, nik, alamat, telp, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, tugas_id, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } }).then(data => {
+        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -106,7 +108,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`SELECT u.id as user_id, * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" ISNULL order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -118,7 +120,7 @@ class Controller {
     static async listUserByCompanyId(req, res) {
         const { company_id } = req.body
         try {
-            let data = await sq.query(`SELECT u.id as user_id, * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -130,7 +132,7 @@ class Controller {
     static async listUserByJenisUserId(req, res) {
         const { jenis_user_id } = req.body
         try {
-            let data = await sq.query(`SELECT u.id as user_id * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" ISNULL and and u.jenis_user_id = '${jenis_user_id}' order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.jenis_user_id = '${jenis_user_id}' order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -143,7 +145,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`SELECT u.id as user_id, * FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id where u."deletedAt" ISNULL and u.id = '${id}'`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -161,7 +163,6 @@ class Controller {
             if (perusahan_id.length == 0) {
                 res.status(201).json({ status: 204, message: "Perusahaan Code Tidak Terdaftar" });
             } else {
-                console.log(perusahan_id[0].id);
                 let cekUser = await users.findAll({ where: { username, company_id: perusahan_id[0].id } });
 
                 if (cekUser.length == 0) {
@@ -192,7 +193,14 @@ class Controller {
     static async cekEmailUsername(req, res) {
         const { username, email } = req.body
         try {
-            let data = await sq.query(`select * from users u where u."deletedAt" isnull and u.username ilike '%${username}%' or u.email ilike '%${email}%'`, s);
+            let isi = ''
+            if (username) {
+                isi += ` and u.username ilike '%${username}%' `
+            }
+            if (email) {
+                isi += ` and u.email ilike '%${email}%' `
+            }
+            let data = await sq.query(`select * from users u where u."deletedAt" isnull ${isi}`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -208,8 +216,8 @@ class Controller {
             if (status_users) {
                 isi += `and u.status_users =${status_users}`
             }
-            let data = await sq.query(`select u.id as user_id, * from users u join company_usaha cu on cu.id = u.company_id join jenis_user ju on ju.id = u.jenis_user_id 
-            where u."deletedAt" isnull and ju.nama_jenis_user ilike 'admin_company' ${isi}`, s);
+
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and ju.nama_jenis_user ilike 'admin_company' ${isi} order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

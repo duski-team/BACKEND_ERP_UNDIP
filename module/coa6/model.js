@@ -15,6 +15,9 @@ const coa6 = sq.define('coa6', {
     },
     nominal_coa6: {
         type: DataTypes.DOUBLE
+    },
+    deskripsi: {
+        type: DataTypes.TEXT
     }
 },
     {

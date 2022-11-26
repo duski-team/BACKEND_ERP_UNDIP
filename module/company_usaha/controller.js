@@ -93,7 +93,14 @@ class Controller {
     static async cekCompany (req,res){
         const {nama_usaha,code} = req.body
         try {
-            let data = await sq.query(`select * from company_usaha cu where cu."deletedAt" isnull and cu.nama_usaha ilike '%${nama_usaha}%' or cu.code ilike '%${code}%'`,s);
+            let isi = ''
+            if(nama_usaha){
+                isi += ` and cu.nama_usaha ilike '%${nama_usaha}%' `
+            }
+            if(code) {
+                isi += ` and cu.code ilike '%${code}%' `
+            }
+            let data = await sq.query(`select * from company_usaha cu where cu."deletedAt" isnull ${isi}`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

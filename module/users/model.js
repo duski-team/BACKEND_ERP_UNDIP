@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sq } = require('../../config/connection');
 const jenisUser = require('../jenis_user/model');
 const companyUsaha = require('../company_usaha/model');
-const tugas = require('../tugas/model');
+// const tugas = require('../tugas_DELETE/model');
 const pendidikan = require('../pendidikan/model');
 const jenisKerja = require('../jenis_kerja/model');
 const kompetensi = require('../kompetensi/model');
@@ -49,16 +49,10 @@ const users = sq.define('users', {
         type: DataTypes.SMALLINT,
         defaultValue: 1  // 0 : Ditolak || 1 : Default || 2 : Accept
     },
-    nama_sdm: {
-        type: DataTypes.STRING
-    },
     nik: {
         type: DataTypes.STRING
     },
-    alamat: {
-        type: DataTypes.STRING
-    },
-    telp: {
+    alamat_users: {
         type: DataTypes.STRING
     },
     waktu_masuk: {
@@ -88,8 +82,8 @@ jenisUser.hasMany(users, { foreignKey: 'jenis_user_id' })
 users.belongsTo(companyUsaha, { foreignKey: 'company_id' })
 companyUsaha.hasMany(users, { foreignKey: 'company_id' })
 
-users.belongsTo(tugas, { foreignKey: 'tugas_id' })
-tugas.hasMany(users, { foreignKey: 'tugas_id' })
+// users.belongsTo(tugas, { foreignKey: 'tugas_id' })
+// tugas.hasMany(users, { foreignKey: 'tugas_id' })
 
 users.belongsTo(pendidikan, { foreignKey: 'pendidikan_id' })
 pendidikan.hasMany(users, { foreignKey: 'pendidikan_id' })

@@ -1,10 +1,11 @@
 const { DataTypes } = require('sequelize');
 const { sq } = require('../../config/connection');
-const produk = require('../produk/model');
+const persediaan = require('../persediaan/model');
 const tipePembayaran = require('../tipe_pembayaran/model');
 const statusOrder = require('../status_order/model');
 const jenisPembelian = require('../jenis_pembelian/model');
 const statusVa = require('../status_va/model');
+const users = require('../users/model');
 
 const order = sq.define('order', {
     id: {
@@ -15,7 +16,7 @@ const order = sq.define('order', {
         type: DataTypes.INTEGER
     },
     harga: {
-        type: DataTypes.STRING
+        type: DataTypes.DOUBLE
     },
     satuan: {
         type: DataTypes.STRING
@@ -44,8 +45,8 @@ const order = sq.define('order', {
         freezeTableName: true
     });
 
-order.belongsTo(produk, { foreignKey: 'produk_id' })
-produk.hasMany(order, { foreignKey: 'produk_id' })
+order.belongsTo(persediaan, { foreignKey: 'persediaan_id' })
+persediaan.hasMany(order, { foreignKey: 'persediaan_id' })
 
 order.belongsTo(tipePembayaran, { foreignKey: 'tipe_pembayaran_id' })
 tipePembayaran.hasMany(order, { foreignKey: 'tipe_pembayaran_id' })
@@ -58,5 +59,8 @@ jenisPembelian.hasMany(order, { foreignKey: 'jenis_pembelian_id' })
 
 order.belongsTo(statusVa, { foreignKey: 'status_va_id' })
 statusVa.hasMany(order, { foreignKey: 'status_va_id' })
+
+order.belongsTo(users, { foreignKey: 'customer_id' })
+users.hasMany(order, { foreignKey: 'customer_id' })
 
 module.exports = order

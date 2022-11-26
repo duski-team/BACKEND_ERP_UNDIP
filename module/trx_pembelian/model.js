@@ -8,10 +8,8 @@ const trxPembelian = sq.define('trx_pembelian', {
         primaryKey: true,
     },
     status_persetujuan_txp: {
-        type: DataTypes.INTEGER
-    },
-    persetujuan_manajer_txp: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 1         // 0: tolak || 1: default || 2: accept
     },
     tgl_persetujuan_manajer_txp: {
         type: DataTypes.DATE
@@ -20,16 +18,13 @@ const trxPembelian = sq.define('trx_pembelian', {
         type: DataTypes.INTEGER
     },
     satuan_txp: {
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
     },
     harga_satuan_txp: {
-        type: DataTypes.INTEGER
+        type: DataTypes.DOUBLE
     },
     harga_total_txp: {
-        type: DataTypes.INTEGER
-    },
-    persetujuan_akuntan_txp: {
-        type: DataTypes.INTEGER
+        type: DataTypes.DOUBLE
     },
     tgl_persetujuan_akuntan_txp: {
         type: DataTypes.DATE

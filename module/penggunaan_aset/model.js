@@ -30,9 +30,12 @@ const penggunaanAset = sq.define('penggunaan_aset', {
     verifikasi_barang_diterima: {
         type: DataTypes.INTEGER
     },
-    jenis_aset_id: {
-        type: DataTypes.STRING
+    jumlah_penggunaa_asset:{
+        type: DataTypes.INTEGER
     }
+    // jenis_aset_id: {
+    //     type: DataTypes.STRING
+    // }
 },
     {
         paranoid: true,

@@ -6,7 +6,7 @@ router.post('/register', authentification, Controller.register);
 router.post('/update', authentification, Controller.update);
 router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
-router.post('/listCoa2ByCoa1Id', authentification, Controller.listCoa2ByCoa1Id);
+router.post('/listCoa2ByKodeCoa1', authentification, Controller.listCoa2ByKodeCoa1);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

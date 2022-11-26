@@ -6,7 +6,7 @@ router.post('/register', authentification, Controller.register);
 router.post('/update', authentification, Controller.update);
 router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
-router.post('/listPembelianByProdukId', authentification, Controller.listPembelianByProdukId);
+router.post('/listPembelianByPersediaanId', authentification, Controller.listPembelianByPersediaanId);
 router.post('/listPembelianByJenisAsetPembelianId', authentification, Controller.listPembelianByJenisAsetPembelianId);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 

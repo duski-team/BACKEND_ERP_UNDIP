@@ -10,7 +10,7 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static async register(req, res) {
-        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
+        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
 
 
         try {
@@ -27,7 +27,7 @@ class Controller {
                     }
                 }
                 let pembelian_id = uuid_v4();
-                let data = await persediaan.create({ id:pembelian_id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar });
+                let data = await persediaan.create({ id:pembelian_id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar });
 
                 res.status(200).json({ status: 200, message: "sukses",data });
             }
@@ -39,7 +39,7 @@ class Controller {
     }
 
     static async registerSaldoAwal(req, res) {
-        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
+        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
 
         const t = await sq.transaction();
 
@@ -56,13 +56,11 @@ class Controller {
                         gambar = req.files.file1[0].filename;
                     }
                 }
-                let pembelian_id = uuid_v4();
                 let persetujuan = moment().format();
-                let totalBarang = stock_awal - stock_rusak
+                let totalBarang = stock - stock_rusak
                 
-                let data = await persediaan.create({ id:pembelian_id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar },{transaction:t});
-
-                await trxPembelian.create({id:uuid_v4(),pembelian_id,tgl_persetujuan_manajer_txp:persetujuan,jumlah_txp:totalBarang,satuan_txp:satuan_persedian,tgl_persetujuan_akuntan_txp:persetujuan,status_persetujuan_txp:2,harga_satuan_txp,harga_total_txp})
+                let data = await persediaan.create({ id:uuid_v4(), nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar },{transaction:t});
+                await trxPembelian.create({id:uuid_v4(),tgl_persetujuan_manajer_txp:persetujuan,jumlah_txp:totalBarang,satuan_txp:satuan_persedian,tgl_persetujuan_akuntan_txp:persetujuan,status_persetujuan_txp:2,harga_satuan_txp:0,harga_total_txp:0},{transaction:t})
                 await t.commit();
 
                 res.status(200).json({ status: 200, message: "sukses",data });
@@ -74,9 +72,9 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
-    
+
     static async update(req, res) {
-        const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
+        const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
 
         const t = await sq.transaction();
 
@@ -87,7 +85,7 @@ class Controller {
                     await persediaan.update({ gambar }, { where: { id }, transaction: t })
                 }
             }
-            await persediaan.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock_awal, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id }, { where: { id }, transaction: t })
+            await persediaan.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id }, { where: { id }, transaction: t })
             await t.commit();
 
             res.status(200).json({ status: 200, message: "sukses" });

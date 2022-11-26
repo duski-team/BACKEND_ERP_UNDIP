@@ -22,7 +22,7 @@ const persediaan = sq.define('persediaan', {
     harga_jual: {
         type: DataTypes.DOUBLE
     },
-    stock_awal: {
+    stock: {
         type: DataTypes.INTEGER
     },
     gambar: {

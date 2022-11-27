@@ -8,10 +8,10 @@ const router = require("express").Router();
 // router.use("/master_akses", require('./module/DELETE_master_akses/route'));
 // router.use("/subAkunSaldoAwal", require('./module/DELETE_subakun_saldo_awal/route'));
 // router.use("/akunSaldoAwal", require('./module/DELETE_akun_saldo_awal/route'));
+// router.use("/jenisPembelian", require('./module/jenis_pembelian/route'));
 
 router.use("/companyUsaha", require('./module/company_usaha/route'));
 router.use("/jenisKerja", require('./module/jenis_kerja/route'));
-router.use("/jenisPembelian", require('./module/jenis_pembelian/route'));
 router.use("/jenisPengeluaranKas", require('./module/jenis_pengeluaran_kas/route'));
 router.use("/jenisPenggunaan", require('./module/jenis_penggunaan/route'));
 router.use("/jenisUser", require('./module/jenis_user/route'));

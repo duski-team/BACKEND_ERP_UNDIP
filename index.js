@@ -8,12 +8,13 @@ const router = require("express").Router();
 // router.use("/master_akses", require('./module/DELETE_master_akses/route'));
 // router.use("/subAkunSaldoAwal", require('./module/DELETE_subakun_saldo_awal/route'));
 // router.use("/akunSaldoAwal", require('./module/DELETE_akun_saldo_awal/route'));
-// router.use("/jenisPembelian", require('./module/jenis_pembelian/route'));
+
 
 router.use("/companyUsaha", require('./module/company_usaha/route'));
 router.use("/jenisKerja", require('./module/jenis_kerja/route'));
 router.use("/jenisPengeluaranKas", require('./module/jenis_pengeluaran_kas/route'));
 router.use("/jenisPenggunaan", require('./module/jenis_penggunaan/route'));
+router.use("/jenisPenjualan", require('./module/jenis_penjualan/route'));
 router.use("/jenisUser", require('./module/jenis_user/route'));
 router.use("/kategori", require('./module/kategori/route'));
 router.use("/kewarganegaraan", require('./module/kewarganegaraan/route'));
@@ -45,7 +46,6 @@ router.use("/test", require('./module/test/route'));
 router.use("/masterSatuan", require('./module/master_satuan/route'));
 router.use("/list_coa", require('./module/list_coa/route'));
 router.use("/masterVendor", require('./module/master_vendor/route'));
-router.use("/jenisPenjualan", require('./module/jenis_penjualan/route'));
 router.use("/generalLedger", require('./module/general_ledger/route'));
 
 

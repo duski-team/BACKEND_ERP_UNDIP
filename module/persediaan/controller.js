@@ -201,7 +201,7 @@ class Controller {
             join kategori k on k.id = p.kategori_id 
             join sub_kategori sk on sk.id = p.sub_kategori_id 
             join sub_sub_kategori ssk on ssk.id = p.sub_sub_kategori_id 
-            where p."deletedAt" isnull and p.id = ${id}`, s);
+            where p."deletedAt" isnull and p.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

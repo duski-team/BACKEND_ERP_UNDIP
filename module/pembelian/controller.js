@@ -34,14 +34,15 @@ class Controller {
 
         try {
             let cekPembelian = await trxPembelian.findAll({where:{pembelian_id:id}})
-            if(cekPembelian[0].status_persetujuan_txp == 2){
-                res.status(201).json({ status: 204, message: "status trx pembelian bukan 1" });
-            }else{
+
+            if(cekPembelian[0].status_persetujuan_txp == 1){
                 await pembelian.update({ jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id }, { where: { id },transaction:t });
-                await trxPembelian.create({jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp },{where:{pembelian_id:id},transaction:t});
+                await trxPembelian.update({jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp },{where:{pembelian_id:id},transaction:t});
                 await t.commit();
 
                 res.status(200).json({ status: 200, message: "sukses" });
+            }else{
+                res.status(201).json({ status: 204, message: "status trx pembelian bukan 1" });
             }
         } catch (err) {
             await t.rollback();
@@ -49,11 +50,6 @@ class Controller {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
-        pembelian.update({ jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id }, { where: { id } }).then(data => {
-            res.status(200).json({ status: 200, message: "sukses" });
-        }).catch(err => {
-            
-        })
     }
 
     static delete(req, res) {

@@ -81,7 +81,7 @@ class Controller {
     }
 
     static async acceptPersetujuan(req, res) {
-        const { id,status_persetujuan_txp,tanggal } = req.params
+        const { id,status_persetujuan_txp,tanggal_persetujuan } = req.body
 
         const t = await sq.transaction();
         try {
@@ -90,19 +90,21 @@ class Controller {
             let tgl_persetujuan_manajer_txp = null
 
             if(status_persetujuan_txp == 2){
-                tgl_persetujuan_akuntan_txp = tanggal
+                tgl_persetujuan_akuntan_txp = tanggal_persetujuan
             }
             if(status_persetujuan_txp == 3){
-                tgl_persetujuan_manajer_txp = tanggal
-                let data = await sq.query(`select p2.*,(tp.jumlah_txp+p2.stock) as totalStock from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id join persediaan p2 on p2.id = p.persediaan_id where tp."deletedAt" isnull and tp.id = '${id}'`,s);
-                let totalStock = data[0].totalStock
+                tgl_persetujuan_manajer_txp = tanggal_persetujuan
+                let data = await sq.query(`select p2.*,(tp.jumlah_txp+p2.stock) as total_stock from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id join persediaan p2 on p2.id = p.persediaan_id where tp."deletedAt" isnull and tp.id = '${id}'`,s);
+                let totalStock = data[0].total_stock
+
                 await persediaan.update({stock:totalStock},{where:{id:data[0].id},transaction:t})
             }
 
             await trxPembelian.update({tgl_persetujuan_akuntan_txp,tgl_persetujuan_manajer_txp,status_persetujuan_txp},{where:{id},transaction:t});
-            
+            await t.commit();
             res.status(200).json({ status: 200, message: "sukses" });
         } catch (err) {
+            await t.rollback();
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }

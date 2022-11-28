@@ -45,7 +45,8 @@ const persediaan = sq.define('persediaan', {
         type: DataTypes.STRING
     },
     status_persediaan: {
-        type: DataTypes.SMALLINT   // 0: Tidak tampil || 1: Tampil
+        type: DataTypes.SMALLINT ,
+        defaultValue: 0  // 0: Tidak tampil || 1: Tampil
     }
 },
     {

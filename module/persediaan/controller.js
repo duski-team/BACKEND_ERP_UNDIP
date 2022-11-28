@@ -40,7 +40,7 @@ class Controller {
     }
 
     static async registerSaldoAwal(req, res) {
-        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id } = req.body
+        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id } = req.body
 
         const t = await sq.transaction();
 

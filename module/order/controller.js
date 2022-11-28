@@ -8,9 +8,9 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualann_id, status_va_id, customer_id } = req.body
+        const { jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualann_id, status_va_id, customer_id, company_id } = req.body
 
-        order.create({ id: uuid_v4(), jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualann_id, status_va_id, customer_id }).then(data => {
+        order.create({ id: uuid_v4(), jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualann_id, status_va_id, customer_id, company_id }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(req.body);
@@ -20,9 +20,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualann_id, status_va_id, customer_id } = req.body
+        const { id, jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualann_id, status_va_id, customer_id, company_id } = req.body
 
-        order.update({ jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualann_id, status_va_id, customer_id }, { where: { id } }).then(data => {
+        order.update({ jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualann_id, status_va_id, customer_id, company_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

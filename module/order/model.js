@@ -6,6 +6,7 @@ const statusOrder = require('../status_order/model');
 const jenisPenjualan = require('../jenis_penjualan/model');
 const statusVa = require('../status_va/model');
 const users = require('../users/model');
+const companyUsaha = require('../company_usaha/model');
 
 const order = sq.define('order', {
     id: {
@@ -62,5 +63,8 @@ statusVa.hasMany(order, { foreignKey: 'status_va_id' })
 
 order.belongsTo(users, { foreignKey: 'customer_id' })
 users.hasMany(order, { foreignKey: 'customer_id' })
+
+order.belongsTo(companyUsaha, { foreignKey: 'company_id' })
+companyUsaha.hasMany(order, { foreignKey: 'company_id' })
 
 module.exports = order

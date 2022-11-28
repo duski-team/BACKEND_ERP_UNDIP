@@ -13,10 +13,12 @@ const generalLedger = sq.define('general_ledger', {
         type: DataTypes.DATE
     },
     penambahan: {
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT,
+        defaultValue:0
     },
     pengurangan: {
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT,
+        defaultValue:0
     },
     keterangan: {
         type: DataTypes.STRING
@@ -25,7 +27,12 @@ const generalLedger = sq.define('general_ledger', {
         type: DataTypes.STRING
     },
     sisa_saldo: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue:0
+    },
+    status: {
+        type: DataTypes.INTEGER,  // 0 || 1
+        defaultValue: 0
     }
 },
     {

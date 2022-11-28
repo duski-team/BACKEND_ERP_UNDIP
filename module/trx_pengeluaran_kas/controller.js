@@ -8,9 +8,9 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { persetujuan_manajer_txpk,tgl_persetujuan_manajer_txpk,persetujuan_kasir_txpk,tgl_persetujuan_kasir_txpk,status_bayar_txpk,persetujuan_akuntan_txpk,tgl_persetujuan_akuntan_txpk,status_persetujuan_txpk,trx_pembelian_id,jenis_pengeluaran_kas_id } = req.body
+        const { persetujuan_manajer_txpk,tgl_persetujuan_manajer_txpk,persetujuan_kasir_txpk,tgl_persetujuan_kasir_txpk,status_bayar_txpk,persetujuan_akuntan_txpk,tgl_persetujuan_akuntan_txpk,status_persetujuan_txpk,trx_pembelian_id,jenis_pengeluaran_kas_id,nominal_txpk,no_invoice_txpk } = req.body
 
-        trxPengeluaranKas.create({ id: uuid_v4(), persetujuan_manajer_txpk,tgl_persetujuan_manajer_txpk,persetujuan_kasir_txpk,tgl_persetujuan_kasir_txpk,status_bayar_txpk,persetujuan_akuntan_txpk,tgl_persetujuan_akuntan_txpk,status_persetujuan_txpk,trx_pembelian_id,jenis_pengeluaran_kas_id }).then(data => {
+        trxPengeluaranKas.create({ id: uuid_v4(), persetujuan_manajer_txpk,tgl_persetujuan_manajer_txpk,persetujuan_kasir_txpk,tgl_persetujuan_kasir_txpk,status_bayar_txpk,persetujuan_akuntan_txpk,tgl_persetujuan_akuntan_txpk,status_persetujuan_txpk,trx_pembelian_id,jenis_pengeluaran_kas_id,nominal_txpk,no_invoice_txpk }).then(data => {
             res.status(200).json({ status: 200, message: "sukses",data });
         }).catch(err => {
             console.log(req.body);
@@ -22,7 +22,7 @@ class Controller {
     static update(req, res) {
         const { id, persetujuan_manajer_txpk,tgl_persetujuan_manajer_txpk,persetujuan_kasir_txpk,tgl_persetujuan_kasir_txpk,status_bayar_txpk,persetujuan_akuntan_txpk,tgl_persetujuan_akuntan_txpk,status_persetujuan_txpk,trx_pembelian_id,jenis_pengeluaran_kas_id } = req.body
 
-        trxPengeluaranKas.update({ persetujuan_manajer_txpk,tgl_persetujuan_manajer_txpk,persetujuan_kasir_txpk,tgl_persetujuan_kasir_txpk,status_bayar_txpk,persetujuan_akuntan_txpk,tgl_persetujuan_akuntan_txpk,status_persetujuan_txpk,trx_pembelian_id,jenis_pengeluaran_kas_id }, { where: { id } }).then(data => {
+        trxPengeluaranKas.update({ persetujuan_manajer_txpk,tgl_persetujuan_manajer_txpk,persetujuan_kasir_txpk,tgl_persetujuan_kasir_txpk,status_bayar_txpk,persetujuan_akuntan_txpk,tgl_persetujuan_akuntan_txpk,status_persetujuan_txpk,trx_pembelian_id,jenis_pengeluaran_kas_id,nominal_txpk,no_invoice_txpk }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

@@ -33,6 +33,12 @@ const trxPengeluaranKas = sq.define('trx_pengeluaran_kas', {
     status_persetujuan_txpk: {
         type: DataTypes.INTEGER
     },
+    nominal_txpk:{
+        type: DataTypes.DOUBLE
+    },
+    no_invoice_txpk:{
+        type: DataTypes.STRING
+    }
 },
     {
         paranoid: true,

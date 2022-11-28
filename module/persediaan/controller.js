@@ -2,6 +2,7 @@ const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
 const persediaan = require("./model");
 const trxPembelian = require("../trx_pembelian/model");
+const generalLedger = require('../general_ledger/model');
 const { QueryTypes } = require('sequelize');
 const moment = require('moment');
 const s = { type: QueryTypes.SELECT };

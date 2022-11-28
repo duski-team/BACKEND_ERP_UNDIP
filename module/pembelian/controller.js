@@ -9,13 +9,20 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static async register(req, res) {
-        const { jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id } = req.body;
+        const { jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,akun_barang_id } = req.body;
 
         const t = await sq.transaction();
         try {
-            let pembelian_id = uuid_v4()
+            let pembelian_id = uuid_v4();
+
+            let akunHutang = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001'`,s);
+            let akunBarang = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '${akun_barang_id}'`,s);
+            let  sisaSaldoBarang = akunBarang[0].nominal_coa6 + harga_total_txp
+            let  sisaSaldoHutang = akunHutang[0].nominal_coa6 + harga_total_txp
+
             let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
             await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
+
             await t.commit();
 
             res.status(200).json({ status: 200, message: "sukses", data:hasil });

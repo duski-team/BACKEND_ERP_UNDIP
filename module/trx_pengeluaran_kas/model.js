@@ -9,14 +9,8 @@ const trxPengeluaranKas = sq.define('trx_pengeluaran_kas', {
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    persetujuan_manajer_txpk: {
-        type: DataTypes.INTEGER
-    },
     tgl_persetujuan_manajer_txpk: {
         type: DataTypes.DATE
-    },
-    persetujuan_kasir_txpk: {
-        type: DataTypes.INTEGER
     },
     tgl_persetujuan_kasir_txpk: {
         type: DataTypes.DATE
@@ -24,14 +18,12 @@ const trxPengeluaranKas = sq.define('trx_pengeluaran_kas', {
     status_bayar_txpk: {
         type: DataTypes.INTEGER
     },
-    persetujuan_akuntan_txpk: {
-        type: DataTypes.INTEGER
-    },
     tgl_persetujuan_akuntan_txpk: {
         type: DataTypes.DATE
     },
     status_persetujuan_txpk: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue : 1    // 0: tolak || 1: default || 2: manager/supervisor || 3: kasir || 4: Akuntansi
     },
     nominal_txpk:{
         type: DataTypes.DOUBLE

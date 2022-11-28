@@ -1,6 +1,6 @@
 const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
-const jenisPembelian = require("./model");
+const jenisPenjualan = require("./model");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
 
@@ -8,13 +8,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_jenis_pembelian } = req.body
+        const { nama_jenis_penjualan } = req.body
 
-        jenisPembelian.findAll({ where: { nama_jenis_pembelian } }).then(data => {
+        jenisPenjualan.findAll({ where: { nama_jenis_penjualan } }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                jenisPembelian.create({ id: uuid_v4(), nama_jenis_pembelian }).then(data2 => {
+                jenisPenjualan.create({ id: uuid_v4(), nama_jenis_penjualan }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
@@ -26,9 +26,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, nama_jenis_pembelian } = req.body
+        const { id, nama_jenis_penjualan } = req.body
 
-        jenisPembelian.update({ nama_jenis_pembelian }, { where: { id } }).then(data => {
+        jenisPenjualan.update({ nama_jenis_penjualan }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -40,7 +40,7 @@ class Controller {
     static delete(req, res) {
         const { id } = req.body
 
-        jenisPembelian.destroy({ where: { id } }).then(data => {
+        jenisPenjualan.destroy({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -50,7 +50,7 @@ class Controller {
     }
 
     static list(req, res) {
-        jenisPembelian.findAll({order:[['createdAt','DESC']]}).then(data => {
+        jenisPenjualan.findAll({order:[['createdAt','DESC']]}).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(err);
@@ -61,7 +61,7 @@ class Controller {
     static detailsById(req, res) {
         const { id } = req.params
 
-        jenisPembelian.findAll({ where: { id } }).then(data => {
+        jenisPenjualan.findAll({ where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(err);

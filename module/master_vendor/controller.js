@@ -71,6 +71,18 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async listVendorByCompanyId(req, res) {
+        const { company_id } = req.body
+        try {
+            let data = await sq.query(`select mv.id as "master_vendor_id", * from master_vendor mv join company_usaha cu on cu.id = mv.company_id where cu."deletedAt" isnull and mv."deletedAt" isnull and mv.company_id = '${company_id}' order by mv."createdAt" desc`, s)
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 
 module.exports = Controller;

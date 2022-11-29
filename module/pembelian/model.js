@@ -4,6 +4,7 @@ const persediaan = require('../persediaan/model');
 const jenisAssetPembelian = require('../m_jenis_aset/model');
 const masterVendor = require('../master_vendor/model');
 const companyUsaha = require('../company_usaha/model');
+const coa6 = require('../coa6/model');
 
 const pembelian = sq.define('pembelian', {
     id: {
@@ -36,5 +37,8 @@ masterVendor.hasMany(pembelian, { foreignKey: 'vendor_id' })
 
 pembelian.belongsTo(companyUsaha, { foreignKey: 'company_id' })
 companyUsaha.hasMany(pembelian, { foreignKey: 'company_id' })
+
+pembelian.belongsTo(coa6, { foreignKey: 'coa6_id' })
+coa6.hasMany(pembelian, { foreignKey: 'coa6_id' })
 
 module.exports = pembelian

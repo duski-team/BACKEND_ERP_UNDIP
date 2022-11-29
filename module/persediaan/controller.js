@@ -15,7 +15,7 @@ class Controller {
 
 
         try {
-            const cekPersediaan = await persediaan.findAll({ where: { nama_persediaan, kode_persediaan } });
+            const cekPersediaan = await persediaan.findAll({ where: { company_id, kode_persediaan, coa6_id } });
 
             if(cekPersediaan.length>0){
                 res.status(201).json({ status: 204, message: "data sudah ada" });
@@ -38,6 +38,44 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    // static async registerSaldoAwal(req, res) {
+    //     const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id } = req.body
+
+    //     const t = await sq.transaction();
+
+    //     try {
+    //         let gambar = "";
+
+    //         if (req.files) {
+    //             if (req.files.file1) {
+    //                     gambar = req.files.file1[0].filename;
+    //             }
+    //         }
+    //         const cekPersediaan = await persediaan.findAll({ where: { kode_persediaan,company_id,coa6_id } });
+
+    //         if(cekPersediaan.length>0){
+    //             res.status(201).json({ status: 204, message: "data sudah ada" });
+    //         }else{
+    //             let akunModal = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = 'UNDIP' and c6.kode_coa6 = '3.1.1.1.01.0001'`,s);
+
+    //             let sisa_saldo = stock * harga_jual
+                
+    //             let data = await persediaan.create({ id:uuid_v4(), nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar, company_id },{transaction:t});
+    //             await trxPembelian.create({id:uuid_v4(),tgl_persetujuan_manajer_txp:tanggal_saldo_awal,jumlah_txp:stock,satuan_txp:satuan_persedian,tgl_persetujuan_akuntan_txp:tanggal_saldo_awal,status_persetujuan_txp:3,harga_satuan_txp:0,harga_total_txp:0},{transaction:t});
+    //             await generalLedger.create({id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo,status:1,akun_id:coa6_id,akun_pasangan_id:akunModal[0].id},{transaction:t});
+               
+    //             await t.commit();
+
+    //             res.status(200).json({ status: 200, message: "sukses",data });
+    //         }
+    //     } catch (err) {
+    //         await t.rollback();
+    //         console.log(req.body);
+    //         console.log(err);
+    //         res.status(500).json({ status: 500, message: "gagal", data: err });
+    //     }
+    // }
 
     static async registerSaldoAwal(req, res) {
         const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id } = req.body

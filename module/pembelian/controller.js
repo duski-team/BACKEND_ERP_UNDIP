@@ -9,47 +9,25 @@ const s = { type: QueryTypes.SELECT };
 
 class Controller {
 
-    // static async register(req, res) {
-    //     const { jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,akun_barang_id } = req.body;
-
-    //     const t = await sq.transaction();
-    //     try {
-    //         let pembelian_id = uuid_v4();
-
-    //         let akunHutang = await sq.query(`select c6.*,gl.akun_id,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001' order by gl."createdAt" desc limit 1`,s);
-    //         let akunBarang = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.akun_id = '${akun_barang_id}' order by gl."createdAt" desc limit 1`,s);
-
-    //         let  saldoHutang = !akunHutang[0].akun_id?harga_total_txp:akunHutang[0].sisa_saldo + harga_total_txp
-    //         let  saldoBarang = akunBarang.length ==0?harga_total_txp:akunBarang[0].sisa_saldo + harga_total_txp
-    //         let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,sisa_saldo:saldoBarang,pembelian_id,akun_id:akun_barang_id,akun_pasangan_id:akunHutang[0].id,nama:"barang"}
-    //         let hutang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,sisa_saldo:saldoHutang,pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:akun_barang_id,nama:"hutang"}
-
-    //         let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
-    //         await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
-    //         await generalLedger.bulkCreate([barang,hutang],{transaction:t})
-
-    //         await t.commit();
-
-    //         res.status(200).json({ status: 200, message: "sukses", data:hasil });
-    //     } catch (err) {
-    //         await t.rollback();
-    //         console.log(req.body);
-    //         console.log(err);
-    //         res.status(500).json({ status: 500, message: "gagal", data: err });
-    //     }
-    // }
-
     static async register(req, res) {
-        let { jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body;
+        let { jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,akun_barang_id } = req.body;
 
         const t = await sq.transaction();
         try {
             if(!company_id){
-                company_id = req.dataUsers.company_id
+                company_id = req.dataUsers.company_id 
             }
-            let pembelian_id = uuid_v4()
-            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id,coa6_id },{transaction:t});
+
+            let pembelian_id = uuid_v4();
+            let akunHutang = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001'`,s);
+
+            let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:akun_barang_id,akun_pasangan_id:akunHutang[0].id,nama:"barang"}
+            let hutang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:akun_barang_id,nama:"hutang"}
+
+            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
             await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
+            await generalLedger.bulkCreate([barang,hutang],{transaction:t})
+
             await t.commit();
 
             res.status(200).json({ status: 200, message: "sukses", data:hasil });
@@ -61,8 +39,60 @@ class Controller {
         }
     }
 
+    static async registerAset(req, res) {
+        const { jumlah_pembelian,tanggal_pembelian,persediaan_id,jenis_asset_pembelian_id,vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,coa6_id } = req.body;
+
+        const t = await sq.transaction();
+        try {
+            if(!company_id){
+                company_id = req.dataUsers.company_id 
+            }
+
+            let pembelian_id = uuid_v4();
+            let akunHutang = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001'`,s);
+
+            let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:coa6_id,akun_pasangan_id:akunHutang[0].id,nama:"barang"}
+            let hutang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:akun_barang_id,nama:"hutang"}
+
+            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
+            await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
+            await generalLedger.bulkCreate([barang,hutang],{transaction:t})
+
+            await t.commit();
+
+            res.status(200).json({ status: 200, message: "sukses", data:hasil });
+        } catch (err) {
+            await t.rollback();
+            console.log(req.body);
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    // static async register(req, res) {
+    //     let { jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body;
+
+    //     const t = await sq.transaction();
+    //     try {
+    //         if(!company_id){
+    //             company_id = req.dataUsers.company_id
+    //         }
+    //         let pembelian_id = uuid_v4()
+    //         let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id,coa6_id },{transaction:t});
+    //         await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
+    //         await t.commit();
+
+    //         res.status(200).json({ status: 200, message: "sukses", data:hasil });
+    //     } catch (err) {
+    //         await t.rollback();
+    //         console.log(req.body);
+    //         console.log(err);
+    //         res.status(500).json({ status: 500, message: "gagal", data: err });
+    //     }
+    // }
+
     static async update(req, res) {
-        let { id, jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body
+        let { id, jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body
 
         const t = await sq.transaction();
 
@@ -70,7 +100,7 @@ class Controller {
             if(!company_id){
                 company_id = req.dataUsers.company_id
             }
-            
+
             let cekPembelian = await trxPembelian.findAll({where:{pembelian_id:id}})
 
             if(cekPembelian[0].status_persetujuan_txp == 1){
@@ -153,7 +183,7 @@ class Controller {
     static async listPembelianByCompanyId(req, res) {
         const { company_id } = req.body
         try {
-            let data = await sq.query(`select p.id as pembelian_id, * , c6.nama_coa6 as "nama_aset" from pembelian p left join persediaan p2 on p2.id = p.persediaan_id left join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id left join master_vendor mv on mv.id = p.vendor_id left join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and p.company_id = '${company_id}' order by p."createdAt" desc `, s);
+            let data = await sq.query(`select p.id as pembelian_id, * , c6.nama_coa6 as "nama_aset" from pembelian p left join persediaan p2 on p2.id = p.persediaan_id left join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id left join master_vendor mv on mv.id = p.vendor_id left join coa6 c6 on c6.id = p.coa6_id left join trx_pembelian tp on tp.pembelian_id = p.id where p."deletedAt" isnull and p.company_id = '${company_id}' order by p."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

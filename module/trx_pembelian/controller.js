@@ -2,6 +2,7 @@ const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
 const trxPembelian = require("./model");
 const persediaan = require("../persediaan/model");
+const generalLedger = require("../general_ledger/model");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
 
@@ -85,24 +86,26 @@ class Controller {
 
         const t = await sq.transaction();
         try {
-
             let tgl_persetujuan_akuntan_txp = null
             let tgl_persetujuan_manajer_txp = null
+            let cekStatus = await sq.query(`select tp.*,p2.stock,p2.harga_satuan,(tp.jumlah_txp+p2.stock) as total_stock from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id left join persediaan p2 on p2.id = p.persediaan_id where tp."deletedAt" isnull and tp.id = '${id}'`,s);
 
-            if(status_persetujuan_txp == 2){
-                tgl_persetujuan_akuntan_txp = tanggal_persetujuan
+            if(cekStatus[0].status_persetujuan_txp == 3){
+                res.status(201).json({ status: 204, message: "status sudah 3" });
+            }else{
+                if(status_persetujuan_txp == 2){
+                    tgl_persetujuan_akuntan_txp = tanggal_persetujuan
+                }
+                if(status_persetujuan_txp == 3){
+                    tgl_persetujuan_manajer_txp = tanggal_persetujuan
+                    let akunGl = await sq.query()
+                    await persediaan.update({stock:cekStatus[0].total_stock,harga_satuan:cekStatus[0].harga_satuan_txp},{where:{id:data[0].id},transaction:t})
+                }
+    
+                await trxPembelian.update({tgl_persetujuan_akuntan_txp,tgl_persetujuan_manajer_txp,status_persetujuan_txp},{where:{id},transaction:t});
+                await t.commit();
+                res.status(200).json({ status: 200, message: "sukses" });
             }
-            if(status_persetujuan_txp == 3){
-                tgl_persetujuan_manajer_txp = tanggal_persetujuan
-                let data = await sq.query(`select p2.*,(tp.jumlah_txp+p2.stock) as total_stock from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id join persediaan p2 on p2.id = p.persediaan_id where tp."deletedAt" isnull and tp.id = '${id}'`,s);
-                let totalStock = data[0].total_stock
-
-                await persediaan.update({stock:totalStock},{where:{id:data[0].id},transaction:t})
-            }
-
-            await trxPembelian.update({tgl_persetujuan_akuntan_txp,tgl_persetujuan_manajer_txp,status_persetujuan_txp},{where:{id},transaction:t});
-            await t.commit();
-            res.status(200).json({ status: 200, message: "sukses" });
         } catch (err) {
             await t.rollback();
             console.log(err);

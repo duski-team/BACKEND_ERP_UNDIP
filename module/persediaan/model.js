@@ -5,6 +5,7 @@ const kategori = require('../kategori/model');
 const subKategori = require('../sub_kategori/model');
 const subSubKategori = require('../sub_sub_kategori/model');
 const companyUsaha = require('../company_usaha/model');
+const masterSatuan = require('../master_satuan/model');
 
 const persediaan = sq.define('persediaan', {
     id: {
@@ -68,5 +69,8 @@ subSubKategori.hasMany(persediaan, { foreignKey: 'sub_sub_kategori_id' })
 
 persediaan.belongsTo(companyUsaha, { foreignKey: 'company_id' })
 companyUsaha.hasMany(persediaan, { foreignKey: 'company_id' })
+
+persediaan.belongsTo(masterSatuan, { foreignKey: 'master_satuan_id' })
+masterSatuan.hasMany(persediaan, { foreignKey: 'master_satuan_id' })
 
 module.exports = persediaan

@@ -1,7 +1,6 @@
 const router = require("express").Router();
 
 // router.use("/penugasan", require('./module/DELETE_penugasan/route'));
-// router.use("/penugasanSdm", require('./module/DELETE_penugasan_sdm/route'));
 // router.use("/sdm", require('./module/DELETE_sdm/route'));
 // router.use("/tugas", require('./module/DELETE_tugas/route'));
 // router.use("/pool_akses", require('./module/DELETE_pool_akses/route'));
@@ -47,6 +46,7 @@ router.use("/masterSatuan", require('./module/master_satuan/route'));
 router.use("/list_coa", require('./module/list_coa/route'));
 router.use("/masterVendor", require('./module/master_vendor/route'));
 router.use("/generalLedger", require('./module/general_ledger/route'));
+router.use("/penugasanSdm", require('./module/penugasan_sdm/route'));
 
 
 module.exports = router;

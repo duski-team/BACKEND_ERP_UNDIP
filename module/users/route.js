@@ -13,5 +13,6 @@ router.get('/list',authentification,Controller.list);
 router.post('/listUserAdminCompany',authentification,Controller.listUserAdminCompany);
 router.post('/listUserByCompanyId',authentification,Controller.listUserByCompanyId);
 router.post('/listUserByJenisUserId',authentification,Controller.listUserByJenisUserId);
+router.post('/registerPelanggan',authentification,Controller.registerPelanggan);
 
 module.exports = router

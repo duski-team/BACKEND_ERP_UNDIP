@@ -265,5 +265,22 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async registerPelanggan(req, res) {
+        const { firstname, lastname, phone_no } = req.body
+
+        try {
+            let data = await users.findAll({ where: { phone_no } })
+            if (data.length) {
+                res.status(200).json({ status: 200, message: "sukses", data })
+            } else {
+                let pelanggan = await users.create({ id: uuid_v4(), username: phone_no, firstname, lastname, phone_no })
+                res.status(200).json({ status: 200, message: "sukses", data: pelanggan })
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
+    }
 }
 module.exports = Controller;

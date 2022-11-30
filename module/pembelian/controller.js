@@ -17,16 +17,16 @@ class Controller {
     //         let pembelian_id = uuid_v4();
 
     //         let akunHutang = await sq.query(`select c6.*,gl.akun_id,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001' order by gl."createdAt" desc limit 1`,s);
-    //         let akunBarang = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull where gl.akun_id = '${akun_barang_id}' order by gl."createdAt" desc  limit 1`,s);
+    //         let akunBarang = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.akun_id = '${akun_barang_id}' order by gl."createdAt" desc limit 1`,s);
 
-    //         let  sisaSaldoHutang = akunHutang[0].nominal_coa6 + harga_total_txp
-    //         let  sisaSaldoBarang = akunBarang.length ==0?0:akunBarang[0].nominal_coa6 + harga_total_txp
+    //         let  saldoHutang = !akunHutang[0].akun_id?harga_total_txp:akunHutang[0].sisa_saldo + harga_total_txp
+    //         let  saldoBarang = akunBarang.length ==0?harga_total_txp:akunBarang[0].sisa_saldo + harga_total_txp
+    //         let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,sisa_saldo:saldoBarang,pembelian_id,akun_id:akun_barang_id,akun_pasangan_id:akunHutang[0].id,nama:"barang"}
+    //         let hutang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,sisa_saldo:saldoHutang,pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:akun_barang_id,nama:"hutang"}
 
     //         let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
     //         await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
-    //         await generalLedger.create({tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,sisa_saldo:sisaSaldoBarang,pembelian_id,akun_id:akun_barang_id},{transaction:t})
-    //         await generalLedger.create({tanggal_transaksi:tanggal_pembelian,pengurangan:harga_total_txp,sisa_saldo:sisaSaldoHutang,pembelian_id,akun_id:akunHutang[0].id},{transaction:t})
-    //         // pasangan nya silang
+    //         await generalLedger.bulkCreate([barang,hutang],{transaction:t})
 
     //         await t.commit();
 

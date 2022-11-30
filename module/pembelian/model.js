@@ -18,7 +18,8 @@ const pembelian = sq.define('pembelian', {
         type: DataTypes.DATE
     },
     status_pembelian: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     }
 },
     {

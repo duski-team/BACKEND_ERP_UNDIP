@@ -8,13 +8,17 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_jenis_pengeluaran_kas } = req.body
+        let  { nama_jenis_pengeluaran_kas,company_id } = req.body
 
-        jenisPengeluaranKas.findAll({ where: { nama_jenis_pengeluaran_kas } }).then(data => {
+        if(!company_id){
+            company_id = req.dataUsers.company_id
+        }
+
+        jenisPengeluaranKas.findAll({ where: { nama_jenis_pengeluaran_kas,company_id } }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {
-                jenisPengeluaranKas.create({ id: uuid_v4(), nama_jenis_pengeluaran_kas }).then(data2 => {
+                jenisPengeluaranKas.create({ id: uuid_v4(), nama_jenis_pengeluaran_kas,company_id }).then(data2 => {
                     res.status(200).json({ status: 200, message: "sukses",data: data2 });
                 })
             }
@@ -26,9 +30,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, nama_jenis_pengeluaran_kas } = req.body
+        const { id, nama_jenis_pengeluaran_kas,company_id } = req.body
 
-        jenisPengeluaranKas.update({ nama_jenis_pengeluaran_kas }, { where: { id } }).then(data => {
+        jenisPengeluaranKas.update({ nama_jenis_pengeluaran_kas,company_id }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

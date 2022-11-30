@@ -11,10 +11,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static async register(req, res) {
-        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, company_id } = req.body
-
+        let { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id } = req.body
 
         try {
+            if(!company_id){
+                company_id = req.dataUsers.company_id
+            }
+
             const cekPersediaan = await persediaan.findAll({ where: { company_id, kode_persediaan, coa6_id } });
 
             if(cekPersediaan.length>0){
@@ -40,11 +43,14 @@ class Controller {
     }
 
     static async registerSaldoAwal(req, res) {
-        const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id } = req.body
+        let { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id } = req.body
 
         const t = await sq.transaction();
 
         try {
+            if(!company_id){
+                company_id = req.dataUsers.company_id
+            }
             let gambar = "";
 
             if (req.files) {
@@ -82,40 +88,6 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
-
-    // static async registerSaldoAwal(req, res) {
-    //     const { nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id } = req.body
-
-    //     const t = await sq.transaction();
-
-    //     try {
-    //         const cekPersediaan = await persediaan.findAll({ where: { nama_persediaan, kode_persediaan } });
-
-    //         if(cekPersediaan.length>0){
-    //             res.status(201).json({ status: 204, message: "data sudah ada" });
-    //         }else{
-    //             let gambar = "";
-
-    //             if (req.files) {
-    //                 if (req.files.file1) {
-    //                     gambar = req.files.file1[0].filename;
-    //                 }
-    //             }
-    //             let totalBarang = stock - stock_rusak
-                
-    //             let data = await persediaan.create({ id:uuid_v4(), nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar, company_id },{transaction:t});
-    //             await trxPembelian.create({id:uuid_v4(),tgl_persetujuan_manajer_txp:tanggal_saldo_awal,jumlah_txp:totalBarang,satuan_txp:satuan_persedian,tgl_persetujuan_akuntan_txp:tanggal_saldo_awal,status_persetujuan_txp:3,harga_satuan_txp:0,harga_total_txp:0},{transaction:t})
-    //             await t.commit();
-
-    //             res.status(200).json({ status: 200, message: "sukses",data });
-    //         }
-    //     } catch (err) {
-    //         await t.rollback();
-    //         console.log(req.body);
-    //         console.log(err);
-    //         res.status(500).json({ status: 500, message: "gagal", data: err });
-    //     }
-    // }
 
     static async update(req, res) {
         const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, company_id } = req.body
@@ -257,18 +229,7 @@ class Controller {
 
     static async listPersedianByBarangJual(req,res){
         try {
-            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.1'`,s);
-            
-            res.status(200).json({ status: 200, message: "sukses", data });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        }
-    }
-
-    static async listPersedianByBarangJual(req,res){
-        try {
-            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.1' order by "createdAt" desc`,s);
+            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.1' order by p."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -279,7 +240,7 @@ class Controller {
 
     static async listPersediaanByBarangHabisPakai(req,res){
         try {
-            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.2' order by "createdAt" desc`,s);
+            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.2' order by p."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

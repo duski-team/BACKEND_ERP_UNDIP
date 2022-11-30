@@ -40,10 +40,13 @@ class Controller {
     // }
 
     static async register(req, res) {
-        const { jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body;
+        let { jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body;
 
         const t = await sq.transaction();
         try {
+            if(!company_id){
+                company_id = req.dataUsers.company_id
+            }
             let pembelian_id = uuid_v4()
             let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id,coa6_id },{transaction:t});
             await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
@@ -59,11 +62,15 @@ class Controller {
     }
 
     static async update(req, res) {
-        const { id, jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body
+        let { id, jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body
 
         const t = await sq.transaction();
 
         try {
+            if(!company_id){
+                company_id = req.dataUsers.company_id
+            }
+            
             let cekPembelian = await trxPembelian.findAll({where:{pembelian_id:id}})
 
             if(cekPembelian[0].status_persetujuan_txp == 1){

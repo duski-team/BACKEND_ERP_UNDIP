@@ -117,13 +117,13 @@ class Controller {
                 let saldoModal = sisa_saldo
 
                 if(akunModal[0].sisa_saldo){
-                    saldoModal= akunModal[0].sisa_saldo + sisa_saldo
+                    saldoModal= akunModal[0].sisa_saldo + parseFloat(sisa_saldo)
                 }
 
                 let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:sisa_saldo,penambahan:sisa_saldo,status:1,akun_id:coa6_id,akun_pasangan_id:akunModal[0].id}
                 let modal = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:saldoModal,penambahan:sisa_saldo,status:1,akun_id:akunModal[0].id,akun_pasangan_id:coa6_id}
 
-                let data = await coa6.create({id:coa6_id,nama_coa6, kode_coa6, coa5_id,nominal_coa6,deskripsi});
+                let data = await coa6.create({id:coa6_id,nama_coa6, kode_coa6, coa5_id,nominal_coa6,deskripsi},{transaction:t});
                 await persediaan.create({ id:uuid_v4(), nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar, company_id,master_satuan_id },{transaction:t});
                 await trxPembelian.create({id:uuid_v4(),tgl_persetujuan_manajer_txp:tanggal_saldo_awal,jumlah_txp:stock,satuan_txp:satuan_persedian,tgl_persetujuan_akuntan_txp:tanggal_saldo_awal,status_persetujuan_txp:3,harga_satuan_txp:0,harga_total_txp:0},{transaction:t});
                 await generalLedger.bulkCreate([barang,modal],{transaction:t});

@@ -40,7 +40,7 @@ class Controller {
     // }
 
     static async register(req, res) {
-        let { jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body;
+        let { jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body;
 
         const t = await sq.transaction();
         try {
@@ -48,7 +48,7 @@ class Controller {
                 company_id = req.dataUsers.company_id
             }
             let pembelian_id = uuid_v4()
-            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id,coa6_id },{transaction:t});
+            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id,coa6_id },{transaction:t});
             await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
             await t.commit();
 
@@ -62,7 +62,7 @@ class Controller {
     }
 
     static async registerAset(req, res) {
-        let { jumlah_pembelian, tanggal_pembelian, status_pembelian, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body;
+        let { jumlah_pembelian, tanggal_pembelian, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body;
 
         const t = await sq.transaction();
         try {
@@ -70,7 +70,7 @@ class Controller {
                 company_id = req.dataUsers.company_id
             }
             let pembelian_id = uuid_v4()
-            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, status_pembelian, jenis_asset_pembelian_id, vendor_id, company_id,coa6_id },{transaction:t});
+            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, jenis_asset_pembelian_id, vendor_id, company_id,coa6_id },{transaction:t});
             await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
             await t.commit();
 
@@ -84,7 +84,7 @@ class Controller {
     }
 
     static async update(req, res) {
-        let { id, jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body
+        let { id, jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp, company_id,coa6_id } = req.body
 
         const t = await sq.transaction();
 

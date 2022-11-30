@@ -8,9 +8,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { nama_kategori } = req.body
+        let { nama_kategori,company_id } = req.body
 
-        kategori.findAll({ where: { nama_kategori } }).then(data => {
+        if(!company_id){
+            company_id = req.dataUsers.company_id
+        }
+
+        kategori.findAll({ where: { nama_kategori,company_id } }).then(data => {
             if (data.length) {
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             } else {

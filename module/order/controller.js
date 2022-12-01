@@ -31,12 +31,12 @@ class Controller {
                 company_id = req.dataUsers.company_id 
             }
 
-            for (let i = 0; i < bulkRegister.length; i++) {
-                bulkRegister[i].id = uuid_v4();
-                bulkRegister[i].company_id = company_id;
+            for (let i = 0; i < bulkData.length; i++) {
+                bulkData[i].id = uuid_v4();
+                bulkData[i].company_id = company_id;
             }
 
-            let data = await order.bulkCreate(bulkRegister);
+            let data = await order.bulkCreate(bulkData);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

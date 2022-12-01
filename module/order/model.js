@@ -55,8 +55,8 @@ tipePembayaran.hasMany(order, { foreignKey: 'tipe_pembayaran_id' })
 order.belongsTo(statusOrder, { foreignKey: 'status_order_id' })
 statusOrder.hasMany(order, { foreignKey: 'status_order_id' })
 
-order.belongsTo(jenisPenjualan, { foreignKey: 'jenis_penjualann_id' })
-jenisPenjualan.hasMany(order, { foreignKey: 'jenis_penjualann_id' })
+order.belongsTo(jenisPenjualan, { foreignKey: 'jenis_penjualan_id' })
+jenisPenjualan.hasMany(order, { foreignKey: 'jenis_penjualan_id' })
 
 order.belongsTo(statusVa, { foreignKey: 'status_va_id' })
 statusVa.hasMany(order, { foreignKey: 'status_va_id' })

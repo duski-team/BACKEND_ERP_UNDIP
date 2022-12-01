@@ -141,7 +141,7 @@ class Controller {
     }
 
     static async update(req, res) {
-        const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, company_id,master_satuan_id } = req.body
+        const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, company_id,master_satuan_id, status_persediaan } = req.body
 
         const t = await sq.transaction();
 
@@ -152,7 +152,7 @@ class Controller {
                     await persediaan.update({ gambar }, { where: { id }, transaction: t })
                 }
             }
-            await persediaan.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id,master_satuan_id  }, { where: { id }, transaction: t })
+            await persediaan.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id,master_satuan_id, status_persediaan  }, { where: { id }, transaction: t })
             await t.commit();
 
             res.status(200).json({ status: 200, message: "sukses" });
@@ -292,6 +292,17 @@ class Controller {
     static async listPersediaanByBarangHabisPakai(req,res){
         try {
             let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.2' order by p."createdAt" desc`,s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async listPersediaanByBarangJualTampil(req,res){
+        try {
+            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.1' and p.status_persediaan = 1 order by p."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

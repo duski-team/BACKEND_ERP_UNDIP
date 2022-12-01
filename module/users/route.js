@@ -14,5 +14,6 @@ router.post('/listUserAdminCompany',authentification,Controller.listUserAdminCom
 router.post('/listUserByCompanyId',authentification,Controller.listUserByCompanyId);
 router.post('/listUserByJenisUserId',authentification,Controller.listUserByJenisUserId);
 router.post('/registerPelanggan',authentification,Controller.registerPelanggan);
+router.post('/cekUserByNomorHp',authentification,Controller.cekUserByNomorHp);
 
 module.exports = router

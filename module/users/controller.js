@@ -274,8 +274,9 @@ class Controller {
             if (data.length) {
                 res.status(200).json({ status: 200, message: "sukses", data })
             } else {
-                let pelanggan = await users.create({ id: uuid_v4(), username: phone_no, firstname, lastname, phone_no })
-                res.status(200).json({ status: 200, message: "sukses", data: pelanggan })
+                let jenisUser = await sq.query(`select ju.id as "jenis_user_id", upper(ju.nama_jenis_user) as "jenis_user" from jenis_user ju where ju."deletedAt" isnull and upper(ju.nama_jenis_user) = 'PELANGGAN'`, s)
+                let pelanggan = await users.create({ id: uuid_v4(), username: phone_no, firstname, lastname, phone_no, jenis_user_id: jenisUser[0].jenis_user_id })
+                res.status(200).json({ status: 200, message: "sukses", data: [pelanggan] })
             }
         } catch (err) {
             console.log(err);

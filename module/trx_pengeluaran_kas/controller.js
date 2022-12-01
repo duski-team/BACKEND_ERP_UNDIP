@@ -96,11 +96,14 @@ class Controller {
     }
 
     static async acceptPersetujuan (req,res){
-        const {id,status_persetujuan_txpk,tgl_persetujuan_manajer_txpk,tgl_persetujuan_kasir_txpk,tgl_persetujuan_akuntan_txpk} = req.body;
+        let {id,status_persetujuan_txpk,tgl_persetujuan_manajer_txpk,tgl_persetujuan_kasir_txpk,tgl_persetujuan_akuntan_txpk,company_id} = req.body;
 
         const t = await sq.transaction();
 
         try {
+            if(!company_id){
+                company_id = req.dataUsers.company_id 
+            }
             let tanggal_persetujuan
             let cekPersetujuan = await sq.query(`select tpk.*, tp.harga_total_txp,(select case when sum(tpk2.nominal_txpk) isnull then 0 else sum(tpk2.nominal_txpk) end from trx_pengeluaran_kas tpk2 where tpk2."deletedAt" isnull and tpk2.status_bayar_txpk = 1 and tpk2.trx_pembelian_id = tpk.trx_pembelian_id) as total,tp.pembelian_id 
             from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id where tpk."deletedAt" isnull and tpk.id = '${id}'`,s);
@@ -120,13 +123,13 @@ class Controller {
                         }
                         tanggal_persetujuan = tgl_persetujuan_akuntan_txpk 
     
-                        // let akunHutang = await sq.query(`select gl.*,c6.nama_coa6,c6.kode_coa6 from general_ledger gl join coa6 c6 on c6.id = gl.akun_id where gl."deletedAt" isnull and gl.status = 1 and gl.status = 1 and c6.kode_coa6 = '2.1.7.1.01.0001' order by tanggal_transaksi desc limit 1`,s);
+                        // let akunHutang = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 1 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001' order by gl.tanggal_persetujuan desc limit 1`,s);
 
                         // let sisa_saldo = akunHutang[0].sisa_saldo - cekPersetujuan[0].nominal_txpk
                         // let hutang = {id:uuid_v4(),tanggal_transaksi:cekPersetujuan[0].createdAt,pengurangan:cekPersetujuan[0].nominal_txpk,pembelian_id:cekPersetujuan[0].pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:"",tanggal_persetujuan,sisa_saldo,nama:"hutang"}
                     }
                     await trxPengeluaranKas.update({tgl_persetujuan_manajer_txpk,tgl_persetujuan_kasir_txpk,tgl_persetujuan_akuntan_txpk,status_bayar_txpk},{where:{id},transaction:t})
-                    
+
                     await t.commit();
                     res.status(200).json({ status: 200, message: "sukses" });
                 }

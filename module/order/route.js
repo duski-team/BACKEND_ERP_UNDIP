@@ -9,6 +9,7 @@ router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
 router.post('/listOrderByStatusOrderId', authentification, Controller.listOrderByStatusOrderId);
 router.post('/listOrderByJenisPembelianId', authentification, Controller.listOrderByJenisPembelianId);
+router.post('/listOrderByCompanyId', authentification, Controller.listOrderByCompanyId);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

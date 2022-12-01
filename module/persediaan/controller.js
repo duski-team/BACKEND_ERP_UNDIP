@@ -141,7 +141,7 @@ class Controller {
     }
 
     static async update(req, res) {
-        const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, company_id,master_satuan_id } = req.body
+        const { id, nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, company_id,master_satuan_id, status_persediaan } = req.body
 
         const t = await sq.transaction();
 
@@ -152,7 +152,7 @@ class Controller {
                     await persediaan.update({ gambar }, { where: { id }, transaction: t })
                 }
             }
-            await persediaan.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id,master_satuan_id  }, { where: { id }, transaction: t })
+            await persediaan.update({ nama_persediaan, kode_persediaan, satuan_persedian, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id,company_id,master_satuan_id, status_persediaan  }, { where: { id }, transaction: t })
             await t.commit();
 
             res.status(200).json({ status: 200, message: "sukses" });

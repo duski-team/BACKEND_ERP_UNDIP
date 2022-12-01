@@ -6,6 +6,7 @@ const authentification = require('../../middleware/authentification');
 router.post('/register', authentification,upload, Controller.register);
 router.post('/registerSaldoAwal', authentification,upload, Controller.registerSaldoAwal);
 router.post('/update', authentification,upload, Controller.update);
+router.post('/updateBulk', authentification,upload, Controller.updateBulk);
 router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
 router.post('/listPersediaanByCoa6Id', authentification, Controller.listPersediaanByCoa6Id);

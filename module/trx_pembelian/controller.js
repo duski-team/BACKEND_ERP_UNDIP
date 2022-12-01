@@ -82,22 +82,19 @@ class Controller {
     }
 
     static async acceptPersetujuan(req, res) {
-        const { id,status_persetujuan_txp,tanggal_persetujuan } = req.body
+        const { id,status_persetujuan_txp,tgl_persetujuan_akuntan_txp,tgl_persetujuan_manajer_txp } = req.body
 
         const t = await sq.transaction();
         try {
-            let tgl_persetujuan_akuntan_txp = null
-            let tgl_persetujuan_manajer_txp = null
+            let tanggal_persetujuan
+
             let cekStatus = await sq.query(`select tp.*,p.persediaan_id,p2.stock,p2.harga_satuan,(tp.jumlah_txp+p2.stock) as total_stock from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id left join persediaan p2 on p2.id = p.persediaan_id where tp."deletedAt" isnull and tp.id = '${id}'`,s);
 
             if(cekStatus[0].status_persetujuan_txp == 3){
                 res.status(201).json({ status: 204, message: "status sudah 3" });
             }else{
-                if(status_persetujuan_txp == 2){
-                    tgl_persetujuan_manajer_txp = tanggal_persetujuan
-                }
                 if(status_persetujuan_txp == 3){
-                    tgl_persetujuan_akuntan_txp = tanggal_persetujuan
+                    tanggal_persetujuan= tgl_persetujuan_akuntan_txp
                     let akunGl = await sq.query(`select gl.*,(gl2.sisa_saldo+gl.penambahan) as total_sisa from general_ledger gl left join general_ledger gl2 on gl2.akun_id = gl.akun_id and gl2.status = 1 where gl."deletedAt" isnull and gl.pembelian_id = '${cekStatus[0].pembelian_id}'`,s);
                     for (let i = 0; i < akunGl.length; i++) {
                         akunGl[i].sisa_saldo = !akunGl[i].total_sisa?akunGl[0].penambahan:akunGl[i].total_sisa

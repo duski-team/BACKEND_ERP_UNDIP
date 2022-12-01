@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const {sq} = require('../../config/connection');
 const trxPembelian = require('../trx_pembelian/model');
-// const penugasanSdm = require('../penugasan_sdm/model');
+const company = require('../company_usaha/model');
 const jenisPengeluaranKas = require('../jenis_pengeluaran_kas/model');
 
 const trxPengeluaranKas = sq.define('trx_pengeluaran_kas', {
@@ -16,7 +16,8 @@ const trxPengeluaranKas = sq.define('trx_pengeluaran_kas', {
         type: DataTypes.DATE
     },
     status_bayar_txpk: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     tgl_persetujuan_akuntan_txpk: {
         type: DataTypes.DATE
@@ -37,8 +38,8 @@ const trxPengeluaranKas = sq.define('trx_pengeluaran_kas', {
         freezeTableName: true
     });
     
-    // trxPengeluaranKas.belongsTo(penugasanSdm,{foreignKey:'penugasan_sdm_id'})
-    // penugasanSdm.hasMany(trxPengeluaranKas,{foreignKey:'penugasan_sdm_id'})
+    trxPengeluaranKas.belongsTo(company,{foreignKey:'company_id'})
+    company.hasMany(trxPengeluaranKas,{foreignKey:'company_id'})
 
     trxPengeluaranKas.belongsTo(trxPembelian,{foreignKey:'trx_pembelian_id'})
     trxPembelian.hasMany(trxPengeluaranKas,{foreignKey:'trx_pembelian_id'})

@@ -18,7 +18,7 @@ const persediaan = sq.define('persediaan', {
     kode_persediaan: {
         type: DataTypes.STRING
     },
-    satuan_persedian: {
+    satuan_persediaan: {
         type: DataTypes.STRING
     },
     harga_jual: {

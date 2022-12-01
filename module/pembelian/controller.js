@@ -40,7 +40,7 @@ class Controller {
     }
 
     static async registerAset(req, res) {
-        const { jumlah_pembelian,tanggal_pembelian,persediaan_id,jenis_asset_pembelian_id,vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,coa6_id } = req.body;
+        const { jumlah_pembelian,tanggal_pembelian,jenis_asset_pembelian_id,vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,coa6_id } = req.body;
 
         const t = await sq.transaction();
         try {
@@ -54,7 +54,7 @@ class Controller {
             let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:coa6_id,akun_pasangan_id:akunHutang[0].id,nama:"barang"}
             let hutang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:akun_barang_id,nama:"hutang"}
 
-            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
+            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
             await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
             await generalLedger.bulkCreate([barang,hutang],{transaction:t})
 

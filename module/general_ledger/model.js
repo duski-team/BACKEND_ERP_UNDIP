@@ -33,6 +33,9 @@ const generalLedger = sq.define('general_ledger', {
     status: {
         type: DataTypes.INTEGER,  // 0 || 1
         defaultValue: 0
+    },
+    tanggal_persetujuan: {
+        type: DataTypes.DATE
     }
 },
     {

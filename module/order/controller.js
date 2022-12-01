@@ -30,10 +30,12 @@ class Controller {
             if(!company_id){
                 company_id = req.dataUsers.company_id 
             }
+            let persediaan = []
 
             for (let i = 0; i < bulkData.length; i++) {
                 bulkData[i].id = uuid_v4();
                 bulkData[i].company_id = company_id;
+                persediaan.push(bulkData[i].persediaan_id);
             }
 
             let data = await order.bulkCreate(bulkData);

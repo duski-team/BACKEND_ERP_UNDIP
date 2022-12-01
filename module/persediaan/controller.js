@@ -164,6 +164,19 @@ class Controller {
         }
     }
 
+    static async updateBulk(req, res) {
+        const { bulkData } = req.body
+
+        try {
+            await persediaan.bulkCreate(bulkData,{updateOnDuplicate:['status_persediaan']})
+            res.status(200).json({ status: 200, message: "sukses" });
+        } catch (err) {
+            console.log(req.body);
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
+    }
+
     static delete(req, res) {
         const { id } = req.body
 

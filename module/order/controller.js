@@ -24,7 +24,7 @@ class Controller {
     }
 
     static async registerBulk(req, res) {
-        let {bulkRegister,pajak,biaya_admin,total_penjualan,company_id} = req.body
+        let {bulkData,pajak,biaya_admin,total_penjualan,company_id} = req.body
 
         try {
             if(!company_id){

@@ -283,5 +283,18 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err })
         }
     }
+
+    static async cekUserByNomorHp(req, res) {
+        const { phone_no } = req.body
+
+        try {
+            let data = await users.findAll({ where: { phone_no } })
+            
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
+    }
 }
 module.exports = Controller;

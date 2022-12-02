@@ -59,9 +59,12 @@ class Controller {
     }
 
     static async listTrxPengeluaranKasByTrxPembelianId(req, res) {
-        const { trx_pembelian_id } = req.body
+        let { trx_pembelian_id,company_id } = req.body
         try {
-            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,jpk.nama_jenis_pengeluaran_kas from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id where tpk."deletedAt" isnull and tpk.trx_pembelian_id ='${trx_pembelian_id}' and tpk.company_id = '${req.dataUsers.company_id}' order by tpk."createdAt" desc`, s);
+            if(!company_id){
+                company_id = req.dataUsers.company_id
+            }
+            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,jpk.nama_jenis_pengeluaran_kas from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id where tpk."deletedAt" isnull and tpk.trx_pembelian_id ='${trx_pembelian_id}' and tpk.company_id = '${company_id}' order by tpk."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -71,9 +74,12 @@ class Controller {
     }
 
     static async listTrxPengeluaranKasByJenisPengeluaranKasId(req, res) {
-        const { jenis_pengeluaran_kas_id } = req.body
+        const { jenis_pengeluaran_kas_id,company_id } = req.body
         try {
-            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,jpk.nama_jenis_pengeluaran_kas from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id where tpk."deletedAt" isnull and tpk.jenis_pengeluaran_kas_id = '${jenis_pengeluaran_kas_id}' and tpk.company_id = '${req.dataUsers.company_id}' order by tpk."createdAt" desc`, s);
+            if(!company_id){
+                company_id = req.dataUsers.company_id
+            }
+            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,jpk.nama_jenis_pengeluaran_kas from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id where tpk."deletedAt" isnull and tpk.jenis_pengeluaran_kas_id = '${jenis_pengeluaran_kas_id}' and tpk.company_id = '${company_id}' order by tpk."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -83,9 +89,12 @@ class Controller {
     }
 
     static async listPembelianByVendorId(req, res) {
-        const { vendor_id } = req.body
+        let { vendor_id,company_id } = req.body
         try {
-            let data = await sq.query(`select p.id as "pembelian_id", * from pembelian p join trx_pembelian tp on tp.pembelian_id = p.id where p."deletedAt" isnull and tp."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and p.vendor_id = '${vendor_id}' order by p."createdAt" desc`, s);
+            if(!company_id){
+                company_id = req.dataUsers.company_id
+            }
+            let data = await sq.query(`select p.id as "pembelian_id", * from pembelian p join trx_pembelian tp on tp.pembelian_id = p.id where p."deletedAt" isnull and tp."deletedAt" isnull and p.company_id = '${company_id}' and p.vendor_id = '${vendor_id}' order by p."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

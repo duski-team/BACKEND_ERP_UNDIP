@@ -7,20 +7,29 @@ const s = { type: QueryTypes.SELECT };
 
 class Controller {
 
-    static register(req, res) {
-        let { jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualan_id, status_va_id, customer_id, company_id } = req.body
+    static async register(req, res) {
+        let { alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, tipe_pembayaran_id, status_order_id, jenis_penjualan_id, customer_id, company_id,bulkData, pajak, biaya_admin, total_penjualan,total_harga_barang } = req.body
 
-        if (!company_id) {
-            company_id = req.dataUsers.company_id
-        }
+        const t = await sq.transaction();
 
-        order.create({ id: uuid_v4(), jumlah, harga, satuan, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persediaan_id, tipe_pembayaran_id, status_order_id, jenis_penjualan_id, status_va_id, customer_id, company_id }).then(data => {
+        try {
+            if (!company_id) {
+                company_id = req.dataUsers.company_id
+            }
+
+            let order_id = uuid_v4();
+            let barang_id =[]
+
+            for (let i = 0; i < bulkData.length; i++) {
+                barang_id.push({});
+            }
+
             res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        } catch (err) {
             console.log(req.body);
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
     static async registerBulk(req, res) {

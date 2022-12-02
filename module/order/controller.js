@@ -21,8 +21,11 @@ class Controller {
             let barang_id =[]
 
             for (let i = 0; i < bulkData.length; i++) {
-                barang_id.push({});
+                bulkData[i].order_id = order_id
+                barang_id.push(`,${bulkData[i].persediaan_id}`);
             }
+
+            let barang = await sq.query(`select * from persediaan p where p."deletedAt" isnull and p.id in ()`)
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

@@ -200,31 +200,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select o.id as "order_id", * from "order" o join persediaan p on p.id = o.persediaan_id join status_order so on so.id = o.status_order_id join jenis_penjualan jp on jp.id = o.jenis_penjualan_id join status_va sv on sv.id = o.status_va_id join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id join users u on u.id = o.customer_id where o."deletedAt" isnull and o.company_id = '${req.dataUsers.company_id}' order by o."createdAt" desc`, s);
-
-            res.status(200).json({ status: 200, message: "sukses", data });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        }
-    }
-
-    static async listOrderByStatusOrderId(req, res) {
-        const { status_order_id } = req.body
-        try {
-            let data = await sq.query(`select o.id as "order_id", * from "order" o join persediaan p on p.id = o.persediaan_id join status_order so on so.id = o.status_order_id join jenis_penjualan jp on jp.id = o.jenis_penjualan_id join status_va sv on sv.id = o.status_va_id join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id join users u on u.id = o.customer_id where o."deletedAt" isnull and o.status_order_id = '${status_order_id}' and o.company_id = '${req.dataUsers.company_id}' order by o."createdAt" desc`, s);
-
-            res.status(200).json({ status: 200, message: "sukses", data });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        }
-    }
-
-    static async listOrderByJenisPembelianId(req, res) {
-        const { jenis_penjualan_id } = req.body
-        try {
-            let data = await sq.query(`select o.id as "order_id", * from "order" o join persediaan p on p.id = o.persediaan_id join status_order so on so.id = o.status_order_id join jenis_penjualan jp on jp.id = o.jenis_penjualan_id join status_va sv on sv.id = o.status_va_id join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id join users u on u.id = o.customer_id where o."deletedAt" isnull and o.jenis_penjualan_id = '${jenis_penjualan_id}' and o.company_id = '${req.dataUsers.company_id}' order by o."createdAt" desc`, s);
+            let data = await sq.query(`select o.id as "order_id", * from "order" o join jenis_penjualan jp on jp.id = o.jenis_penjualan_id join status_va sv on sv.id = o.status_va_id join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id join users u on u.id = o.customer_id where o."deletedAt" isnull and o.company_id = '${req.dataUsers.company_id}' order by o."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -237,7 +213,11 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select o.id as "order_id", * from "order" o join persediaan p on p.id = o.persediaan_id join status_order so on so.id = o.status_order_id join jenis_penjualan jp on jp.id = o.jenis_penjualan_id join status_va sv on sv.id = o.status_va_id join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id join users u on u.id = o.customer_id where o."deletedAt" isnull and o.id = '${id}'`, s);
+            let data = await sq.query(`select o.id as "order_id", * from "order" o join jenis_penjualan jp on jp.id = o.jenis_penjualan_id join status_va sv on sv.id = o.status_va_id join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id join users u on u.id = o.customer_id where o."deletedAt" isnull and o.id = '${id}'`, s);
+
+            let barang = await sq.query(`select bo.id as "barang_order_id", * from barang_order bo join persediaan p on p.id = bo.persediaan_id where bo."deletedAt" isnull and p."deletedAt" isnull and bo.order_id = '${id}'`, s);
+
+            data[0].barang_order = barang
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -252,7 +232,7 @@ class Controller {
             if (!company_id) {
                 company_id = req.dataUsers.company_id
             }
-            let data = await sq.query(`select o.id as "order_id", * from "order" o left join persediaan p on p.id = o.persediaan_id left join status_order so on so.id = o.status_order_id left join jenis_penjualan jp on jp.id = o.jenis_penjualan_id left join status_va sv on sv.id = o.status_va_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id left join users u on u.id = o.customer_id where o."deletedAt" isnull and o.company_id = '${company_id}' order by o."createdAt" desc`, s);
+            let data = await sq.query(`select o.id as "order_id", * from "order" o left join jenis_penjualan jp on jp.id = o.jenis_penjualan_id left join status_va sv on sv.id = o.status_va_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id left join users u on u.id = o.customer_id where o."deletedAt" isnull and o.company_id = '${company_id}' order by o."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -264,7 +244,7 @@ class Controller {
     static async listOrderByKodeInvoice(req, res) {
         let { kode_invoice } = req.body
         try {
-            let data = await sq.query(`select o.id as "order_id", * from "order" o left join persediaan p on p.id = o.persediaan_id left join status_order so on so.id = o.status_order_id left join jenis_penjualan jp on jp.id = o.jenis_penjualan_id left join status_va sv on sv.id = o.status_va_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id left join users u on u.id = o.customer_id where o."deletedAt" isnull and o.kode_invoice = '${kode_invoice}' order by o."createdAt" desc`, s);
+            let data = await sq.query(`select o.id as "order_id", * from "order" o left join jenis_penjualan jp on jp.id = o.jenis_penjualan_id left join status_va sv on sv.id = o.status_va_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id left join users u on u.id = o.customer_id where o."deletedAt" isnull and o.kode_invoice = '${kode_invoice}' order by o."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

@@ -8,6 +8,7 @@ router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
 router.post('/listTrxPengeluaranKasByJenisPengeluaranKasId', authentification, Controller.listTrxPengeluaranKasByJenisPengeluaranKasId);
 router.post('/listTrxPengeluaranKasByTrxPembelianId', authentification, Controller.listTrxPengeluaranKasByTrxPembelianId);
+router.post('/listPembelianByVendorId', authentification, Controller.listPembelianByVendorId);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 router.post('/acceptPersetujuan', authentification, Controller.acceptPersetujuan);
 

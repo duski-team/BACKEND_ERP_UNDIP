@@ -13,15 +13,6 @@ const order = sq.define('order', {
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    jumlah: {
-        type: DataTypes.INTEGER
-    },
-    harga: {
-        type: DataTypes.DOUBLE
-    },
-    satuan: {
-        type: DataTypes.STRING
-    },
     alamat_order: {
         type: DataTypes.STRING
     },

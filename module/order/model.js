@@ -1,10 +1,10 @@
 const { DataTypes } = require('sequelize');
 const { sq } = require('../../config/connection');
-const persediaan = require('../persediaan/model');
+// const persediaan = require('../persediaan/model');
 const tipePembayaran = require('../tipe_pembayaran/model');
 const statusOrder = require('../status_order/model');
 const jenisPenjualan = require('../jenis_penjualan/model');
-const statusVa = require('../status_va/model');
+// const statusVa = require('../status_va/model');
 const users = require('../users/model');
 const companyUsaha = require('../company_usaha/model');
 

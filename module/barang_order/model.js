@@ -22,8 +22,8 @@ const barangOrder = sq.define('barang_order', {
         freezeTableName: true
     });
 
-barangOrder.belongsTo(persediaan, { foreignKey: 'persediaan_id' })
-persediaan.hasMany(barangOrder, { foreignKey: 'persediaan_id' })
+barangOrder.belongsTo(persediaan, { foreignKey: 'produk_id' })
+persediaan.hasMany(barangOrder, { foreignKey: 'produk_id' })
 
 barangOrder.belongsTo(order, { foreignKey: 'order_id' })
 order.hasMany(barangOrder, { foreignKey: 'order_id' })

@@ -220,7 +220,10 @@ class Controller {
     static async listPembelianByCompanyId(req, res) {
         const { company_id } = req.body
         try {
-            let data = await sq.query(`select p.id as pembelian_id, * , c6.nama_coa6 as "nama_aset" from pembelian p left join persediaan p2 on p2.id = p.persediaan_id left join m_jenis_aset mja on p.jenis_asset_pembelian_id = mja.id left join master_vendor mv on mv.id = p.vendor_id left join coa6 c6 on c6.id = p.coa6_id left join trx_pembelian tp on tp.pembelian_id = p.id where p."deletedAt" isnull and p.company_id = '${company_id}' order by p."createdAt" desc`, s);
+            if (!company_id) {
+                company_id = req.dataUsers.company_id
+            }
+            let data = await sq.query(`select p.id as "pembelian_id", c6.nama_coa6 as "nama_aset", * from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id left join coa6 c6 on c6.id = p.coa6_id left join coa5 c5 on c5.id = c6.coa5_id left join master_vendor mv on mv.id = p.vendor_id left join persediaan p2 on p2.id = p.persediaan_id left join m_jenis_aset mja on mja.id = p.jenis_asset_pembelian_id where tp."deletedAt" isnull and p."deletedAt" isnull and p.company_id = '${company_id}' order by p."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

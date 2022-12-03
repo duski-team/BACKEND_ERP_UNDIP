@@ -89,12 +89,17 @@ class Controller {
     }
 
     static async listPembelianByVendorId(req, res) {
-        let { vendor_id,company_id } = req.body
+        let { vendor_id,company_id, status_pembelian } = req.body
         try {
             if(!company_id){
                 company_id = req.dataUsers.company_id
             }
-            let data = await sq.query(`select tp.id as trx_pembelian_id, *, (select sum(tpk.nominal_txpk) from trx_pengeluaran_kas tpk where tpk."deletedAt" isnull and tpk.trx_pembelian_id = tp.id and tpk.status_persetujuan_txpk >1) as total_dibayar from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id join persediaan p2 on p2.id = p.persediaan_id  where tp."deletedAt" isnull and p.company_id = '${company_id}' and p.vendor_id = '${vendor_id}' and tp.status_persetujuan_txp = 3 order by tp.tgl_persetujuan_akuntan_txp desc`, s);
+            let isi = ''
+            if (status_pembelian) {
+                isi += ` and p.status_pembelian = ${status_pembelian} `
+            }
+
+            let data = await sq.query(`select tp.id as trx_pembelian_id, *, (select sum(tpk.nominal_txpk) from trx_pengeluaran_kas tpk where tpk."deletedAt" isnull and tpk.trx_pembelian_id = tp.id and tpk.status_persetujuan_txpk >1) as total_dibayar from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id join persediaan p2 on p2.id = p.persediaan_id  where tp."deletedAt" isnull and p.company_id = '${company_id}' and p.vendor_id = '${vendor_id}' and tp.status_persetujuan_txp = 3 ${isi} order by tp.tgl_persetujuan_akuntan_txp desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

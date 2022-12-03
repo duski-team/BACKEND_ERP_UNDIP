@@ -45,7 +45,7 @@ class Controller {
             let pembelian_id = uuid_v4();
 
             let hasil = await pembelian.create({ id:pembelian_id,persediaan_id,jumlah_pembelian, tanggal_pembelian, jenis_asset_pembelian_id, vendor_id, company_id,status_pembelian,coa6_id },{transaction:t});
-            await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id,master_satuan_id },{transaction:t});
+            await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,harga_satuan_txp,harga_total_txp,pembelian_id,master_satuan_id },{transaction:t});
 
             await t.commit();
             res.status(200).json({ status: 200, message: "sukses", data:hasil });

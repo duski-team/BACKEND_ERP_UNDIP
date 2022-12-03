@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const {sq} = require('../../config/connection');
 const pembelian = require('../pembelian/model');
+const masterSatuan = require('../master_satuan/model');
 
 const trxPembelian = sq.define('trx_pembelian', {
     id: {
@@ -16,9 +17,6 @@ const trxPembelian = sq.define('trx_pembelian', {
     },
     jumlah_txp: {
         type: DataTypes.INTEGER
-    },
-    satuan_txp: {
-        type: DataTypes.STRING
     },
     harga_satuan_txp: {
         type: DataTypes.DOUBLE
@@ -37,5 +35,8 @@ const trxPembelian = sq.define('trx_pembelian', {
     
     trxPembelian.belongsTo(pembelian,{foreignKey:'pembelian_id'})
     pembelian.hasMany(trxPembelian,{foreignKey:'pembelian_id'})
+    
+    trxPembelian.belongsTo(masterSatuan,{foreignKey:'master_satuan_id'})
+    masterSatuan.hasMany(trxPembelian,{foreignKey:'master_satuan_id'})
 
 module.exports = trxPembelian

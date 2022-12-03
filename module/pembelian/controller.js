@@ -10,7 +10,7 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static async register(req, res) {
-        let { jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,akun_barang_id } = req.body;
+        let { jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,akun_barang_id,status_pembelian } = req.body;
 
         const t = await sq.transaction();
         try {
@@ -24,7 +24,7 @@ class Controller {
             let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:akun_barang_id,akun_pasangan_id:akunHutang[0].id,nama:"barang"}
             let hutang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:akun_barang_id,nama:"hutang"}
 
-            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
+            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id,status_pembelian },{transaction:t});
             await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
             await generalLedger.bulkCreate([barang,hutang],{transaction:t})
 
@@ -40,7 +40,7 @@ class Controller {
     }
 
     static async registerAset(req, res) {
-        const { jumlah_pembelian,tanggal_pembelian,jenis_asset_pembelian_id,vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,coa6_id } = req.body;
+        const { jumlah_pembelian,tanggal_pembelian,jenis_asset_pembelian_id,vendor_id,satuan_txp,harga_satuan_txp,harga_total_txp,company_id,coa6_id,status_pembelian } = req.body;
 
         const t = await sq.transaction();
         try {
@@ -54,7 +54,7 @@ class Controller {
             let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:coa6_id,akun_pasangan_id:akunHutang[0].id,nama:"barang"}
             let hutang = {id:uuid_v4(),tanggal_transaksi:tanggal_pembelian,penambahan:harga_total_txp,pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:akun_barang_id,nama:"hutang"}
 
-            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, jenis_asset_pembelian_id, vendor_id, company_id },{transaction:t});
+            let hasil = await pembelian.create({ id:pembelian_id , jumlah_pembelian, tanggal_pembelian, jenis_asset_pembelian_id, vendor_id, company_id,status_pembelian },{transaction:t});
             await trxPembelian.create({ id: uuid_v4(),jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,pembelian_id },{transaction:t});
             await generalLedger.bulkCreate([barang,hutang],{transaction:t})
 
@@ -110,7 +110,7 @@ class Controller {
 
                 res.status(200).json({ status: 200, message: "sukses" });
             }else{
-                res.status(201).json({ status: 204, message: "status trx pembelian bukan 1" });
+                res.status(201).json({ status: 204, message: "status bukan 1" });
             }
         } catch (err) {
             await t.rollback();
@@ -120,16 +120,28 @@ class Controller {
         }
     }
 
-    static delete(req, res) {
+    static async delete(req, res) {
         const { id } = req.body
 
-        pembelian.destroy({ where: { id } }).then(data => {
-            res.status(200).json({ status: 200, message: "sukses" });
-        }).catch(err => {
+        const t = await sq.transaction();
+        try {
+            let cekPembelian = await trxPembelian.findAll({where:{pembelian_id:id}})
+            if(cekPembelian[0].status_persetujuan_txp == 1){
+                await pembelian.destroy({where:{id},transaction:t})
+                await trxPembelian.destroy({where:{pembelian_id:id},transaction:t})
+                await generalLedger.destroy({where:{pembelian_id:id},transaction:t})
+    
+                await t.commit();
+                res.status(200).json({ status: 200, message: "sukses" });
+            }else{
+                res.status(201).json({ status: 204, message: "status bukan 1" });
+            }
+        } catch (err) {
+            await t.rollback();
             console.log(req.body);
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
     static async list(req, res) {

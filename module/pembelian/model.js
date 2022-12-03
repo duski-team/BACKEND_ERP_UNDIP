@@ -16,7 +16,11 @@ const pembelian = sq.define('pembelian', {
     },
     tanggal_pembelian: {
         type: DataTypes.DATE
-    }
+    },
+    status_pembelian: {
+        type: DataTypes.SMALLINT,
+        defaultValue: 0         // 0: default || 1: lunas
+    },
 },
     {
         paranoid: true,

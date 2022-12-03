@@ -112,7 +112,7 @@ class Controller {
                     }
                 }
 
-                let akunModal = await sq.query(`select c6.*,gl.akun_id,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '3.1.1.1.01.0001' order by gl."createdAt" desc limit 1`,s);
+                let akunModal = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '3.1.1.1.01.0001' order gl.tanggal_transaksi desc,gl.sisa_saldo desc limit 1`,s);
                 let sisa_saldo = nominal_coa6
                 let saldoModal = sisa_saldo
 
@@ -120,12 +120,12 @@ class Controller {
                     saldoModal= akunModal[0].sisa_saldo + parseFloat(sisa_saldo)
                 }
 
-                let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:sisa_saldo,penambahan:sisa_saldo,status:4,akun_id:coa6_id,akun_pasangan_id:akunModal[0].id}
-                let modal = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:saldoModal,penambahan:sisa_saldo,status:4,akun_id:akunModal[0].id,akun_pasangan_id:coa6_id}
+                let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:sisa_saldo,penambahan:sisa_saldo,status:4,akun_id:coa6_id,akun_pasangan_id:akunModal[0].id,tanggal_persetujuan:tanggal_saldo_awal,nama_transaksi:"saldo awal"}
+                let modal = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:saldoModal,penambahan:sisa_saldo,status:4,akun_id:akunModal[0].id,akun_pasangan_id:coa6_id,tanggal_persetujuan:tanggal_saldo_awal,nama_transaksi:"saldo awal"}
 
                 let data = await coa6.create({id:coa6_id,nama_coa6, kode_coa6, coa5_id,nominal_coa6,deskripsi},{transaction:t});
                 await persediaan.create({ id:uuid_v4(), nama_persediaan, kode_persediaan, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar, company_id,master_satuan_id },{transaction:t});
-                await trxPembelian.create({id:uuid_v4(),tgl_persetujuan_manajer_txp:tanggal_saldo_awal,jumlah_txp:stock,tgl_persetujuan_akuntan_txp:tanggal_saldo_awal,status_persetujuan_txp:3,harga_satuan_txp:0,harga_total_txp:0,master_satuan_id},{transaction:t});
+                await trxPembelian.create({id:uuid_v4(),tgl_persetujuan_manajer_txp:tanggal_saldo_awal,jumlah_txp:stock,tgl_persetujuan_akuntan_txp:tanggal_saldo_awal,status_persetujuan_txp:4,harga_satuan_txp:0,harga_total_txp:0,master_satuan_id},{transaction:t});
                 await generalLedger.bulkCreate([barang,modal],{transaction:t});
                
                 await t.commit();

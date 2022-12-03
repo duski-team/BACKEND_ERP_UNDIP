@@ -30,17 +30,13 @@ const generalLedger = sq.define('general_ledger', {
         type: DataTypes.INTEGER,
         defaultValue:0
     },
-    status: {
-        type: DataTypes.INTEGER,  // 0 || 1
-        defaultValue: 0
-    },
     tanggal_persetujuan: {
         type: DataTypes.DATE
     },
     nama_transaksi: {
         type: DataTypes.STRING
     },
-    status_general_ledger: {
+    status: {
         type: DataTypes.STRING, 
         defaultValue: 1  // 0: ditolak || 1: created || 2: supervisor || 3: manager || 4: akuntan
     },

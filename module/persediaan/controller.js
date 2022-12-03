@@ -120,8 +120,8 @@ class Controller {
                     saldoModal= akunModal[0].sisa_saldo + parseFloat(sisa_saldo)
                 }
 
-                let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:sisa_saldo,penambahan:sisa_saldo,status:1,akun_id:coa6_id,akun_pasangan_id:akunModal[0].id}
-                let modal = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:saldoModal,penambahan:sisa_saldo,status:1,akun_id:akunModal[0].id,akun_pasangan_id:coa6_id}
+                let barang = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:sisa_saldo,penambahan:sisa_saldo,status:4,akun_id:coa6_id,akun_pasangan_id:akunModal[0].id}
+                let modal = {id:uuid_v4(),tanggal_transaksi:tanggal_saldo_awal,sisa_saldo:saldoModal,penambahan:sisa_saldo,status:4,akun_id:akunModal[0].id,akun_pasangan_id:coa6_id}
 
                 let data = await coa6.create({id:coa6_id,nama_coa6, kode_coa6, coa5_id,nominal_coa6,deskripsi},{transaction:t});
                 await persediaan.create({ id:uuid_v4(), nama_persediaan, kode_persediaan, harga_jual, stock, stock_rusak, harga_satuan, tanggal_saldo_awal, kondisi, keterangan, coa6_id, kategori_id, sub_kategori_id, sub_sub_kategori_id, gambar, company_id,master_satuan_id },{transaction:t});

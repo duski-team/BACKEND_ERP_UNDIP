@@ -3,6 +3,7 @@ const { sq } = require('../../config/connection');
 const pembelian = require('../pembelian/model');
 const coa6 = require('../coa6/model');
 const order = require('../order/model');
+const pegawai = require('../users/model');
 
 const generalLedger = sq.define('general_ledger', {
     id: {
@@ -13,11 +14,11 @@ const generalLedger = sq.define('general_ledger', {
         type: DataTypes.DATE
     },
     penambahan: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.DOUBLE,
         defaultValue:0
     },
     pengurangan: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.DOUBLE,
         defaultValue:0
     },
     keterangan: {
@@ -27,7 +28,7 @@ const generalLedger = sq.define('general_ledger', {
         type: DataTypes.STRING
     },
     sisa_saldo: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DOUBLE,
         defaultValue:0
     },
     tanggal_persetujuan: {
@@ -37,7 +38,7 @@ const generalLedger = sq.define('general_ledger', {
         type: DataTypes.STRING
     },
     status: {
-        type: DataTypes.INTEGER, 
+        type: DataTypes.SMALLINT, 
         defaultValue: 1  // 0: ditolak || 1: created || 2: supervisor || 3: manager || 4: akuntan
     },
 },
@@ -57,5 +58,8 @@ coa6.hasMany(generalLedger, { foreignKey: 'akun_id' })
 
 generalLedger.belongsTo(coa6, { foreignKey: 'akun_pasangan_id' })
 coa6.hasMany(generalLedger, { foreignKey: 'akun_pasangan_id' })
+
+generalLedger.belongsTo(pegawai, { foreignKey: 'pegawai_id' })
+pegawai.hasMany(generalLedger, { foreignKey: 'pegawai_id' })
 
 module.exports = generalLedger

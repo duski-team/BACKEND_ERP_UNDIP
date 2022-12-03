@@ -19,6 +19,18 @@ class Controller {
         })
     }
 
+    static async registerPenerimaanKasNonPelanggan(req, res) {
+        const { akun_id, penambahan, keterangan, referensi_bukti, sisa_saldo } = req.body
+
+        try {
+            let cekAkun = await sq.query(``,s)
+        } catch (err) {
+            console.log(req.body)
+            console.log(err)
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
+    }
+
     static update(req, res) {
         const { id, tanggal_transaksi, penambahan, pengurangan, keterangan, referensi_bukti, sisa_saldo, pembelian_id, penjualan_id, akun_id, akun_pasangan_id,tanggal_persetujuan } = req.body
 

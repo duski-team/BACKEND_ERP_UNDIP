@@ -36,7 +36,13 @@ const generalLedger = sq.define('general_ledger', {
     },
     tanggal_persetujuan: {
         type: DataTypes.DATE
-    }
+    },
+    nama_transaksi: {
+        type: DataTypes.STRING
+    },
+    status_general_ledger: {
+        type: DataTypes.STRING  // 0: ditolak || 1: created || 2: supervisor || 3: manager || 4: akuntan
+    },
 },
     {
         paranoid: true,

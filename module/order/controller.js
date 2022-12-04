@@ -139,34 +139,49 @@ class Controller {
     }
 
     static async acceptStatus(req,res){
-        const{id,status_order} = req.body
+        let{id,status_order,company_id} = req.body
 
         const t = await sq.transaction();
 
         try {
-            let data = await sq.query(`select bo.*,o.status_order from barang_order bo join "order" o on o.id = bo.order_id where bo."deletedAt" isnull and bo.order_id ='${id}'`,s);
+            if(!company_id){
+                company_id = req.dataUsers.company_id
+            }
+
+            let data = await sq.query(`select bo.*,o.kode_invoice,o.tgl_order,p.stock,p.coa6_id,o.status_order,c6.nominal_coa6,(select gl.sisa_saldo from general_ledger gl where gl."deletedAt" isnull and gl.status=4 and gl.akun_id = p.coa6_id order by gl.tanggal_persetujuan desc limit 1) from barang_order bo join "order" o on o.id = bo.order_id join persediaan p on p.id = bo.persediaan_id join coa6 c6 on c6.id = p.coa6_id where o."deletedAt" isnull and bo.order_id = '${id}'`,s);
             
             if(data.length == 0){
                 res.status(201).json({ status: 204, message: "data tidak ada" });
             }else{
-                if(data[0].status_order != 1){
-                    res.status(201).json({ status: 204, message: "status bukan 1" });
+                if(data[0].status_order == 0 || data[0].status_order == 4){
+                    res.status(201).json({ status: 204, message: "status 0/4" });
                 }else{
                     if(status_order == 0){
-                        let barang = await sq.query(`select * from persediaan p where p."deletedAt" isnull and p.id in (select bo.persediaan_id from barang_order bo join "order" o on o.id = bo.order_id where bo."deletedAt" isnull and bo.order_id ='${id}')`,s);
-
-                        for (let i = 0; i < barang.length; i++) {
-                            for (let j = 0; j < data.length; j++) {
-                                if(barang[i].id == data[j].persediaan_id){
-                                    barang[i].stock += data[j].jumlah
-                                }
-                            }
+                        let stock = []
+                        for (let i = 0; i < data.length; i++) {
+                            let jml = data[i].stock+data[i].jumlah
+                            stock.push({id:data[i].persediaan_id,stock:jml})
                         }
-                        await persediaan.bulkCreate(barang,{updateOnDuplicate:['stock'],transaction:t});
+                        await persediaan.bulkCreate(stock,{updateOnDuplicate:['stock'],transaction:t});
                     }
-                    if(status_order == 2){
-        
-                    }
+                    // if(status_order == 2){
+                    //     let akunHpp = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id
+                    //     where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 ='1.1.3.2.01.0009' order by gl.tanggal_persetujuan desc limit 1`,s);
+                    //     let barang = []
+                    //     let hpp = []
+                    //     let nilaiHpp = !akunHpp[0].sisa_saldo? akunHpp[0].nominal_coa6:akunHpp[0].sisa_saldo
+
+                    //     for (let i = 0; i < data.length; i++) {
+                    //         let saldoBarang = data[i].sisa_saldo - data[i].harga_total
+                    //         nilaiHpp+=data[i].harga_total
+
+                    //         let x = {id:uuid_v4(),tanggal_transaksi:data[i].tgl_order,pengurangan:data[i].harga_total,referensi_bukti:data[i].kode_invoice,sisa_saldo:saldoBarang,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[i].order_id,akun_id:data[i].coa6_id,akun_pasangan_id:akunHpp[0].id}
+                    //         let y = {id:uuid_v4(),tanggal_transaksi:data[i].tgl_order,penambahan:data[i].harga_total,referensi_bukti:data[i].kode_invoice,sisa_saldo:nilaiHpp,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[i].order_id,akun_id:akunHpp[0].id,akun_pasangan_id:data[i].coa6_id}
+                    //         barang.push(x)
+                    //         hpp.push(y)
+                    //     }
+
+                    // }
                     await order.update({status_order},{where:{id},transaction:t})
                     await t.commit();
                     res.status(200).json({ status: 200, message: "sukses" });
@@ -179,6 +194,48 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    // static async acceptStatus(req,res){
+    //     const{id,status_order} = req.body
+
+    //     const t = await sq.transaction();
+
+    //     try {
+    //         let data = await sq.query(`select bo.*,o.status_order from barang_order bo join "order" o on o.id = bo.order_id where bo."deletedAt" isnull and bo.order_id ='${id}'`,s);
+            
+    //         if(data.length == 0){
+    //             res.status(201).json({ status: 204, message: "data tidak ada" });
+    //         }else{
+    //             if(data[0].status_order != 1){
+    //                 res.status(201).json({ status: 204, message: "status bukan 1" });
+    //             }else{
+    //                 if(status_order == 0){
+    //                     let barang = await sq.query(`select * from persediaan p where p."deletedAt" isnull and p.id in (select bo.persediaan_id from barang_order bo join "order" o on o.id = bo.order_id where bo."deletedAt" isnull and bo.order_id ='${id}')`,s);
+
+    //                     for (let i = 0; i < barang.length; i++) {
+    //                         for (let j = 0; j < data.length; j++) {
+    //                             if(barang[i].id == data[j].persediaan_id){
+    //                                 barang[i].stock += data[j].jumlah
+    //                             }
+    //                         }
+    //                     }
+    //                     await persediaan.bulkCreate(barang,{updateOnDuplicate:['stock'],transaction:t});
+    //                 }
+    //                 if(status_order == 4){
+                        
+    //                 }
+    //                 await order.update({status_order},{where:{id},transaction:t})
+    //                 await t.commit();
+    //                 res.status(200).json({ status: 200, message: "sukses" });
+    //             }
+    //         }
+    //     } catch (err) {
+    //          await t.rollback();
+    //         console.log(req.body);
+    //         console.log(err);
+    //         res.status(500).json({ status: 500, message: "gagal", data: err });
+    //     }
+    // }
 
     static  async delete(req, res) {
         const { id } = req.body

@@ -10,7 +10,7 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static async register(req, res) {
-        let { jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,harga_satuan_txp,harga_total_txp,company_id,coa6_id,status_pembelian,master_satuan_id } = req.body;
+        let { jumlah_pembelian,tanggal_pembelian,persediaan_id,jenis_asset_pembelian_id,vendor_id,harga_satuan_txp,harga_total_txp,company_id,coa6_id,status_pembelian,master_satuan_id } = req.body;
 
         const t = await sq.transaction();
         try {
@@ -34,7 +34,7 @@ class Controller {
     }
 
     static async registerAset(req, res) {
-        const { jumlah_pembelian, tanggal_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id,harga_satuan_txp,harga_total_txp,company_id,coa6_id,status_pembelian,master_satuan_id } = req.body;
+        const { jumlah_pembelian,tanggal_pembelian,persediaan_id,jenis_asset_pembelian_id,vendor_id,harga_satuan_txp,harga_total_txp,company_id,coa6_id,status_pembelian,master_satuan_id } = req.body;
 
         const t = await sq.transaction();
         try {
@@ -129,14 +129,14 @@ class Controller {
 
             let cekPembelian = await trxPembelian.findAll({where:{pembelian_id:id}})
 
-            if(cekPembelian[0].status_persetujuan_txp == 1){
+            if(cekPembelian[0].status_persetujuan_txp > 1){
+                res.status(201).json({ status: 204, message: "status bukan 1" });
+            }else{
                 await pembelian.update({ jumlah_pembelian, tanggal_pembelian, status_pembelian, persediaan_id, jenis_asset_pembelian_id, vendor_id, company_id,coa6_id }, { where: { id },transaction:t });
                 await trxPembelian.update({jumlah_txp:jumlah_pembelian,satuan_txp,harga_satuan_txp,harga_total_txp,master_satuan_id },{where:{pembelian_id:id},transaction:t});
                 await t.commit();
 
                 res.status(200).json({ status: 200, message: "sukses" });
-            }else{
-                res.status(201).json({ status: 204, message: "status bukan 1" });
             }
         } catch (err) {
             await t.rollback();

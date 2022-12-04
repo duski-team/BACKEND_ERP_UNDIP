@@ -10,7 +10,7 @@ const trxPembelian = sq.define('trx_pembelian', {
     },
     status_persetujuan_txp: {
         type: DataTypes.INTEGER,
-        defaultValue: 1             // 0: tolak || 1: default || 2: manager || 3: akuntansi
+        defaultValue: 1            // 0: ditolak || 1: created || 2: supervisor/manager || 3: kasir || 4: akuntan
     },
     tgl_persetujuan_manajer_txp: {
         type: DataTypes.DATE

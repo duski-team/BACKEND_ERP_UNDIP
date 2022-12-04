@@ -38,6 +38,41 @@ class Controller {
         }
     }
 
+    static async approvalPenerimaanKasNonPelanggan(req, res) {
+        const { id } = req.body
+
+        try {
+            let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`,s)
+            let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
+            let cekSaldo = await sq.query(`select sum(gl.sisa_saldo) as "sisa_saldo" from general_ledger gl join coa6 c6 on c6.id = gl.akun_pasangan_id where gl."deletedAt" isnull and c6.kode_coa6 = '1.1.1.1.01.0001' and gl.nama_transaksi = 'penerimaan kas non pelanggan'`,s)
+
+            let akunPenambahanKas = {id, sisa_saldo:0, status: 4}
+            let akunKas = {id:'', sisa_saldo:0, status: 4}
+
+            for (let i = 0; i < cekAkun.length; i++) {
+                if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
+                    if (cekId[0].akun_pasangan_id == cekAkun[i].akun_id) {
+                        akunKas.id = cekAkun[i].id
+                        if (cekSaldo[0].sisa_saldo == 0) {
+                            akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan 
+                            akunKas.sisa_saldo = cekAkun[i].penambahan
+                        } else {
+                            akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
+                            akunKas.sisa_saldo = cekSaldo[0].sisa_saldo + cekAkun[i].penambahan
+                        }
+                    }
+                }
+            }
+            await generalLedger.bulkCreate([akunPenambahanKas, akunKas], {updateOnDuplicate: ["sisa_saldo", "status"]})
+            
+            res.status(200).json({ status: 200, message: "sukses" })
+        } catch (err) {
+            console.log(req.body)
+            console.log(err)
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
+    }
+
     static update(req, res) {
         const { id, tanggal_transaksi, penambahan, pengurangan, keterangan, referensi_bukti, sisa_saldo, pembelian_id, penjualan_id, akun_id, akun_pasangan_id, tanggal_persetujuan } = req.body
 

@@ -95,7 +95,7 @@ class Controller {
             }else{
                 if(status_persetujuan_txp == 4){
 
-                    let akunHutang = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 1 where c6."deletedAt" isnull and c5.company_id = '${cekStatus[0].company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001' order by gl.tanggal_persetujuan desc,gl.sisa_saldo desc limit 1`,s);
+                    let akunHutang = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${cekStatus[0].company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001' order by gl.tanggal_persetujuan desc,gl.sisa_saldo desc limit 1`,s);
                     let akunBarang = await sq.query(`select gl.sisa_saldo from general_ledger gl where gl."deletedAt" isnull and gl.akun_id = '${cekStatus[0].coa6_id}' and gl.status = 4 order by gl.tanggal_persetujuan desc,gl.sisa_saldo desc`,s);
                     let hargaTotal = cekStatus[0].harga_total_txp
                     let tglPembelian = cekStatus[0].tanggal_pembelian
@@ -108,6 +108,7 @@ class Controller {
                     let hutang = {id:uuid_v4(),sisa_saldo:saldoHutang,tanggal_transaksi:tglPembelian,penambahan:hargaTotal,pembelian_id:cekStatus[0].pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:cekStatus[0].coa6_id,tanggal_persetujuan:tgl_persetujuan_akuntan_txp,nama_transaksi:"pembelian",status:4,nama:"hutang"}
 
                     await generalLedger.bulkCreate([barang,hutang],{transaction:t})
+                    
                     if(cekStatus[0].persediaan_id){
                         await persediaan.update({stock:cekStatus[0].total_stock,harga_satuan:cekStatus[0].harga_satuan_txp},{where:{id:cekStatus[0].persediaan_id},transaction:t})
                     }

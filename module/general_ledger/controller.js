@@ -230,9 +230,11 @@ class Controller {
             let jenisInvestasi = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunKas[0].id, akun_pasangan_id: akunBank[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pengembalian dana investasi" }
 
             if (cekSaldo.length == 0 || cekSaldo[0].sisa_saldo == 0) {
-                kas.sisa_saldo = nominal
+                kas.sisa_saldo = nominal 
+                jenisInvestasi.sisa_saldo = nominal
             } else {
-                kas.sisa_saldo = cekSaldo[0].sisa_saldo - nominal
+                kas.sisa_saldo = cekSaldo[0].sisa_saldo - nominal 
+                jenisInvestasi.sisa_saldo = nominal
             }
 
             // console.log(kas);

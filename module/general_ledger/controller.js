@@ -247,5 +247,39 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async pembayaranDanaInvestasi(req, res) {
+        let { invoice, tanggal_transaksi, jenis_investasi_id, nominal, deskripsi, company_id, akun_bank_id } = req.body;
+
+        try {
+            if (!company_id) {
+                company_id = req.dataUsers.company_id
+            }
+
+            let akunKas = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id ='${jenis_investasi_id}' order by gl.tanggal_persetujuan desc limit 1`, s);
+            let akunBank = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id ='${akun_bank_id}' order by gl.tanggal_persetujuan desc limit 1`, s);
+            let cekSaldo = await sq.query(`select gl.sisa_saldo from general_ledger gl join coa6 c6 on c6.id = gl.akun_id where gl."deletedAt" isnull and gl.status = 4 and c6.kode_coa6 = '1.1.1.1.01.0001' order by gl.tanggal_persetujuan desc limit 1`, s)
+
+            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunBank[0].id, akun_pasangan_id: akunKas[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pembayaran dana investasi" }
+            let jenisInvestasi = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunKas[0].id, akun_pasangan_id: akunBank[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pembayaran dana investasi" }
+
+            if (cekSaldo.length == 0 || cekSaldo[0].sisa_saldo == 0) {
+                kas.sisa_saldo = nominal 
+                jenisInvestasi.sisa_saldo = nominal
+            } else {
+                kas.sisa_saldo = cekSaldo[0].sisa_saldo - nominal 
+                jenisInvestasi.sisa_saldo = nominal
+            }
+
+            // console.log(kas);
+            // console.log(jenisInvestasi);
+            let hasil = await generalLedger.bulkCreate([jenisInvestasi, kas])
+            res.status(200).json({ status: 200, message: "sukses", data: hasil })
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 module.exports = Controller;

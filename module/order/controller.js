@@ -19,7 +19,7 @@ class Controller {
                 company_id = req.dataUsers.company_id
             }
             if(!kode_invoice){
-                kode_invoice = `${moment().format('dddYYMMDDHHmmSSS')}`
+                kode_invoice = `INV-${moment().format('dddYYMMDDHHmmSSS')}`
             }
 
             let order_id = uuid_v4();

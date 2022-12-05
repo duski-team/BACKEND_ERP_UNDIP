@@ -279,7 +279,7 @@ class Controller {
         }
     }
 
-    static async pengembalianDanaInvestasi(req, res) {
+    static async pengeluaranKasPengembalianDanaInvestasi(req, res) {
         let { invoice, tanggal_transaksi, jenis_investasi_id, nominal, deskripsi, company_id, akun_bank_id } = req.body;
 
         try {
@@ -313,7 +313,7 @@ class Controller {
         }
     }
 
-    static async pembayaranDanaInvestasi(req, res) {
+    static async pengeluaranKasPembayaranDanaInvestasi(req, res) {
         let { invoice, tanggal_transaksi, jenis_investasi_id, nominal, deskripsi, company_id, akun_bank_id } = req.body;
 
         try {

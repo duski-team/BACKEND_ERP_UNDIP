@@ -14,5 +14,6 @@ router.get('/listAkunPengembalianInvestasi', authentification, Controller.listAk
 router.get('/listAkunPendanaanDariPinjaman', authentification, Controller.listAkunPendanaanDariPinjaman);
 router.get('/listAkunPenambahanModal', authentification, Controller.listAkunPenambahanModal);
 router.get('/listAkunJenisInvestasi', authentification, Controller.listAkunJenisInvestasi);
+router.get('/listAkunKasByCompanyId', authentification, Controller.listAkunKasByCompanyId);
 
 module.exports = router

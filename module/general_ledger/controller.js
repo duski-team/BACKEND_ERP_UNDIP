@@ -20,7 +20,7 @@ class Controller {
     }
 
     static async registerPenerimaanKasNonPelangganPengembalianInvestasi(req, res) {
-        const { coa6_id, jumlah, deskripsi_penerimaan_kas, nomor_faktur, akun_kas_id, company_id } = req.body
+        let { coa6_id, jumlah, deskripsi_penerimaan_kas, nomor_faktur, akun_kas_id, company_id } = req.body
 
         try {
             if (!company_id) {
@@ -41,7 +41,7 @@ class Controller {
     }
 
     static async registerPenerimaanKasNonPelangganPendanaanDariPinjaman(req, res) {
-        const { coa6_id, jumlah, deskripsi_penerimaan_kas, nomor_faktur, akun_kas_id, company_id } = req.body
+        let { coa6_id, jumlah, deskripsi_penerimaan_kas, nomor_faktur, akun_kas_id, company_id } = req.body
 
         try {
             if (!company_id) {
@@ -62,7 +62,7 @@ class Controller {
     }
 
     static async registerPenerimaanKasNonPelangganPenambahanModal(req, res) {
-        const { coa6_id, jumlah, deskripsi_penerimaan_kas, nomor_faktur, akun_kas_id, company_id } = req.body
+        let { coa6_id, jumlah, deskripsi_penerimaan_kas, nomor_faktur, akun_kas_id, company_id } = req.body
 
         try {
             if (!company_id) {

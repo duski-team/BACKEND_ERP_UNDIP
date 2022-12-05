@@ -75,5 +75,16 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async listAkunKasByCompanyId(req, res) {
+        try {
+            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join coa4 c4 on c4.id = c5.coa4_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c4.kode_coa4 = '1.1.1.1' or c4.kode_coa4 = '1.1.1.7' and c5.company_id = '${req.dataUsers.company_id}' order by c6.kode_coa6`, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 module.exports = Controller;

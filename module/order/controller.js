@@ -309,5 +309,17 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async listOrderByCustomerId(req, res) {
+        let { customer_id } = req.body
+        try {
+            let data = await sq.query(`select o.id as "order_id", * from "order" o left join jenis_penjualan jp on jp.id = o.jenis_penjualan_id left join status_va sv on sv.id = o.status_va_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id left join users u on u.id = o.customer_id where o."deletedAt" isnull and o.customer_id = '${customer_id}' order by o."createdAt" desc`, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 module.exports = Controller;

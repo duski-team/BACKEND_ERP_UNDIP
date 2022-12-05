@@ -9,10 +9,11 @@ const routing = require('./index')
 
 app.use(morgan('dev'))
 app.use(cors())
+
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-// app.use(express.static('asset/file/'));
+app.use(express.static('asset/file/'));
 
 app.use('/', routing);
 

@@ -81,7 +81,7 @@ class Controller {
         }
     }
 
-    static async acceptPersetujuan(req, res) {
+    static async acceptPersetujuanPersediaan(req, res) {
         let { id,status_persetujuan_txp,tgl_persetujuan_akuntan_txp,tgl_persetujuan_manajer_txp } = req.body
 
         const t = await sq.transaction();
@@ -103,9 +103,53 @@ class Controller {
                     let saldoBarang = akunBarang.length>0?akunBarang[0].sisa_saldo+hargaTotal:hargaTotal
                     let saldoHutang = !akunHutang[0].sisa_saldo?hargaTotal:akunHutang[0].sisa_saldo+hargaTotal
 
-                    let barang = {id:uuid_v4(),sisa_saldo:saldoBarang,tanggal_transaksi:tglPembelian,penambahan:hargaTotal,pembelian_id:cekStatus[0].pembelian_id,akun_id:cekStatus[0].coa6_id,akun_pasangan_id:akunHutang[0].id,tanggal_persetujuan:tgl_persetujuan_akuntan_txp,nama_transaksi:"pembelian",status:4,nama:"barang"}
+                    let barang = {id:uuid_v4(),sisa_saldo:saldoBarang,tanggal_transaksi:tglPembelian,penambahan:hargaTotal,pembelian_id:cekStatus[0].pembelian_id,akun_id:cekStatus[0].coa6_id,akun_pasangan_id:akunHutang[0].id,tanggal_persetujuan:tgl_persetujuan_akuntan_txp,nama_transaksi:"pembelian persediaan",status:4,nama:"barang"}
                     
-                    let hutang = {id:uuid_v4(),sisa_saldo:saldoHutang,tanggal_transaksi:tglPembelian,penambahan:hargaTotal,pembelian_id:cekStatus[0].pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:cekStatus[0].coa6_id,tanggal_persetujuan:tgl_persetujuan_akuntan_txp,nama_transaksi:"pembelian",status:4,nama:"hutang"}
+                    let hutang = {id:uuid_v4(),sisa_saldo:saldoHutang,tanggal_transaksi:tglPembelian,penambahan:hargaTotal,pembelian_id:cekStatus[0].pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:cekStatus[0].coa6_id,tanggal_persetujuan:tgl_persetujuan_akuntan_txp,nama_transaksi:"pembelian persediaan",status:4,nama:"hutang"}
+
+                    await generalLedger.bulkCreate([barang,hutang],{transaction:t})
+                    
+                    if(cekStatus[0].persediaan_id){
+                        await persediaan.update({stock:cekStatus[0].total_stock,harga_satuan:cekStatus[0].harga_satuan_txp},{where:{id:cekStatus[0].persediaan_id},transaction:t})
+                    }
+                }
+    
+                await trxPembelian.update({tgl_persetujuan_akuntan_txp,tgl_persetujuan_manajer_txp,status_persetujuan_txp},{where:{id},transaction:t});
+                await t.commit();
+                res.status(200).json({ status: 200, message: "sukses" });
+            }
+        } catch (err) {
+            await t.rollback();
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async acceptPersetujuanAsset(req, res) {
+        let { id,status_persetujuan_txp,tgl_persetujuan_akuntan_txp,tgl_persetujuan_manajer_txp } = req.body
+
+        const t = await sq.transaction();
+        try { 
+
+            let cekStatus = await sq.query(`select tp.*,p.company_id,p.tanggal_pembelian,p.coa6_id,p.persediaan_id,p2.stock,p2.harga_satuan,(tp.jumlah_txp+p2.stock) as total_stock from trx_pembelian tp join pembelian p on p.id = tp.pembelian_id left join persediaan p2 on p2.id = p.persediaan_id where tp."deletedAt" isnull and tp.id = '${id}'`,s);
+
+             // 4: akuntansi
+            if(cekStatus[0].status_persetujuan_txp == 4){
+                res.status(201).json({ status: 204, message: "status sudah 4" });
+            }else{
+                if(status_persetujuan_txp == 4){
+
+                    let akunHutang = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${cekStatus[0].company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001' order by gl.tanggal_persetujuan desc,gl.sisa_saldo desc limit 1`,s);
+                    let akunBarang = await sq.query(`select gl.sisa_saldo from general_ledger gl where gl."deletedAt" isnull and gl.akun_id = '${cekStatus[0].coa6_id}' and gl.status = 4 order by gl.tanggal_persetujuan desc,gl.sisa_saldo desc`,s);
+                    let hargaTotal = cekStatus[0].harga_total_txp
+                    let tglPembelian = cekStatus[0].tanggal_pembelian
+
+                    let saldoBarang = akunBarang.length>0?akunBarang[0].sisa_saldo+hargaTotal:hargaTotal
+                    let saldoHutang = !akunHutang[0].sisa_saldo?hargaTotal:akunHutang[0].sisa_saldo+hargaTotal
+
+                    let barang = {id:uuid_v4(),sisa_saldo:saldoBarang,tanggal_transaksi:tglPembelian,penambahan:hargaTotal,pembelian_id:cekStatus[0].pembelian_id,akun_id:cekStatus[0].coa6_id,akun_pasangan_id:akunHutang[0].id,tanggal_persetujuan:tgl_persetujuan_akuntan_txp,nama_transaksi:"pembelian aset",status:4,nama:"barang"}
+                    
+                    let hutang = {id:uuid_v4(),sisa_saldo:saldoHutang,tanggal_transaksi:tglPembelian,penambahan:hargaTotal,pembelian_id:cekStatus[0].pembelian_id,akun_id:akunHutang[0].id,akun_pasangan_id:cekStatus[0].coa6_id,tanggal_persetujuan:tgl_persetujuan_akuntan_txp,nama_transaksi:"pembelian aset",status:4,nama:"hutang"}
 
                     await generalLedger.bulkCreate([barang,hutang],{transaction:t})
                     

@@ -10,6 +10,7 @@ router.post('/listTrxPengeluaranKasByJenisPengeluaranKasId', authentification, C
 router.post('/listTrxPengeluaranKasByTrxPembelianId', authentification, Controller.listTrxPengeluaranKasByTrxPembelianId);
 router.post('/listPembelianByVendorId', authentification, Controller.listPembelianByVendorId);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
-router.post('/acceptPersetujuan', authentification, Controller.acceptPersetujuan);
+router.post('/acceptPersetujuanPembayaranKewajibanVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanVendor);
+router.post('/acceptPersetujuanPembayaranKewajibanLainKepadaVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanLainKepadaVendor);
 
 module.exports = router

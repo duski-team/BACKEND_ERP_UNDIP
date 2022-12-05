@@ -325,7 +325,7 @@ class Controller {
     static async listBarangOrderByOrderId(req, res) {
         let { order_id } = req.body
         try {
-            let data = await sq.query(`select bo.id as "barang_order_id", * from barang_order bo join persediaan p on p.id = bo.persediaan_id where bo."deletedAt" isnull and p."deletedAt" isnull and bo.order_id = '${order_id}'`, s);
+            let data = await sq.query(`select bo.id as "barang_order_id", * from barang_order bo join persediaan p on p.id = bo.persediaan_id join master_satuan ms on ms.id = p.master_satuan_id join kategori k on k.id = p.kategori_id where bo."deletedAt" isnull and p."deletedAt" isnull and bo.order_id = '${order_id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

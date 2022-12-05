@@ -120,5 +120,33 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async pengembalianInvestasi(req,res){
+        let {invoice,tanggal_transaksi,jenis_investasi_id,nominal,deskripsi,company_id,akun_bank_id} = req.body;
+        
+        try {
+            if (!company_id) {
+                company_id = req.dataUsers.company_id
+            }
+
+            let akunKas = await sq.query(`select c6.*,gl.sisa_saldo 
+            from coa6 c6 
+            join coa5 c5 on c5.id = c6.coa5_id
+            left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4
+            where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id ='${jenis_investasi_id}' order by gl.tanggal_persetujuan desc limit 1`,s);
+
+            let akunBank = await sq.query(`select c6.*,gl.sisa_saldo 
+            from coa6 c6 
+            join coa5 c5 on c5.id = c6.coa5_id
+            left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4
+            where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id ='${akun_bank_id}' order by gl.tanggal_persetujuan desc limit 1`,s);
+
+            let kas = {id}
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 module.exports = Controller;

@@ -19,50 +19,6 @@ class Controller {
         })
     }
 
-    static async listAkunPengembalianInvestasi(req, res) {
-        try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.kode_coa6 ilike '1.1.2%' or c6.kode_coa6 ilike '1.2.1%' order by c6.kode_coa6`, s);
-
-            res.status(200).json({ status: 200, message: "sukses", data });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        }
-    }
-
-    static async listAkunPendanaanDariPinjaman(req, res) {
-        try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.kode_coa6 ilike '2.1.7%' order by c6.kode_coa6`, s);
-
-            res.status(200).json({ status: 200, message: "sukses", data });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        }
-    }
-
-    static async listAkunPenambahanModal(req, res) {
-        try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.kode_coa6 ilike '3%' order by c6.kode_coa6`, s);
-
-            res.status(200).json({ status: 200, message: "sukses", data });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        }
-    }
-
-    static async listAkunJenisInvestasi(req, res) {
-        try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.kode_coa6 ilike '1.2.1%' order by c6.kode_coa6 `, s);
-
-            res.status(200).json({ status: 200, message: "sukses", data });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ status: 500, message: "gagal", data: err });
-        }
-    }
-
     static async registerPenerimaanKasNonPelangganPengembalianInvestasi(req, res) {
         const { coa6_id, jumlah, deskripsi_penerimaan_kas, nomor_faktur, company_id } = req.body
 

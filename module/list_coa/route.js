@@ -10,5 +10,9 @@ router.post('/listCoa6ByCoa3', authentification, Controller.listCoa6ByCoa3);
 //! COA4
 //! COA5
 //! COA6
+router.get('/listAkunPengembalianInvestasi', authentification, Controller.listAkunPengembalianInvestasi);
+router.get('/listAkunPendanaanDariPinjaman', authentification, Controller.listAkunPendanaanDariPinjaman);
+router.get('/listAkunPenambahanModal', authentification, Controller.listAkunPenambahanModal);
+router.get('/listAkunJenisInvestasi', authentification, Controller.listAkunJenisInvestasi);
 
 module.exports = router

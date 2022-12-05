@@ -222,7 +222,7 @@ class Controller {
 
     static async listPenerimaanKasNonPelanggan(req, res) {
         try {
-            let data = await sq.query(`select gl.id as "general_ledger_id", *, c62.nama_coa6 as "nama_coa6_pasangan", c62.kode_coa6 as "kode_coa6_pasangan" from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa6 c62 on c62.id = gl.akun_pasangan_id where gl.nama_transaksi = 'penerimaan kas non pelanggan' order by gl."createdAt" desc`, s);
+            let data = await sq.query(`select gl.id as "general_ledger_id", *, c62.nama_coa6 as "nama_coa6_pasangan", c62.kode_coa6 as "kode_coa6_pasangan" from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa6 c62 on c62.id = gl.akun_pasangan_id where gl.nama_transaksi = 'penerimaan kas non pelanggan pendanaan dari pinjaman' or gl.nama_transaksi = 'penerimaan kas non pelanggan pengembalian investasi' or gl.nama_transaksi = 'penerimaan kas non pelanggan penambahan modal' order by gl."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

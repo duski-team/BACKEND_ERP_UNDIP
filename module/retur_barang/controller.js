@@ -45,7 +45,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select gl.id as "general_ledger_id", * from general_ledger gl join "order" o on o.id = gl.penjualan_id join pembelian p on p.id = gl.pembelian_id join coa6 c on c.id = gl.akun_id and c.id = gl.akun_pasangan_id where gl."deletedAt" isnull order by gl."createdAt" desc`, s);
+            let data = await sq.query(`select rb.id as "retur_barang_id", * from retur_barang rb join persediaan p on p.id = rb.persediaan_id join "order" o on o.id = rb.order_id where rb."deletedAt" isnull and p."deletedAt" isnull and o."deletedAt" isnull order by rb."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -58,7 +58,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select gl.id as "general_ledger_id", * from general_ledger gl join "order" o on o.id = gl.penjualan_id join pembelian p on p.id = gl.pembelian_id join coa6 c on c.id = gl.akun_id and c.id = gl.akun_pasangan_id where gl."deletedAt" isnull and gl.id = '${id}'`, s);
+            let data = await sq.query(`select rb.id as "retur_barang_id", * from retur_barang rb join persediaan p on p.id = rb.persediaan_id join "order" o on o.id = rb.order_id where rb."deletedAt" isnull and p."deletedAt" isnull and o."deletedAt" isnull and rb.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

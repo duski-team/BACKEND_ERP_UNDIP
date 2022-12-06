@@ -22,9 +22,6 @@ const returBarang = sq.define('retur_barang', {
     keterangan: {
         type: DataTypes.STRING
     },
-    status_retur: {
-        type: DataTypes.STRING
-    },
     no_invoice: {
         type: DataTypes.STRING
     },
@@ -41,6 +38,10 @@ const returBarang = sq.define('retur_barang', {
     total_harga_dan_pajak: {
         type: DataTypes.DOUBLE, 
         defaultValue: 0 
+    },
+    status_retur: {
+        type: DataTypes.SMALLINT,
+        defaultValue : 1
     },
 },
     {

@@ -15,5 +15,6 @@ router.get('/listAkunPendanaanDariPinjaman', authentification, Controller.listAk
 router.get('/listAkunPenambahanModal', authentification, Controller.listAkunPenambahanModal);
 router.get('/listAkunJenisInvestasi', authentification, Controller.listAkunJenisInvestasi);
 router.get('/listAkunKasByCompanyId', authentification, Controller.listAkunKasByCompanyId);
+router.post('/listCoa6ByCoa2', authentification, Controller.listCoa6ByCoa2);
 
 module.exports = router

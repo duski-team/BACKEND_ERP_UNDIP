@@ -8,9 +8,9 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { tgl_persetujuan_manager, status_persetujuan_manager, status_barang, tgl_diserahkan, tgl_mulai_penggunaan, tgl_selesai_penggunaan, verifikasi_barang_diterima, users_id, jenis_penggunaan_id, coa6_id, jumlah_penggunaa_asset } = req.body
+        const { tgl_persetujuan_manager, status_persetujuan_manager, status_barang, tgl_diserahkan, tgl_mulai_penggunaan, tgl_selesai_penggunaan, verifikasi_barang_diterima, users_id, jenis_penggunaan_id, coa6_id, jumlah_penggunaa_asset, company_id } = req.body
 
-        penggunaanAset.create({ id: uuid_v4(), tgl_persetujuan_manager, status_persetujuan_manager, status_barang, tgl_diserahkan, tgl_mulai_penggunaan, tgl_selesai_penggunaan, verifikasi_barang_diterima, users_id, jenis_penggunaan_id, coa6_id, jumlah_penggunaa_asset }).then(data => {
+        penggunaanAset.create({ id: uuid_v4(), tgl_persetujuan_manager, status_persetujuan_manager, status_barang, tgl_diserahkan, tgl_mulai_penggunaan, tgl_selesai_penggunaan, verifikasi_barang_diterima, users_id, jenis_penggunaan_id, coa6_id, jumlah_penggunaa_asset, company_id  }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(req.body);
@@ -20,9 +20,9 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, tgl_persetujuan_manager, status_persetujuan_manager, status_barang, tgl_diserahkan, tgl_mulai_penggunaan, tgl_selesai_penggunaan, verifikasi_barang_diterima, users_id, jenis_penggunaan_id, coa6_id, jumlah_penggunaa_asset } = req.body
+        const { id, tgl_persetujuan_manager, status_persetujuan_manager, status_barang, tgl_diserahkan, tgl_mulai_penggunaan, tgl_selesai_penggunaan, verifikasi_barang_diterima, users_id, jenis_penggunaan_id, coa6_id, jumlah_penggunaa_asset, company_id  } = req.body
 
-        penggunaanAset.update({ tgl_persetujuan_manager, status_persetujuan_manager, status_barang, tgl_diserahkan, tgl_mulai_penggunaan, tgl_selesai_penggunaan, verifikasi_barang_diterima, users_id, jenis_penggunaan_id, coa6_id, jumlah_penggunaa_asset }, { where: { id } }).then(data => {
+        penggunaanAset.update({ tgl_persetujuan_manager, status_persetujuan_manager, status_barang, tgl_diserahkan, tgl_mulai_penggunaan, tgl_selesai_penggunaan, verifikasi_barang_diterima, users_id, jenis_penggunaan_id, coa6_id, jumlah_penggunaa_asset, company_id  }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);

@@ -43,6 +43,9 @@ const generalLedger = sq.define('general_ledger', {
         type: DataTypes.SMALLINT, 
         defaultValue: 1  // 0: ditolak || 1: created || 2: supervisor || 3: manager || 4: akuntan
     },
+    jenis_biaya: {
+        type: DataTypes.STRING
+    },
 },
     {
         paranoid: true,

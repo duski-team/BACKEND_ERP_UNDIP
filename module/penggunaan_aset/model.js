@@ -1,8 +1,9 @@
 const { DataTypes } = require('sequelize');
-const {sq} = require('../../config/connection');
+const { sq } = require('../../config/connection');
 const users = require('../users/model');
 const jenisPenggunaan = require('../jenis_penggunaan/model');
-const coa6= require('../coa6/model')
+const coa6 = require('../coa6/model')
+const companyUsaha = require('../company_usaha/model')
 
 const penggunaanAset = sq.define('penggunaan_aset', {
     id: {
@@ -30,7 +31,7 @@ const penggunaanAset = sq.define('penggunaan_aset', {
     verifikasi_barang_diterima: {
         type: DataTypes.INTEGER
     },
-    jumlah_penggunaa_asset:{
+    jumlah_penggunaa_asset: {
         type: DataTypes.INTEGER
     }
     // jenis_aset_id: {
@@ -41,14 +42,17 @@ const penggunaanAset = sq.define('penggunaan_aset', {
         paranoid: true,
         freezeTableName: true
     });
-    
-    penggunaanAset.belongsTo(users,{foreignKey:'users_id'})
-    users.hasMany(penggunaanAset,{foreignKey:'users_id'})
 
-    penggunaanAset.belongsTo(jenisPenggunaan,{foreignKey:'jenis_penggunaan_id'})
-    jenisPenggunaan.hasMany(penggunaanAset,{foreignKey:'jenis_penggunaan_id'})
+penggunaanAset.belongsTo(users, { foreignKey: 'users_id' })
+users.hasMany(penggunaanAset, { foreignKey: 'users_id' })
 
-    penggunaanAset.belongsTo(coa6,{foreignKey:'coa6_id'})
-    coa6.hasMany(penggunaanAset,{foreignKey:'coa6_id'})
+penggunaanAset.belongsTo(jenisPenggunaan, { foreignKey: 'jenis_penggunaan_id' })
+jenisPenggunaan.hasMany(penggunaanAset, { foreignKey: 'jenis_penggunaan_id' })
+
+penggunaanAset.belongsTo(coa6, { foreignKey: 'coa6_id' })
+coa6.hasMany(penggunaanAset, { foreignKey: 'coa6_id' })
+
+penggunaanAset.belongsTo(companyUsaha, { foreignKey: 'company_id' })
+companyUsaha.hasMany(penggunaanAset, { foreignKey: 'company_id' })
 
 module.exports = penggunaanAset

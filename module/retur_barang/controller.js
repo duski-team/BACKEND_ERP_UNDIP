@@ -7,7 +7,19 @@ const s = { type: QueryTypes.SELECT };
 
 class Controller {
 
-    static register(req, res) {
+    static registerPenjualan(req, res) {
+        const { harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak } = req.body
+        
+        returBarang.create({ id: uuid_v4(), harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak }).then(data => {
+            res.status(200).json({ status: 200, message: "sukses", data });
+        }).catch(err => {
+            console.log(req.body);
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        })
+    }
+    
+    static registerPembelian(req, res) {
         const { harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak } = req.body
         
         returBarang.create({ id: uuid_v4(), harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak }).then(data => {

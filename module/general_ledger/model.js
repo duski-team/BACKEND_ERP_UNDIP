@@ -4,6 +4,7 @@ const pembelian = require('../pembelian/model');
 const coa6 = require('../coa6/model');
 const order = require('../order/model');
 const pegawai = require('../users/model');
+const masterVendor = require('../master_vendor/model');
 
 const generalLedger = sq.define('general_ledger', {
     id: {
@@ -61,5 +62,8 @@ coa6.hasMany(generalLedger, { foreignKey: 'akun_pasangan_id' })
 
 generalLedger.belongsTo(pegawai, { foreignKey: 'pegawai_id' })
 pegawai.hasMany(generalLedger, { foreignKey: 'pegawai_id' })
+
+generalLedger.belongsTo(masterVendor, { foreignKey: 'vendor_id' })
+masterVendor.hasMany(generalLedger, { foreignKey: 'vendor_id' })
 
 module.exports = generalLedger

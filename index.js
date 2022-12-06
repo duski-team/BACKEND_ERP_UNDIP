@@ -47,6 +47,7 @@ router.use("/list_coa", require('./module/list_coa/route'));
 router.use("/masterVendor", require('./module/master_vendor/route'));
 router.use("/generalLedger", require('./module/general_ledger/route'));
 router.use("/penugasanSdm", require('./module/penugasan_sdm/route'));
+router.use("/returBarang", require('./module/retur_barang/route'));
 
 
 module.exports = router;

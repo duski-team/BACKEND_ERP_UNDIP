@@ -125,10 +125,10 @@ class Controller {
             }
             let data = await sq.query(`select pa.id as penggunaan_asset_id, pa.*, u.firstname, u.lastname, u.username, u.email, jp.nama_jenis_penggunaan ,c.nama_coa6, c.kode_coa6, c.coa5_id, c.nominal_coa6 
             from penggunaan_aset pa
-            join users u on u.id = pa.users_id 
-            join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id 
+            left join users u on u.id = pa.users_id 
+            left join jenis_penggunaan jp on jp.id = pa.jenis_penggunaan_id 
             join coa6 c on c.id = pa.coa6_id 
-            where pa."deletedAt" isnull and u.company_id = '${company_id}'`, s);
+            where pa."deletedAt" isnull and pa.company_id = '${company_id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

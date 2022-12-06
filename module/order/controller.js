@@ -3,6 +3,7 @@ const { v4: uuid_v4 } = require("uuid");
 const order = require("./model");
 const barangOrder = require("../barang_order/model");
 const persediaan = require("../persediaan/model");
+const generalLedger = require("../general_ledger/model");
 const { QueryTypes } = require('sequelize');
 const s = { type: QueryTypes.SELECT };
 const moment = require('moment')
@@ -139,7 +140,7 @@ class Controller {
     }
 
     static async acceptStatus(req,res){
-        let{id,status_order,company_id} = req.body
+        let{id,status_order,company_id,tanggal_persetujuan} = req.body
 
         const t = await sq.transaction();
 
@@ -148,7 +149,7 @@ class Controller {
                 company_id = req.dataUsers.company_id
             }
 
-            let data = await sq.query(`select bo.*,o.kode_invoice,o.tgl_order,p.stock,p.coa6_id,o.status_order,c6.nominal_coa6,(select gl.sisa_saldo from general_ledger gl where gl."deletedAt" isnull and gl.status=4 and gl.akun_id = p.coa6_id order by gl.tanggal_persetujuan desc limit 1) from barang_order bo join "order" o on o.id = bo.order_id join persediaan p on p.id = bo.persediaan_id join coa6 c6 on c6.id = p.coa6_id where o."deletedAt" isnull and bo.order_id = '${id}'`,s);
+            let data = await sq.query(`select bo.*,o.total_pajak,o.total_penjualan,o.biaya_admin,o.kode_invoice,o.tgl_order,p.stock,p.coa6_id,o.status_order,c6.nominal_coa6,(select gl.sisa_saldo from general_ledger gl where gl."deletedAt" isnull and gl.status=4 and gl.akun_id = p.coa6_id order by gl.tanggal_persetujuan desc limit 1) from barang_order bo join "order" o on o.id = bo.order_id join persediaan p on p.id = bo.persediaan_id join coa6 c6 on c6.id = p.coa6_id where o."deletedAt" isnull and bo.order_id = '${id}'`,s);
             
             if(data.length == 0){
                 res.status(201).json({ status: 204, message: "data tidak ada" });
@@ -165,22 +166,49 @@ class Controller {
                         await persediaan.bulkCreate(stock,{updateOnDuplicate:['stock'],transaction:t});
                     }
                     // if(status_order == 2){
-                    //     let akunHpp = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id
-                    //     where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 ='1.1.3.2.01.0009' order by gl.tanggal_persetujuan desc limit 1`,s);
-                    //     let barang = []
-                    //     let hpp = []
+                    //     let akunHpp = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 ='1.1.3.2.01.0009' order by gl.tanggal_persetujuan desc limit 1`,s);
+                    //     let akunPajak = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 ='2.1.6.1.01.0008' order by gl.tanggal_persetujuan desc limit 1`,s);
+                    //     let akunBiayaAdmin = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 ='2.1.7.2.01.0009' order by gl.tanggal_persetujuan desc limit 1`,s);
+                    //     let akunKas = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 ='2.1.7.2.01.0013' order by gl.tanggal_persetujuan desc limit 1`,s);
+                    //     let akunPenjualan = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 ='6.2.4.3.01.0001' order by gl.tanggal_persetujuan desc limit 1`,s);
+
+                    //     let gl = []
+
+                    //     let saldoPajak = (!akunPajak[0].sisa_saldo? akunPajak[0].nominal_coa6:akunPajak[0].sisa_saldo)+ data[0].total_pajak
+                    //     let saldoBiayaAdmin = (!akunBiayaAdmin[0].sisa_saldo? akunBiayaAdmin[0].nominal_coa6:akunBiayaAdmin[0].sisa_saldo)+ data[0].biaya_admin
+                    //     let saldoKas = !akunKas[0].sisa_saldo? akunKas[0].nominal_coa6:akunKas[0].sisa_saldo
+                    //     let saldoPenjualan = !akunPenjualan[0].sisa_saldo? akunPenjualan[0].nominal_coa6:akunPenjualan[0].sisa_saldo
                     //     let nilaiHpp = !akunHpp[0].sisa_saldo? akunHpp[0].nominal_coa6:akunHpp[0].sisa_saldo
+                    //     let total_penjualan = 0
 
                     //     for (let i = 0; i < data.length; i++) {
                     //         let saldoBarang = data[i].sisa_saldo - data[i].harga_total
                     //         nilaiHpp+=data[i].harga_total
+                    //         saldoPenjualan+=data[i].harga_total
+                    //         total_penjualan+=data[i].harga_total
 
-                    //         let x = {id:uuid_v4(),tanggal_transaksi:data[i].tgl_order,pengurangan:data[i].harga_total,referensi_bukti:data[i].kode_invoice,sisa_saldo:saldoBarang,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[i].order_id,akun_id:data[i].coa6_id,akun_pasangan_id:akunHpp[0].id}
-                    //         let y = {id:uuid_v4(),tanggal_transaksi:data[i].tgl_order,penambahan:data[i].harga_total,referensi_bukti:data[i].kode_invoice,sisa_saldo:nilaiHpp,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[i].order_id,akun_id:akunHpp[0].id,akun_pasangan_id:data[i].coa6_id}
-                    //         barang.push(x)
-                    //         hpp.push(y)
+                    //         let x = {id:uuid_v4(),tanggal_transaksi:data[i].tgl_order,pengurangan:data[i].harga_total,referensi_bukti:data[i].kode_invoice,sisa_saldo:saldoBarang,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[i].order_id,akun_id:data[i].coa6_id,akun_pasangan_id:akunHpp[0].id,nama:"Barang"}
+                    //         let y = {id:uuid_v4(),tanggal_transaksi:data[i].tgl_order,penambahan:data[i].harga_total,referensi_bukti:data[i].kode_invoice,sisa_saldo:nilaiHpp,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[i].order_id,akun_id:akunHpp[0].id,akun_pasangan_id:data[i].coa6_id,nama:"HPP"}
+                    //         gl.push(x,y);
                     //     }
 
+                    //     let pajak = {id:uuid_v4(),tanggal_transaksi:data[0].tgl_order,penambahan:data[0].total_pajak,referensi_bukti:data[0].kode_invoice,sisa_saldo:saldoPajak,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[0].order_id,akun_id:akunPajak[0].id,akun_pasangan_id:akunKas[0].id,nama:"Pajak"}
+                    //     let bAdmin = {id:uuid_v4(),tanggal_transaksi:data[0].tgl_order,penambahan:data[0].biaya_admin,referensi_bukti:data[0].kode_invoice,sisa_saldo:saldoBiayaAdmin,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[0].order_id,akun_id:akunBiayaAdmin[0].id,akun_pasangan_id:akunKas[0].id,nama:"Biaya admin"}
+                    //     let penjualan = {id:uuid_v4(),tanggal_transaksi:data[0].tgl_order,penambahan:total_penjualan,referensi_bukti:data[0].kode_invoice,sisa_saldo:saldoPenjualan,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[0].order_id,akun_id:akunPenjualan[0].id,akun_pasangan_id:akunKas[0].id,nama:"Penjualan"}
+                    //     //! KAS
+                    //     let kasPajak = {id:uuid_v4(),tanggal_transaksi:data[0].tgl_order,penambahan:data[0].total_pajak,referensi_bukti:data[0].kode_invoice,sisa_saldo:saldoKas+=data[0].total_pajak,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[0].order_id,akun_id:akunKas[0].id,akun_pasangan_id:akunPajak[0].id,nama:"KasPajak"}
+                    //     let kasBiayaAdmin = {id:uuid_v4(),tanggal_transaksi:data[0].tgl_order,penambahan:data[0].biaya_admin,referensi_bukti:data[0].kode_invoice,sisa_saldo:saldoKas+=data[0].biaya_admin,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[0].order_id,akun_id:akunKas[0].id,akun_pasangan_id:akunBiayaAdmin[0].id,nama:"Kas Biaya admin"}
+                    //     let kasPenjualan = {id:uuid_v4(),tanggal_transaksi:data[0].tgl_order,penambahan:total_penjualan,referensi_bukti:data[0].kode_invoice,sisa_saldo:saldoKas+=total_penjualan,tanggal_persetujuan:moment().format(),nama_transaksi:"penjualan",status:4,penjualan_id:data[0].order_id,akun_id:akunKas[0].id,akun_pasangan_id:akunPenjualan[0].id,nama:"Kas Penjualan"}
+                    //     gl.push(pajak,bAdmin,penjualan,kasPajak,kasBiayaAdmin,kasPenjualan);
+                    //     await generalLedger.bulkCreate(gl,{transaction:t})
+                    //     // console.log(gl);
+                    //     // console.log(pajak);
+                    //     // console.log(bAdmin);
+                    //     // console.log(penjualan);
+                    //     // console.log("===============================");
+                    //     // console.log(kasPajak);
+                    //     // console.log(kasBiayaAdmin);
+                    //     // console.log(kasPenjualan);
                     // }
                     await order.update({status_order},{where:{id},transaction:t})
                     await t.commit();
@@ -237,22 +265,37 @@ class Controller {
     //     }
     // }
 
-    static  async delete(req, res) {
+    static async delete(req, res) {
         const { id } = req.body
 
         const t = await sq.transaction();
+        try {
+            let data = await sq.query(`select bo.*,o.total_pajak,o.total_penjualan,o.biaya_admin,o.kode_invoice,o.tgl_order,p.stock,p.nama_persediaan,o.status_order from barang_order bo join "order" o on o.id = bo.order_id join persediaan p on p.id = bo.persediaan_id join coa6 c6 on c6.id = p.coa6_id where o."deletedAt" isnull and bo.order_id = '${id}'`,s);
 
-        order.destroy({ where: { id },transaction:t }).then(async data => {
-            barangOrder.destroy({where:{order_id:id},transaction:t}).then( async data2 =>{
+            if(data[0].status_order>1){
+                res.status(200).json({ status: 200, message: "status lebih dari 1" });
+            }else{
+                if(data[0].status_order==0){
+                    await order.destroy({ where: { id },transaction:t })
+                    await barangOrder.destroy({where:{order_id:id},transaction:t})
+                }else if(data[0].status_order==1){
+                    for (let i = 0; i < data.length; i++) {
+                        let jml = data[i].stock+data[i].jumlah
+                        stock.push({id:data[i].persediaan_id,stock:jml})
+                    }
+                    await persediaan.bulkCreate(stock,{updateOnDuplicate:['stock'],transaction:t});
+                    await order.destroy({ where: { id },transaction:t })
+                    await barangOrder.destroy({where:{order_id:id},transaction:t})
+                }
                 await t.commit();
                 res.status(200).json({ status: 200, message: "sukses" });
-            })
-        }).catch(async err => {
+            }
+        } catch (err) {
             await t.rollback();
             console.log(req.body);
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
     static async list(req, res) {

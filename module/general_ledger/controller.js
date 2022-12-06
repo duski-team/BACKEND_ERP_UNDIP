@@ -89,8 +89,9 @@ class Controller {
             if (status == 4) {
                 let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
                 let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
-                let cekSaldo = await sq.query(`select gl.sisa_saldo from general_ledger gl join coa6 c6 on c6.id = gl.akun_pasangan_id where gl."deletedAt" isnull and gl.status = 4 and c6.id = '${cekId[0].akun_pasangan_id}' order by gl.tanggal_persetujuan desc limit 1`, s)
+                let cekSaldo = await sq.query(`select gl.sisa_saldo from general_ledger gl join coa6 c6 on c6.id = gl.akun_pasangan_id where gl."deletedAt" isnull and gl.status = 4 order by gl."createdAt" desc limit 1`, s)
 
+                // console.log(cekSaldo);
                 let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status: 4 }
                 let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status: 4 }
 
@@ -98,17 +99,12 @@ class Controller {
                     if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
                         if (cekId[0].akun_pasangan_id == cekAkun[i].akun_id) {
                             akunKas.id = cekAkun[i].id
-                            if (cekSaldo.length == 0) {
+                            if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
                                 akunPenambahanKas.sisa_saldo = cekAkun[i].pengurangan
                                 akunKas.sisa_saldo = cekAkun[i].pengurangan
                             } else {
-                                if (cekSaldo[0].sisa_saldo == 0) {
-                                    akunPenambahanKas.sisa_saldo = cekAkun[i].pengurangan
-                                    akunKas.sisa_saldo = cekAkun[i].pengurangan
-                                } else {
-                                    akunPenambahanKas.sisa_saldo = cekAkun[i].pengurangan
-                                    akunKas.sisa_saldo = cekSaldo[0].sisa_saldo + cekAkun[i].pengurangan
-                                }
+                                akunPenambahanKas.sisa_saldo = cekAkun[i].pengurangan
+                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo + cekAkun[i].pengurangan
                             }
                         }
                     }

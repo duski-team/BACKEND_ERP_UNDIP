@@ -112,7 +112,7 @@ class Controller {
                     }
                 }
 
-                let akunModal = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '3.1.1.1.01.0001' order gl.tanggal_transaksi desc,gl.sisa_saldo desc limit 1`,s);
+                let akunModal = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '3.1.1.1.01.0001' order by gl.tanggal_transaksi desc limit 1`,s);
                 let sisa_saldo = nominal_coa6
                 let saldoModal = sisa_saldo
 

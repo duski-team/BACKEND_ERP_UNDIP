@@ -61,8 +61,8 @@ order.hasMany(generalLedger, { foreignKey: 'penjualan_id' })
 generalLedger.belongsTo(coa6, { foreignKey: 'akun_id' })
 coa6.hasMany(generalLedger, { foreignKey: 'akun_id' })
 
-generalLedger.belongsTo(coa6, { foreignKey: 'akun_pasangan_id' })
-coa6.hasMany(generalLedger, { foreignKey: 'akun_pasangan_id' })
+// generalLedger.belongsTo(coa6, { foreignKey: 'akun_pasangan_id' })
+// coa6.hasMany(generalLedger, { foreignKey: 'akun_pasangan_id' })
 
 generalLedger.belongsTo(pegawai, { foreignKey: 'pegawai_id' })
 pegawai.hasMany(generalLedger, { foreignKey: 'pegawai_id' })

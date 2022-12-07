@@ -147,9 +147,13 @@ class Controller {
     }
 
     static async listUserByCompanyId(req, res) {
-        const { company_id } = req.body
+        let { company_id } = req.body
         try {
-            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
+            if(!company_id){
+                company_id = req.dataUser.token
+            }
+
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

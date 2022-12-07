@@ -3,6 +3,7 @@ const router = require('express').Router();
 const authentification = require('../../middleware/authentification')
 
 router.post('/register',Controller.register);
+router.post('/registerUser',Controller.registerUser);
 router.post('/update',authentification,Controller.update);
 router.post('/delete',authentification,Controller.delete);
 router.get('/detailsById/:id',authentification,Controller.detailsById);

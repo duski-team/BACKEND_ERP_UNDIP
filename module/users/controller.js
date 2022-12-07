@@ -75,6 +75,35 @@ class Controller {
         }
     }
 
+    static async registerUser(req, res) {
+        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+
+        try {
+            let cekUser = await users.findAll({ where: { [Op.or]: [{ email }, { username }] } });
+
+            if (cekUser.length > 0) {
+                res.status(201).json({ status: 204, message: "data sudah ada" });
+            } else {
+                let profil_image = "";
+
+                if (req.files) {
+                    if (req.files.file1) {
+                        profil_image = req.files.file1[0].filename;
+                    }
+                }
+                let encryptedPassword = bcrypt.hashPassword(password);
+                
+                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password:encryptedPassword, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,profil_image })
+
+                res.status(200).json({ status: 200, message: "sukses", data });
+            }
+        } catch (err) {
+            console.log(req.body);
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
     static update(req, res) {
         const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
@@ -118,9 +147,13 @@ class Controller {
     }
 
     static async listUserByCompanyId(req, res) {
-        const { company_id } = req.body
+        let { company_id } = req.body
         try {
-            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
+            if(!company_id){
+                company_id = req.dataUser.token
+            }
+
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user, u.email as email_user, u.phone_no as phone_no_user, cu.email as email_company, cu.phone_no as phone_no_company FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

@@ -403,5 +403,16 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async listPenerimaanKasDariPelanggan(req, res) {
+        try {
+            let data = await sq.query(`select gl.id as "general_ledger", * from general_ledger gl join "order" o on o.id = gl.penjualan_id join coa6 c6 on c6.id = gl.akun_id where gl."deletedAt" isnull and o."deletedAt" isnull and c6."deletedAt" isnull and o.company_id = '${req.dataUsers.company_id}'`, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 module.exports = Controller;

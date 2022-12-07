@@ -13,6 +13,7 @@ router.post('/listOrderByKodeInvoice', authentification, Controller.listOrderByK
 router.post('/listOrderByCustomerId', authentification, Controller.listOrderByCustomerId);
 router.post('/listOrderLunasByCustomerId', authentification, Controller.listOrderLunasByCustomerId);
 router.post('/listBarangOrderByOrderId', authentification, Controller.listBarangOrderByOrderId);
+router.get('/listPenerimaanKasDariPelanggan', authentification, Controller.listPenerimaanKasDariPelanggan);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

@@ -352,7 +352,7 @@ class Controller {
     }
 
     static async pengeluaranKasUntukPegawai(req, res) {
-        let { coa6_id_beban, jenis_biaya, tanggal_transaksi, nomor_invoice, pegawai_id, jumlah_hak_pembayaran, coa6_id_pajak, tarif_pph_21, jumlah_dibayarkan, keterangan_pembayaran, akun_kas_id, company_id } = req.body;
+        let { coa6_id_beban, jenis_biaya, tanggal_transaksi, nomor_invoice, pegawai_id, jumlah_hak_pembayaran, coa6_id_pajak, tarif_pph_21, nilai_potongan, jumlah_dibayarkan, keterangan_pembayaran, akun_kas_id, company_id } = req.body;
 
         try {
             if (!company_id) {
@@ -362,10 +362,10 @@ class Controller {
             let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
 
             let bebanPegawai = { id: uuid_v4(), tanggal_transaksi, penambahan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: coa6_id_beban, akun_pasangan_id: akunKas[0].id }
-            let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: tarif_pph_21/100 * jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: coa6_id_pajak, akun_pasangan_id: akunKas[0].id }
+            let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: coa6_id_pajak, akun_pasangan_id: akunKas[0].id }
 
-            let kasBebanPegawai = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_dibayarkan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: akunKas[0].id, akun_pasangan_id: coa6_id_beban }
-            let kasUtangPajak = { id: uuid_v4(), tanggal_transaksi, pengurangan: 0, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: akunKas[0].id, akun_pasangan_id: coa6_id_pajak }
+            let kasBebanPegawai = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: akunKas[0].id, akun_pasangan_id: coa6_id_beban }
+            let kasUtangPajak = { id: uuid_v4(), tanggal_transaksi, pengurangan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: akunKas[0].id, akun_pasangan_id: coa6_id_pajak }
 
             let hasil = await generalLedger.bulkCreate([bebanPegawai, kasBebanPegawai, utangPajak, kasUtangPajak])
             res.status(200).json({ status: 200, message: "sukses", data: hasil })

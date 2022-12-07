@@ -75,6 +75,35 @@ class Controller {
         }
     }
 
+    static async registerUser(req, res) {
+        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+
+        try {
+            let cekUser = await users.findAll({ where: { [Op.or]: [{ email }, { username }] } });
+
+            if (cekUser.length > 0) {
+                res.status(201).json({ status: 204, message: "data sudah ada" });
+            } else {
+                let profil_image = "";
+
+                if (req.files) {
+                    if (req.files.file1) {
+                        profil_image = req.files.file1[0].filename;
+                    }
+                }
+                let encryptedPassword = bcrypt.hashPassword(password);
+                
+                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password:encryptedPassword, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,profil_image })
+
+                res.status(200).json({ status: 200, message: "sukses", data });
+            }
+        } catch (err) {
+            console.log(req.body);
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
     static update(req, res) {
         const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 

@@ -12,6 +12,7 @@ router.post('/pembayaranDanaInvestasi', authentification, Controller.pengeluaran
 router.post('/approvalPenerimaanKasNonPelangganPengembalianInvestasi', authentification, Controller.approvalPenerimaanKasNonPelangganPengembalianInvestasi);
 router.post('/approvalPenerimaanKasNonPelangganPendanaanDariPinjaman', authentification, Controller.approvalPenerimaanKasNonPelangganPendanaanDariPinjaman);
 router.post('/approvalPenerimaanKasNonPelangganPenambahanModal', authentification, Controller.approvalPenerimaanKasNonPelangganPenambahanModal);
+router.post('/pengeluaranKasUntukPegawai', authentification, Controller.pengeluaranKasUntukPegawai);
 router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
 router.get('/listPenerimaanKasNonPelanggan', authentification, Controller.listPenerimaanKasNonPelanggan);

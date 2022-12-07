@@ -8,6 +8,7 @@ router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
 router.post('/listPenggunaanAsetByUserId', authentification, Controller.listPenggunaanAsetByUserId);
 router.post('/listPenggunaanAsetByJenisPenggunaanId', authentification, Controller.listPenggunaanAsetByJenisPenggunaanId);
+router.post('/listPenggunaanAsetByCompanyId', authentification, Controller.listPenggunaanAsetByCompanyId);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

@@ -86,6 +86,8 @@ class Controller {
         const { id, tanggal_persetujuan, status } = req.body
 
         try {
+            let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status }
+            let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
             if (status == 4) {
                 let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
                 let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
@@ -98,8 +100,8 @@ class Controller {
                         saldo = cekSaldo[j].sisa_saldo
                     }
                 }
-                let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status: 4 }
-                let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status: 4 }
+                // let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status: 4 }
+                // let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status: 4 }
 
                 for (let i = 0; i < cekAkun.length; i++) {
                     if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {

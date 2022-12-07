@@ -341,6 +341,21 @@ class Controller {
         }
     }
 
+    static async listOrderLunasByCompanyId(req, res) {
+        let { company_id } = req.body
+        try {
+            if (!company_id) {
+                company_id = req.dataUsers.company_id
+            }
+            let data = await sq.query(`select o.id as "order_id", * from "order" o left join jenis_penjualan jp on jp.id = o.jenis_penjualan_id left join status_va sv on sv.id = o.status_va_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id left join users u on u.id = o.customer_id where o."deletedAt" isnull and o.status_order = 2 and o.company_id = '${company_id}' order by o."createdAt" desc`, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
     static async listOrderByKodeInvoice(req, res) {
         let { kode_invoice } = req.body
         try {
@@ -357,6 +372,18 @@ class Controller {
         let { customer_id } = req.body
         try {
             let data = await sq.query(`select o.id as "order_id", * from "order" o left join jenis_penjualan jp on jp.id = o.jenis_penjualan_id left join status_va sv on sv.id = o.status_va_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id left join users u on u.id = o.customer_id where o."deletedAt" isnull and o.customer_id = '${customer_id}' order by o."createdAt" desc`, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async listOrderLunasByCustomerId(req, res) {
+        let { customer_id } = req.body
+        try {
+            let data = await sq.query(`select o.id as "order_id", * from "order" o left join jenis_penjualan jp on jp.id = o.jenis_penjualan_id left join status_va sv on sv.id = o.status_va_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id left join users u on u.id = o.customer_id where o."deletedAt" isnull and o.status_order = 2 and o.customer_id = '${customer_id}' order by o."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

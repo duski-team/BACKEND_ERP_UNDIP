@@ -28,8 +28,8 @@ class Controller {
             }
             let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
 
-            let penambahanKas = { id: uuid_v4(), pengurangan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: coa6_id, akun_pasangan_id: akunKas[0].id, status: 1, nama_transaksi: "penerimaan kas non pelanggan pengembalian investasi" }
-            let kas = { id: uuid_v4(), pengurangan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: akunKas[0].id, akun_pasangan_id: coa6_id, status: 1, nama_transaksi: "penerimaan kas non pelanggan pengembalian investasi" }
+            let penambahanKas = { id: uuid_v4(), pengurangan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: coa6_id, status: 1, nama_transaksi: "penerimaan kas non pelanggan pengembalian investasi" }
+            let kas = { id: uuid_v4(), pengurangan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: akunKas[0].id, status: 1, nama_transaksi: "penerimaan kas non pelanggan pengembalian investasi" }
 
             let hasil = await generalLedger.bulkCreate([penambahanKas, kas])
             res.status(200).json({ status: 200, message: "sukses", data: hasil })
@@ -49,8 +49,8 @@ class Controller {
             }
             let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
 
-            let penambahanKas = { id: uuid_v4(), penambahan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: coa6_id, akun_pasangan_id: akunKas[0].id, status: 1, nama_transaksi: "penerimaan kas non pelanggan pendanaan dari pinjaman" }
-            let kas = { id: uuid_v4(), penambahan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: akunKas[0].id, akun_pasangan_id: coa6_id, status: 1, nama_transaksi: "penerimaan kas non pelanggan pendanaan dari pinjaman" }
+            let penambahanKas = { id: uuid_v4(), penambahan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: coa6_id, status: 1, nama_transaksi: "penerimaan kas non pelanggan pendanaan dari pinjaman" }
+            let kas = { id: uuid_v4(), penambahan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: akunKas[0].id, status: 1, nama_transaksi: "penerimaan kas non pelanggan pendanaan dari pinjaman" }
 
             let hasil = await generalLedger.bulkCreate([penambahanKas, kas])
             res.status(200).json({ status: 200, message: "sukses", data: hasil })
@@ -70,8 +70,8 @@ class Controller {
             }
             let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
 
-            let penambahanKas = { id: uuid_v4(), penambahan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: coa6_id, akun_pasangan_id: akunKas[0].id, status: 1, nama_transaksi: "penerimaan kas non pelanggan penambahan modal" }
-            let kas = { id: uuid_v4(), penambahan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: akunKas[0].id, akun_pasangan_id: coa6_id, status: 1, nama_transaksi: "penerimaan kas non pelanggan penambahan modal" }
+            let penambahanKas = { id: uuid_v4(), penambahan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: coa6_id, status: 1, nama_transaksi: "penerimaan kas non pelanggan penambahan modal" }
+            let kas = { id: uuid_v4(), penambahan: jumlah, keterangan: deskripsi_penerimaan_kas, referensi_bukti: nomor_faktur, akun_id: akunKas[0].id, status: 1, nama_transaksi: "penerimaan kas non pelanggan penambahan modal" }
 
             let hasil = await generalLedger.bulkCreate([penambahanKas, kas])
             res.status(200).json({ status: 200, message: "sukses", data: hasil })
@@ -86,42 +86,39 @@ class Controller {
         const { id, tanggal_persetujuan, status } = req.body
 
         try {
+            let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
+            let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
+            let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 2`, s)
+
+            let saldo = 0
+            for (let j = 0; j < cekSaldo.length; j++) {
+                if (cekSaldo[j].pengurangan != cekSaldo[j].sisa_saldo) {
+                    saldo = cekSaldo[j].sisa_saldo
+                }
+            }
             let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status }
             let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
-            if (status == 4) {
-                let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
-                let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
-                let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 2`, s)
 
-
-                let saldo = 0
-                for (let j = 0; j < cekSaldo.length; j++) {
-                    if (cekSaldo[j].pengurangan != cekSaldo[j].sisa_saldo) {
-                        saldo = cekSaldo[j].sisa_saldo
-                    }
-                }
-                // let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status: 4 }
-                // let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status: 4 }
-
-                for (let i = 0; i < cekAkun.length; i++) {
-                    if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
-                        if (cekId[0].akun_pasangan_id == cekAkun[i].akun_id) {
-                            akunKas.id = cekAkun[i].id
-                            if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
-                                akunPenambahanKas.sisa_saldo = cekAkun[i].pengurangan
-                                akunKas.sisa_saldo = cekAkun[i].pengurangan
-                            } else {
-                                akunPenambahanKas.sisa_saldo = cekAkun[i].pengurangan
-                                akunKas.sisa_saldo = saldo + cekAkun[i].pengurangan
-                            }
+            for (let i = 0; i < cekAkun.length; i++) {
+                if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
+                    if (cekId[0].akun_id != cekAkun[i].akun_id) {
+                        akunKas.id = cekAkun[i].id
+                        if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
+                            akunPenambahanKas.sisa_saldo = cekAkun[i].pengurangan
+                            akunKas.sisa_saldo = cekAkun[i].pengurangan
+                        } else {
+                            akunPenambahanKas.sisa_saldo = cekAkun[i].pengurangan
+                            akunKas.sisa_saldo = saldo + cekAkun[i].pengurangan
                         }
                     }
                 }
+            }
 
+            if (status == 4) {
                 await generalLedger.bulkCreate([akunPenambahanKas, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
-
                 res.status(200).json({ status: 200, message: "sukses" })
             } else {
+                await generalLedger.bulkCreate([akunPenambahanKas, akunKas], { updateOnDuplicate: ["status"] })
                 res.status(200).json({ status: 200, message: "sukses" })
             }
 
@@ -136,39 +133,39 @@ class Controller {
         const { id, tanggal_persetujuan, status } = req.body
 
         try {
-            if (status == 4) {
-                let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
-                let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
-                let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 2`, s)
+            let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
+            let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
+            let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 2`, s)
 
-                let saldo = 0
-                for (let j = 0; j < cekSaldo.length; j++) {
-                    if (cekSaldo[j].pengurangan != cekSaldo[j].sisa_saldo) {
-                        saldo = cekSaldo[j].sisa_saldo
-                    }
+            let saldo = 0
+            for (let j = 0; j < cekSaldo.length; j++) {
+                if (cekSaldo[j].pengurangan != cekSaldo[j].sisa_saldo) {
+                    saldo = cekSaldo[j].sisa_saldo
                 }
-                let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status: 4 }
-                let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status: 4 }
+            }
+            let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status }
+            let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
 
-                for (let i = 0; i < cekAkun.length; i++) {
-                    if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
-                        if (cekId[0].akun_pasangan_id == cekAkun[i].akun_id) {
-                            akunKas.id = cekAkun[i].id
-                            if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
-                                akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
-                                akunKas.sisa_saldo = cekAkun[i].penambahan
-                            } else {
-                                akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
-                                akunKas.sisa_saldo = saldo + cekAkun[i].penambahan
-                            }
+            for (let i = 0; i < cekAkun.length; i++) {
+                if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
+                    if (cekId[0].akun_id != cekAkun[i].akun_id) {
+                        akunKas.id = cekAkun[i].id
+                        if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
+                            akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
+                            akunKas.sisa_saldo = cekAkun[i].penambahan
+                        } else {
+                            akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
+                            akunKas.sisa_saldo = saldo + cekAkun[i].penambahan
                         }
                     }
                 }
+            }
 
+            if (status == 4) {
                 await generalLedger.bulkCreate([akunPenambahanKas, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
-
                 res.status(200).json({ status: 200, message: "sukses" })
             } else {
+                await generalLedger.bulkCreate([akunPenambahanKas, akunKas], { updateOnDuplicate: ["status"] })
                 res.status(200).json({ status: 200, message: "sukses" })
             }
 
@@ -183,42 +180,41 @@ class Controller {
         const { id, tanggal_persetujuan, status } = req.body
 
         try {
-            if (status == 4) {
-                let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
-                let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
-                let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 2`, s)
+            let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
+            let cekAkun = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and gl.status = 1 order by gl."createdAt" desc`, s)
+            let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 2`, s)
 
-                let saldo = 0
-                for (let j = 0; j < cekSaldo.length; j++) {
-                    if (cekSaldo[j].pengurangan != cekSaldo[j].sisa_saldo) {
-                        saldo = cekSaldo[j].sisa_saldo
-                    }
+            let saldo = 0
+            for (let j = 0; j < cekSaldo.length; j++) {
+                if (cekSaldo[j].pengurangan != cekSaldo[j].sisa_saldo) {
+                    saldo = cekSaldo[j].sisa_saldo
                 }
-                let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status: 4 }
-                let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status: 4 }
+            }
+            let akunPenambahanKas = { id, tanggal_persetujuan, sisa_saldo: 0, status }
+            let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
 
-                for (let i = 0; i < cekAkun.length; i++) {
-                    if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
-                        if (cekId[0].akun_pasangan_id == cekAkun[i].akun_id) {
-                            akunKas.id = cekAkun[i].id
-                            if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
-                                akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
-                                akunKas.sisa_saldo = cekAkun[i].penambahan
-                            } else {
-                                akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
-                                akunKas.sisa_saldo = saldo + cekAkun[i].penambahan
-                            }
+            for (let i = 0; i < cekAkun.length; i++) {
+                if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
+                    if (cekId[0].akun_id != cekAkun[i].akun_id) {
+                        akunKas.id = cekAkun[i].id
+                        if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
+                            akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
+                            akunKas.sisa_saldo = cekAkun[i].penambahan
+                        } else {
+                            akunPenambahanKas.sisa_saldo = cekAkun[i].penambahan
+                            akunKas.sisa_saldo = saldo + cekAkun[i].penambahan
                         }
                     }
                 }
-
-                await generalLedger.bulkCreate([akunPenambahanKas, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
-
-                res.status(200).json({ status: 200, message: "sukses" })
-            } else {
-                res.status(200).json({ status: 200, message: "sukses" })
             }
 
+            if (status == 4) {
+                await generalLedger.bulkCreate([akunPenambahanKas, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
+                res.status(200).json({ status: 200, message: "sukses" })
+            } else {
+                await generalLedger.bulkCreate([akunPenambahanKas, akunKas], { updateOnDuplicate: ["status"] })
+                res.status(200).json({ status: 200, message: "sukses" })
+            }
         } catch (err) {
             console.log(req.body)
             console.log(err)
@@ -228,7 +224,7 @@ class Controller {
 
     static async listPenerimaanKasNonPelanggan(req, res) {
         try {
-            let data = await sq.query(`select gl.id as "general_ledger_id",c6.nama_coa6 ,c6.kode_coa6 , c62.nama_coa6 as "nama_coa6_pasangan", c62.kode_coa6 as "kode_coa6_pasangan",gl.tanggal_transaksi ,gl.penambahan ,gl.pengurangan ,gl.keterangan ,gl.referensi_bukti ,gl.sisa_saldo ,gl.tanggal_persetujuan , gl.nama_transaksi ,gl.status from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa6 c62 on c62.id = gl.akun_pasangan_id where gl.nama_transaksi = 'penerimaan kas non pelanggan pendanaan dari pinjaman' or gl.nama_transaksi = 'penerimaan kas non pelanggan pengembalian investasi' or gl.nama_transaksi = 'penerimaan kas non pelanggan penambahan modal' order by gl."createdAt" desc`, s);
+            let data = await sq.query(`select gl.id as "general_ledger_id",c6.nama_coa6 ,c6.kode_coa6 ,gl.tanggal_transaksi ,gl.penambahan ,gl.pengurangan ,gl.keterangan ,gl.referensi_bukti ,gl.sisa_saldo ,gl.tanggal_persetujuan , gl.nama_transaksi ,gl.status from general_ledger gl join coa6 c6 on c6.id = gl.akun_id where gl.nama_transaksi = 'penerimaan kas non pelanggan pendanaan dari pinjaman' or gl.nama_transaksi = 'penerimaan kas non pelanggan pengembalian investasi' or gl.nama_transaksi = 'penerimaan kas non pelanggan penambahan modal' order by gl."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

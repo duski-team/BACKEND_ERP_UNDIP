@@ -455,10 +455,10 @@ class Controller {
             // console.log(akunKas);
 
             if (status == 4) {
-                // await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
+                await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
                 res.status(200).json({ status: 200, message: "sukses" })
             } else {
-                // await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["status"] })
+                await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["status"] })
                 res.status(200).json({ status: 200, message: "sukses" })
             }
 

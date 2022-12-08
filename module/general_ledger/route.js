@@ -19,6 +19,7 @@ router.get('/list', authentification, Controller.list);
 router.get('/listPenerimaanKasNonPelanggan', authentification, Controller.listPenerimaanKasNonPelanggan);
 router.get('/listPengeluaranKasPengembalianDanaInvestasi', authentification, Controller.listPengeluaranKasPengembalianDanaInvestasi);
 router.get('/listPengeluaranKasPembayaranDanaInvestasi', authentification, Controller.listPengeluaranKasPembayaranDanaInvestasi);
+router.get('/listpengeluaranKasUntukPegawai', authentification, Controller.listpengeluaranKasUntukPegawai);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

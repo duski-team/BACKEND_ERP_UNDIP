@@ -14,5 +14,15 @@ router.post('/listTrxPengeluaranKasByStatusPersetujuan', authentification, Contr
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 router.post('/acceptPersetujuanPembayaranKewajibanVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanVendor);
 router.post('/acceptPersetujuanPembayaranKewajibanLainKepadaVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanLainKepadaVendor);
+router.post('/pengembalianDanaInvestasi', authentification, Controller.pengeluaranKasPengembalianDanaInvestasi);
+router.post('/pembayaranDanaInvestasi', authentification, Controller.pengeluaranKasPembayaranDanaInvestasi);
+router.post('/pengeluaranKasUntukPegawai', authentification, Controller.pengeluaranKasUntukPegawai);
+router.post('/approvalPengeluaranKasUntukPegawai', authentification, Controller.approvalPengeluaranKasUntukPegawai);
+router.post('/pengeluaranKasNonPegawai', authentification, Controller.pengeluaranKasNonPegawai);
+router.post('/approvalPengeluaranKasNonPegawai', authentification, Controller.approvalPengeluaranKasNonPegawai);
+router.get('/listPengeluaranKasPengembalianDanaInvestasi', authentification, Controller.listPengeluaranKasPengembalianDanaInvestasi);
+router.get('/listPengeluaranKasPembayaranDanaInvestasi', authentification, Controller.listPengeluaranKasPembayaranDanaInvestasi);
+router.get('/listpengeluaranKasUntukPegawai', authentification, Controller.listpengeluaranKasUntukPegawai);
+router.get('/listpengeluaranKasNonPegawai', authentification, Controller.listpengeluaranKasNonPegawai);
 
 module.exports = router

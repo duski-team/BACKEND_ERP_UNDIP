@@ -14,12 +14,15 @@ router.post('/approvalPenerimaanKasNonPelangganPendanaanDariPinjaman', authentif
 router.post('/approvalPenerimaanKasNonPelangganPenambahanModal', authentification, Controller.approvalPenerimaanKasNonPelangganPenambahanModal);
 router.post('/pengeluaranKasUntukPegawai', authentification, Controller.pengeluaranKasUntukPegawai);
 router.post('/approvalPengeluaranKasUntukPegawai', authentification, Controller.approvalPengeluaranKasUntukPegawai);
+router.post('/pengeluaranKasNonPegawai', authentification, Controller.pengeluaranKasNonPegawai);
+router.post('/approvalPengeluaranKasNonPegawai', authentification, Controller.approvalPengeluaranKasNonPegawai);
 router.post('/delete', authentification, Controller.delete);
 router.get('/list', authentification, Controller.list);
 router.get('/listPenerimaanKasNonPelanggan', authentification, Controller.listPenerimaanKasNonPelanggan);
 router.get('/listPengeluaranKasPengembalianDanaInvestasi', authentification, Controller.listPengeluaranKasPengembalianDanaInvestasi);
 router.get('/listPengeluaranKasPembayaranDanaInvestasi', authentification, Controller.listPengeluaranKasPembayaranDanaInvestasi);
 router.get('/listpengeluaranKasUntukPegawai', authentification, Controller.listpengeluaranKasUntukPegawai);
+router.get('/listpengeluaranKasNonPegawai', authentification, Controller.listpengeluaranKasNonPegawai);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 
 module.exports = router

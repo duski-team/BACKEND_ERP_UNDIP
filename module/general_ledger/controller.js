@@ -400,7 +400,7 @@ class Controller {
         try {
             let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
             let cekAkun = await sq.query(`select c6.id as "coa6_id", gl.id as "general_ledger_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull order by c6."kode_coa6"`, s)
-            let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 3`, s)
+            let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 1`, s)
 
             let saldo = 0
             for (let j = 0; j < cekSaldo.length; j++) {
@@ -458,6 +458,104 @@ class Controller {
     static async listpengeluaranKasUntukPegawai(req, res) {
         try {
             let data = await sq.query(`select * from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa5 c5 on c5.id = c6.coa5_id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5."deletedAt" isnull and gl.nama_transaksi = 'pengeluaran kas untuk pegawai' and c5.company_id = '${req.dataUsers.company_id}' order by gl."createdAt" desc `, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async pengeluaranKasNonPegawai(req, res) {
+        let { coa6_id_biaya, jenis_biaya, tanggal_transaksi, nomor_invoice, pegawai_id, jumlah_hak_pembayaran, coa6_id_pajak, tarif_pph_21, nilai_potongan, jumlah_dibayarkan, keterangan_pembayaran, akun_kas_id, company_id } = req.body;
+
+        try {
+            if (!company_id) {
+                company_id = req.dataUsers.company_id
+            }
+            let pengeluaran = []
+            let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
+
+            let biaya = { id: uuid_v4(), tanggal_transaksi, penambahan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_biaya }
+            let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_pajak }
+            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: akunKas[0].id }
+
+            if (coa6_id_pajak) {
+                pengeluaran.push(biaya, utangPajak, kas)
+            } else {
+                pengeluaran.push(biaya, kas)
+            }
+            // console.log(pengeluaran);
+            let hasil = await generalLedger.bulkCreate(pengeluaran)
+            res.status(200).json({ status: 200, message: "sukses", data: hasil })
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async approvalPengeluaranKasNonPegawai(req, res) {
+        let { id, tanggal_persetujuan, status } = req.body;
+
+        try {
+            let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
+            let cekAkun = await sq.query(`select c6.id as "coa6_id", gl.id as "general_ledger_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull order by c6."kode_coa6"`, s)
+            let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 1`, s)
+
+            let akunBiaya = { id, tanggal_persetujuan, sisa_saldo: 0, status }
+            let akunUtangPajak = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
+            let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
+
+            for (let i = 0; i < cekAkun.length; i++) {
+                if (cekAkun[i].nama_transaksi === cekId[0].nama_transaksi) {
+                    if (cekId[0].akun_id != cekAkun[i].akun_id) {
+                        if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
+                            if (cekAkun[i].penambahan == 0) {
+                                akunKas.id = cekAkun[i].general_ledger_id
+                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - cekAkun[i].pengurangan
+                            }
+                            akunUtangPajak.id = cekAkun[i].general_ledger_id
+                            akunUtangPajak.sisa_saldo = cekAkun[i].penambahan
+                        } else {
+                            if (cekAkun[i].penambahan == 0) {
+                                akunKas.id = cekAkun[i].general_ledger_id
+                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - cekAkun[i].pengurangan
+                            }
+                            akunUtangPajak.id = cekAkun[i].general_ledger_id
+                            akunUtangPajak.sisa_saldo = cekAkun[i].penambahan
+                        }
+                        
+                    } else {
+                        akunBiaya.sisa_saldo = cekId[0].penambahan
+                    }
+                }
+            }
+            let pengeluaran = []
+            if (akunUtangPajak.sisa_saldo == 0) {
+                pengeluaran.push(akunBiaya, akunKas)
+            } else {
+                pengeluaran.push(akunBiaya, akunUtangPajak, akunKas)
+            }
+            // console.log(pengeluaran);
+
+            if (status == 4) {
+                await generalLedger.bulkCreate(pengeluaran, { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
+                res.status(200).json({ status: 200, message: "sukses" })
+            } else {
+                await generalLedger.bulkCreate(pengeluaran, { updateOnDuplicate: ["status"] })
+                res.status(200).json({ status: 200, message: "sukses" })
+            }
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async listpengeluaranKasNonPegawai(req, res) {
+        try {
+            let data = await sq.query(`select * from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa5 c5 on c5.id = c6.coa5_id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5."deletedAt" isnull and gl.nama_transaksi = 'pengeluaran kas non pegawai' and c5.company_id = '${req.dataUsers.company_id}' order by gl."createdAt" desc `, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

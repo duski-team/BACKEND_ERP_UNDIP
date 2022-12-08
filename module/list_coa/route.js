@@ -16,6 +16,7 @@ router.get('/listAkunPenambahanModal', authentification, Controller.listAkunPena
 router.get('/listAkunJenisInvestasi', authentification, Controller.listAkunJenisInvestasi);
 router.get('/listAkunKasByCompanyId', authentification, Controller.listAkunKasByCompanyId);
 router.get('/listAkunJenisBiayaUntukPegawai', authentification, Controller.listAkunJenisBiayaUntukPegawai);
+router.get('/listAkunJenisBiayaNonPegawai', authentification, Controller.listAkunJenisBiayaNonPegawai);
 router.get('/listAkunPajak', authentification, Controller.listAkunPajak);
 router.post('/listCoa6ByCoa2', authentification, Controller.listCoa6ByCoa2);
 

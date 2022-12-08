@@ -34,7 +34,7 @@ class Controller {
     //! COA6
     static async listAkunPengembalianInvestasi(req, res) {
         try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.kode_coa6 ilike '1.1.2%' or c6.kode_coa6 ilike '1.2.1%' order by c6.kode_coa6`, s);
+            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,5) = '1.1.2' or left(c6.kode_coa6,5) = '1.2.1' order by c6.kode_coa6 `, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -45,7 +45,7 @@ class Controller {
 
     static async listAkunPendanaanDariPinjaman(req, res) {
         try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.kode_coa6 ilike '2.1.7%' order by c6.kode_coa6`, s);
+            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,5) = '2.1.7' order by c6.kode_coa6`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -56,7 +56,7 @@ class Controller {
 
     static async listAkunPenambahanModal(req, res) {
         try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.kode_coa6 ilike '3%' order by c6.kode_coa6`, s);
+            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,1) = '3' order by c6.kode_coa6`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -67,7 +67,7 @@ class Controller {
 
     static async listAkunJenisInvestasi(req, res) {
         try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.kode_coa6 ilike '1.2.1%' order by c6.kode_coa6 `, s);
+            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,5) = '1.2.1' order by c6.kode_coa6`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -78,7 +78,7 @@ class Controller {
 
     static async listAkunKasByCompanyId(req, res) {
         try {
-            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join coa4 c4 on c4.id = c5.coa4_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c4.kode_coa4 = '1.1.1.1' or c4.kode_coa4 = '1.1.1.7' and c5.company_id = '${req.dataUsers.company_id}' order by c6.kode_coa6`, s);
+            let data = await sq.query(`select c6.id as "coa6_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.1.1' or left(c6.kode_coa6,7) = '1.1.1.7' order by c6.kode_coa6`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

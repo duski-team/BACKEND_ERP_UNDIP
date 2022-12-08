@@ -308,8 +308,8 @@ class Controller {
             let akunBank = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id ='${akun_bank_id}' order by gl.tanggal_persetujuan desc limit 1`, s);
             let cekSaldo = await sq.query(`select gl.sisa_saldo from general_ledger gl join coa6 c6 on c6.id = gl.akun_id where gl."deletedAt" isnull order by gl.tanggal_persetujuan desc limit 1`, s)
 
-            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunBank[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pengembalian dana investasi" }
-            let jenisInvestasi = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunKas[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pengembalian dana investasi" }
+            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunBank[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pengembalian dana investasi", pegawai_id: req.dataUsers.id, company_id }
+            let jenisInvestasi = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunKas[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pengembalian dana investasi", pegawai_id: req.dataUsers.id, company_id }
 
             if (cekSaldo.length == 0 || cekSaldo[0].sisa_saldo == 0) {
                 kas.sisa_saldo = nominal
@@ -342,8 +342,8 @@ class Controller {
             let akunBank = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id ='${akun_bank_id}' order by gl.tanggal_persetujuan desc limit 1`, s);
             let cekSaldo = await sq.query(`select gl.sisa_saldo from general_ledger gl join coa6 c6 on c6.id = gl.akun_id where gl."deletedAt" isnull and gl.status = 4 and c6.id = '${akun_bank_id}' order by gl.tanggal_persetujuan desc limit 1`, s)
 
-            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunBank[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pembayaran dana investasi" }
-            let jenisInvestasi = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunKas[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pembayaran dana investasi" }
+            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunBank[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pembayaran dana investasi", pegawai_id: req.dataUsers.id, company_id }
+            let jenisInvestasi = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunKas[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pembayaran dana investasi", pegawai_id: req.dataUsers.id, company_id }
 
             if (cekSaldo.length == 0 || cekSaldo[0].sisa_saldo == 0) {
                 kas.sisa_saldo = nominal
@@ -495,21 +495,26 @@ class Controller {
             if (!company_id) {
                 company_id = req.dataUsers.company_id
             }
-            let pengeluaran = []
-            let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
-
-            let biaya = { id: uuid_v4(), tanggal_transaksi, penambahan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_biaya, pegawai_id: req.dataUsers.id, company_id }
-            let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_pajak, pegawai_id: req.dataUsers.id, company_id }
-            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: akunKas[0].id, pegawai_id: req.dataUsers.id, company_id }
-
-            if (coa6_id_pajak) {
-                pengeluaran.push(biaya, utangPajak, kas)
+            let cekInvoice = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.referensi_bukti = '${nomor_invoice}'`, s)
+            if (cekInvoice.length > 0) {
+                res.status(201).json({ status: 204, message: "data sudah ada" })
             } else {
-                pengeluaran.push(biaya, kas)
+                let pengeluaran = []
+                let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
+    
+                let biaya = { id: uuid_v4(), tanggal_transaksi, penambahan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_biaya, pegawai_id: req.dataUsers.id, company_id }
+                let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_pajak, pegawai_id: req.dataUsers.id, company_id }
+                let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: akunKas[0].id, pegawai_id: req.dataUsers.id, company_id }
+    
+                if (coa6_id_pajak) {
+                    pengeluaran.push(biaya, utangPajak, kas)
+                } else {
+                    pengeluaran.push(biaya, kas)
+                }
+                // console.log(pengeluaran);
+                let hasil = await generalLedger.bulkCreate(pengeluaran)
+                res.status(200).json({ status: 200, message: "sukses", data: hasil })
             }
-            // console.log(pengeluaran);
-            let hasil = await generalLedger.bulkCreate(pengeluaran)
-            res.status(200).json({ status: 200, message: "sukses", data: hasil })
 
         } catch (err) {
             console.log(err);

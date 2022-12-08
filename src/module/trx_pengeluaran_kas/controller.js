@@ -385,15 +385,19 @@ class Controller {
                 company_id = req.dataUsers.company_id
             }
 
-            let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
+            let cekInvoice = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.referensi_bukti = '${nomor_invoice}'`, s)
+            if (cekInvoice.length > 0) {
+                res.status(201).json({ status: 204, message: "data sudah ada" })
+            } else {
+                let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
+    
+                let bebanPegawai = { id: uuid_v4(), tanggal_transaksi, penambahan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: coa6_id_beban, pegawai_id: req.dataUsers.id }
+                let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: coa6_id_pajak, pegawai_id: req.dataUsers.id }
+                let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_dibayarkan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: akunKas[0].id, pegawai_id: req.dataUsers.id }
 
-            let bebanPegawai = { id: uuid_v4(), tanggal_transaksi, penambahan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: coa6_id_beban, pegawai_id: req.dataUsers.id }
-            let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: coa6_id_pajak, pegawai_id: req.dataUsers.id }
-            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas untuk pegawai", status: 1, akun_id: akunKas[0].id, pegawai_id: req.dataUsers.id }
-
-            let hasil = await generalLedger.bulkCreate([bebanPegawai, utangPajak, kas])
-            res.status(200).json({ status: 200, message: "sukses", data: hasil })
-
+                let hasil = await generalLedger.bulkCreate([bebanPegawai, utangPajak, kas])
+                res.status(200).json({ status: 200, message: "sukses", data: hasil })
+            }
         } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
@@ -444,9 +448,9 @@ class Controller {
                     }
                 }
             }
-            console.log(akunBebanPegawai);
-            console.log(akunUtangPajak);
-            console.log(akunKas);
+            // console.log(akunBebanPegawai);
+            // console.log(akunUtangPajak);
+            // console.log(akunKas);
 
             if (status == 4) {
                 await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })

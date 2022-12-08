@@ -225,6 +225,33 @@ class Controller {
     static async listPenerimaanKasNonPelanggan(req, res) {
         try {
             let data = await sq.query(`select gl.id as "general_ledger_id",c6.nama_coa6 ,c6.kode_coa6 ,gl.tanggal_transaksi ,gl.penambahan ,gl.pengurangan ,gl.keterangan ,gl.referensi_bukti ,gl.sisa_saldo ,gl.tanggal_persetujuan , gl.nama_transaksi ,gl.status from general_ledger gl join coa6 c6 on c6.id = gl.akun_id where gl.nama_transaksi = 'penerimaan kas non pelanggan pendanaan dari pinjaman' or gl.nama_transaksi = 'penerimaan kas non pelanggan pengembalian investasi' or gl.nama_transaksi = 'penerimaan kas non pelanggan penambahan modal' order by gl."createdAt" desc`, s);
+            let data2 = await sq.query(`select distinct gl.referensi_bukti from general_ledger gl join coa6 c6 on c6.id = gl.akun_id where gl.nama_transaksi = 'penerimaan kas non pelanggan pendanaan dari pinjaman' or gl.nama_transaksi = 'penerimaan kas non pelanggan pengembalian investasi' or gl.nama_transaksi = 'penerimaan kas non pelanggan penambahan modal' `, s);
+
+            for (let i = 0; i < data2.length; i++) {
+                data2[i].isi = []
+                for (let j = 0; j < data.length; j++) {
+                    if (data2[i].referensi_bukti == data[j].referensi_bukti) {
+                        data2[i].isi.push(data[j])
+                    }
+                }
+            }
+
+            let hasil = []
+            for (let k = 0; k < data2.length; k++) {
+                for (let l = 0; l < data2[k].isi.length; l++) {
+                    let x = {
+                        general_ledger_id: data2[k].isi[0].general_ledger_id,
+                        nama_coa6: data2[k].isi[0].nama_coa6,
+                        kode_coa6: data2[k].isi[0].kode_coa6,
+                        general_ledger_id_pasangan: data2[k].isi[1].general_ledger_id,
+                        nama_coa6_pasangan: data2[k].isi[1].nama_coa6,
+                        kode_coa6_pasangan: data2[k].isi[1].kode_coa6,
+                        referensi_bukti: data2[k].isi[0].referensi_bukti,
+                        nama_transaksi: data2[k].isi[0].nama_transaksi,
+                    }
+                    hasil.push(x)
+                }
+            }
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

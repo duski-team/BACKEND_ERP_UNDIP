@@ -31,6 +31,9 @@ const trxPengeluaranKas = sq.define('trx_pengeluaran_kas', {
     },
     no_invoice_txpk:{
         type: DataTypes.STRING
+    },
+    deskripsi_txpk:{
+        type: DataTypes.STRING
     }
 },
     {

@@ -480,7 +480,7 @@ class Controller {
     }
 
     static async pengeluaranKasNonPegawai(req, res) {
-        let { coa6_id_biaya, jenis_biaya, tanggal_transaksi, nomor_invoice, pegawai_id, jumlah_hak_pembayaran, coa6_id_pajak, tarif_pph_21, nilai_potongan, jumlah_dibayarkan, keterangan_pembayaran, akun_kas_id, company_id } = req.body;
+        let { coa6_id_biaya, tanggal_transaksi, nomor_invoice, jumlah_hak_pembayaran, coa6_id_pajak, tarif_pph_21, nilai_potongan, jumlah_dibayarkan, keterangan_pembayaran, akun_kas_id, company_id } = req.body;
 
         try {
             if (!company_id) {
@@ -489,9 +489,9 @@ class Controller {
             let pengeluaran = []
             let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`, s)
 
-            let biaya = { id: uuid_v4(), tanggal_transaksi, penambahan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_biaya }
-            let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_pajak }
-            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: akunKas[0].id }
+            let biaya = { id: uuid_v4(), tanggal_transaksi, penambahan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_biaya, pegawai_id: req.dataUsers.id }
+            let utangPajak = { id: uuid_v4(), tanggal_transaksi, penambahan: nilai_potongan, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: coa6_id_pajak, pegawai_id: req.dataUsers.id }
+            let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: jumlah_hak_pembayaran, keterangan: keterangan_pembayaran, referensi_bukti: nomor_invoice, nama_transaksi: "pengeluaran kas non pegawai", status: 1, akun_id: akunKas[0].id, pegawai_id: req.dataUsers.id }
 
             if (coa6_id_pajak) {
                 pengeluaran.push(biaya, utangPajak, kas)
@@ -526,7 +526,7 @@ class Controller {
                         if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
                             if (cekAkun[i].penambahan == 0) {
                                 akunKas.id = cekAkun[i].general_ledger_id
-                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - cekAkun[i].pengurangan
+                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo 
                             }
                             akunUtangPajak.id = cekAkun[i].general_ledger_id
                             akunUtangPajak.sisa_saldo = cekAkun[i].penambahan

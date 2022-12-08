@@ -7,6 +7,7 @@ const authentification = require('../../middleware/authentification');
 router.get('/listCoa6ByAssetTetap', authentification, Controller.listCoa6ByAssetTetap);
 //! COA3
 router.post('/listCoa6ByCoa3', authentification, Controller.listCoa6ByCoa3);
+router.get('/listAkunKasDanSetaraKas', authentification, Controller.listAkunKasDanSetaraKas);
 //! COA4
 //! COA5
 //! COA6

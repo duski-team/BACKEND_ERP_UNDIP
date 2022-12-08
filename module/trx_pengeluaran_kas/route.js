@@ -9,6 +9,7 @@ router.get('/list', authentification, Controller.list);
 router.post('/listTrxPengeluaranKasByJenisPengeluaranKasId', authentification, Controller.listTrxPengeluaranKasByJenisPengeluaranKasId);
 router.post('/listTrxPengeluaranKasByTrxPembelianId', authentification, Controller.listTrxPengeluaranKasByTrxPembelianId);
 router.post('/listPembelianByVendorId', authentification, Controller.listPembelianByVendorId);
+router.post('/listTrxPengeluaranKasByStatusPersetujuan', authentification, Controller.listTrxPengeluaranKasByStatusPersetujuan);
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 router.post('/acceptPersetujuanPembayaranKewajibanVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanVendor);
 router.post('/acceptPersetujuanPembayaranKewajibanLainKepadaVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanLainKepadaVendor);

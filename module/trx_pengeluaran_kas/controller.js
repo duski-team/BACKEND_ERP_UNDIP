@@ -250,5 +250,25 @@ class Controller {
             res.status(500).json({ status: 500, message: "gagal", data: err });
         }
     }
+
+    static async listTrxPengeluaranKasByStatusPersetujuan (req,res){
+        let {company_id,status_persetujuan_txpk,vendor_id}= req.body;
+        try {
+            let isi =''
+            if (!company_id) {
+                company_id = req.dataUsers.company_id
+            }
+            if(vendor_id){
+                isi += ` and p.vendor_id = '${vendor_id}'`
+            }
+
+            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,p.*,jpk.nama_jenis_pengeluaran_kas from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id left join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id join pembelian p on tp.pembelian_id = p.id where tpk."deletedAt" isnull and tpk.status_persetujuan_txpk  = ${status_persetujuan_txpk} and tpk.company_id = '${company_id}' ${isi} order by tpk."createdAt" desc`,s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
 }
 module.exports = Controller;

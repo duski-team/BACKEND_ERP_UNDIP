@@ -25,20 +25,29 @@ class Controller {
         })
     }
 
-    static registerKewajibanLainKepadaVendor(req, res) {
-        let { tgl_persetujuan_manajer_txpk, tgl_persetujuan_kasir_txpk, status_bayar_txpk, tgl_persetujuan_akuntan_txpk, status_persetujuan_txpk, trx_pembelian_id, jenis_pengeluaran_kas_id, nominal_txpk, no_invoice_txpk, company_id,deskripsi_txpk } = req.body
+    static async registerKewajibanLainKepadaVendor(req, res) {
+        let { akun_kas_id, nominal_txpk, no_invoice_txpk, company_id,deskripsi_txpk,tanggal_transaksi,pembelian_id } = req.body
 
-        if (!company_id) {
-            company_id = req.dataUsers.company_id
-        }
+        try {
+            if (!company_id) {
+                company_id = req.dataUsers.company_id
+            }
 
-        trxPengeluaranKas.create({ id: uuid_v4(), tgl_persetujuan_manajer_txpk, tgl_persetujuan_kasir_txpk, status_bayar_txpk, tgl_persetujuan_akuntan_txpk, status_persetujuan_txpk, trx_pembelian_id, jenis_pengeluaran_kas_id, nominal_txpk, no_invoice_txpk, company_id,deskripsi_txpk }).then(data => {
+            let akunKas = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}'`,s);
+
+            let akunHutang = await sq.query(`select c6.* from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001'`,s);
+            
+            let kas = {id:uuid_v4(),tanggal_transaksi,pengurangan:nominal_txpk,pembelian_id,akun_id:akunKas[0].id,nama_transaksi:"pembayaran kewajiban lain pada vendor",referensi_bukti:no_invoice_txpk,keterangan:deskripsi_txpk,nama:"kas"}
+            let hutang = {id:uuid_v4(),tanggal_transaksi,pengurangan:nominal_txpk,pembelian_id,akun_id:akunHutang[0].id,nama_transaksi:"pembayaran kewajiban lain pada vendor",referensi_bukti:no_invoice_txpk,keterangan:deskripsi_txpk,nama:"hutang"}
+
+            let data = await generalLedger.bulkCreate([kas,hutang])
+
             res.status(200).json({ status: 200, message: "sukses", data });
-        }).catch(err => {
+        } catch (err) {
             console.log(req.body);
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
     static update(req, res) {
@@ -565,6 +574,22 @@ class Controller {
     static async listpengeluaranKasNonPegawai(req, res) {
         try {
             let data = await sq.query(`select * from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa5 c5 on c5.id = c6.coa5_id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5."deletedAt" isnull and gl.nama_transaksi = 'pengeluaran kas non pegawai' and c5.company_id = '${req.dataUsers.company_id}' order by gl."createdAt" desc `, s);
+
+            res.status(200).json({ status: 200, message: "sukses", data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async listPembayaranKewajibanLainVendorByStatusPersetujuan(req, res) {
+        const {status} = req.body
+        try {
+            let data = await sq.query(`select gl.id as general_ledger_id,*
+            from general_ledger gl
+            left join pembelian p on p.id = gl.pembelian_id 
+            join coa6 c6 on c6.id = gl.akun_id 
+            where gl."deletedAt" isnull and gl.nama_transaksi = 'pembayaran kewajiban lain pada vendor' and gl.status = '' order by gl."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

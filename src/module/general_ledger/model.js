@@ -6,6 +6,7 @@ const order = require('../order/model');
 const pegawai = require('../users/model');
 const masterVendor = require('../master_vendor/model');
 const returBarang = require('../retur_barang/model');
+const company = require('../company_usaha/model');
 
 const generalLedger = sq.define('general_ledger', {
     id: {
@@ -43,9 +44,9 @@ const generalLedger = sq.define('general_ledger', {
         type: DataTypes.SMALLINT, 
         defaultValue: 1  // 0: ditolak || 1: created || 2: supervisor || 3: manager || 4: akuntan
     },
-    jenis_biaya: {
-        type: DataTypes.STRING
-    },
+    // jenis_biaya: {
+    //     type: DataTypes.STRING
+    // },
 },
     {
         paranoid: true,
@@ -72,5 +73,8 @@ masterVendor.hasMany(generalLedger, { foreignKey: 'vendor_id' })
 
 generalLedger.belongsTo(returBarang, { foreignKey: 'retur_barang_id' })
 returBarang.hasMany(generalLedger, { foreignKey: 'retur_barang_id' })
+
+generalLedger.belongsTo(company, { foreignKey: 'company_id' })
+company.hasMany(generalLedger, { foreignKey: 'company_id' })
 
 module.exports = generalLedger

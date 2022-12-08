@@ -1,4 +1,24 @@
 {
+  "name": "backend_erp_undip",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve":"node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duski-team/BACKEND_ERP_UNDIP.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/duski-team/BACKEND_ERP_UNDIP/issues"
+  },
+  "homepage": "https://github.com/duski-team/BACKEND_ERP_UNDIP#readme",
+  "description": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

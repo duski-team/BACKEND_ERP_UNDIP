@@ -427,18 +427,20 @@ class Controller {
             for (let i = 0; i < cekAkun.length; i++) {
                 if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
                     if (cekId[0].akun_id != cekAkun[i].akun_id) {
-                        // console.log(cekAkun[i]);
+                        // console.log(cekAkun[i].penambahan);
                         if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
+                            
                             if (cekAkun[i].penambahan == 0) {
                                 akunKas.id = cekAkun[i].general_ledger_id
-                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - cekAkun[i].pengurangan
+                                akunKas.sisa_saldo = cekAkun[i].pengurangan
                             }
                             akunUtangPajak.id = cekAkun[i].general_ledger_id
                             akunUtangPajak.sisa_saldo = cekAkun[i].penambahan
                         } else {
+                            // console.log(cekAkun[i]);
                             if (cekAkun[i].penambahan == 0) {
                                 akunKas.id = cekAkun[i].general_ledger_id
-                                akunKas.sisa_saldo = cekAkun[i].pengurangan
+                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - cekAkun[i].pengurangan
                             }
                             akunUtangPajak.id = cekAkun[i].general_ledger_id
                             akunUtangPajak.sisa_saldo = cekAkun[i].penambahan
@@ -453,10 +455,10 @@ class Controller {
             // console.log(akunKas);
 
             if (status == 4) {
-                await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
+                // await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
                 res.status(200).json({ status: 200, message: "sukses" })
             } else {
-                await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["status"] })
+                // await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["status"] })
                 res.status(200).json({ status: 200, message: "sukses" })
             }
 

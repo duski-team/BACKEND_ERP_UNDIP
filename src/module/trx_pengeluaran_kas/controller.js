@@ -569,9 +569,6 @@ class Controller {
             } else {
                 akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - pengurangan
             }
-            // console.log(akunBebanPegawai);
-            // console.log(akunUtangPajak);
-            // console.log(akunKas);
 
             if (status == 4) {
                 await generalLedger.bulkCreate([akunBebanPegawai, akunUtangPajak, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
@@ -671,7 +668,7 @@ class Controller {
             }
 
             let pengeluaran = []
-            if (akunUtangPajak.sisa_saldo == 0) {
+            if (akunUtangPajak.id == '') {
                 pengeluaran.push(akunBiaya, akunKas)
             } else {
                 pengeluaran.push(akunBiaya, akunUtangPajak, akunKas)

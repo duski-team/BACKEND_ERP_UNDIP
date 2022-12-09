@@ -562,7 +562,7 @@ class Controller {
                 }
             }
             
-            let cekSaldo = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.id = '${akun_kas_id}' and gl.status = 4 order by gl.tanggal_persetujuan desc limit 1`, s)
+            let cekSaldo = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where gl."deletedAt" isnull and c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.id = '${akun_kas_id}' order by gl.tanggal_persetujuan desc limit 1`, s)
             
             if (cekSaldo[0].sisa_saldo == 0 || cekSaldo[0].sisa_saldo == null) {
                 akunKas.sisa_saldo = cekSaldo[0].nominal_coa6 - pengurangan
@@ -662,7 +662,7 @@ class Controller {
                 }
             }
 
-            let cekSaldo = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.id = '${akun_kas_id}' and gl.status = 4 order by gl.tanggal_persetujuan desc limit 1`, s)
+            let cekSaldo = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where gl."deletedAt" isnull and c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.id = '${akun_kas_id}' order by gl.tanggal_persetujuan desc limit 1`, s)
            
             if (cekSaldo[0].sisa_saldo == 0 || cekSaldo[0].sisa_saldo == null) {
                 akunKas.sisa_saldo = cekSaldo[0].nominal_coa6 - pengurangan

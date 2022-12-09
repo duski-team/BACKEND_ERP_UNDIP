@@ -174,40 +174,35 @@ class Controller {
             } else {
                 let totalPembayaran = cekPersetujuan[0].status_persetujuan_txpk ==0?cekPersetujuan[0].total+cekPersetujuan[0].nominal_txpk:cekPersetujuan[0].total
                 let status_bayar_txpk = 0
-                if (totalPembayaran > cekPersetujuan[0].harga_total_txp) {
-                    res.status(201).json({ status: 204, message: "pembayaran melebihi tagihan" });
-                } else {
-                    if (status_persetujuan_txpk == 4) {
-                        if (totalPembayaran == cekPersetujuan[0].harga_total_txp) {
-                            status_bayar_txpk = 1
-                            await pembelian.update({status_pembelian:1},{where:{id:cekPersetujuan[0].pembelian_id},transaction:t});
+                if(status_bayar_txpk> 1){
+                    if (totalPembayaran > cekPersetujuan[0].harga_total_txp){
+                        res.status(201).json({ status: 204, message: "pembayaran melebihi tagihan" });
+                    }else{
+                        if (status_persetujuan_txpk == 4) {
+                            if (totalPembayaran == cekPersetujuan[0].harga_total_txp) {
+                                status_bayar_txpk = 1
+                                await pembelian.update({status_pembelian:1},{where:{id:cekPersetujuan[0].pembelian_id},transaction:t});
+                            }
+        
+                            let akunKas = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}' order by gl.tanggal_persetujuan desc limit 1`,s);
+                            let akunHutang = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001' order by gl.tanggal_persetujuan desc limit 1`,s);
+        
+                            let sisaSaldo = !akunKas[0].sisa_saldo?akunKas[0].nominal_coa6:akunKas[0].sisa_saldo
+                            let saldoKas = sisaSaldo - cekPersetujuan[0].nominal_txpk
+                            let saldoHutang = akunHutang[0].sisa_saldo - cekPersetujuan[0].nominal_txpk
+        
+                            let kas = {id:uuid_v4(),tanggal_transaksi:cekPersetujuan[0].createdAt,pengurangan:cekPersetujuan[0].nominal_txpk,pembelian_id:cekPersetujuan[0].pembelian_id,akun_id:akunKas[0].id,company_id,tanggal_persetujuan:tgl_persetujuan_akuntan_txpk,sisa_saldo:saldoKas,status:4,nama_transaksi:"pembayaran kewajiban vendor",referensi_bukti:cekPersetujuan[0].no_invoice_txpk,keterangan:cekPersetujuan[0].deskripsi_txpk,nama:"kas"}
+                            let hutang = {id:uuid_v4(),tanggal_transaksi:cekPersetujuan[0].createdAt,pengurangan:cekPersetujuan[0].nominal_txpk,pembelian_id:cekPersetujuan[0].pembelian_id,akun_id:akunHutang[0].id,company_id,tanggal_persetujuan:tgl_persetujuan_akuntan_txpk,sisa_saldo:saldoHutang,status:4,nama_transaksi:"pembayaran kewajiban vendor",referensi_bukti:cekPersetujuan[0].no_invoice_txpk,keterangan:cekPersetujuan[0].deskripsi_txpk,nama:"hutang"}
+        
+                            // console.log(kas);
+                            // console.log(hutang);
+                            await generalLedger.bulkCreate([kas,hutang],{transaction:t});
                         }
-
-                        let akunKas = await sq.query(`select c6.*,gl.sisa_saldo 
-                        from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id = '${akun_kas_id}' order by gl.tanggal_persetujuan desc limit 1`,s);
-                        let akunHutang = await sq.query(`select c6.*,gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.kode_coa6 = '2.1.7.1.01.0001' order by gl.tanggal_persetujuan desc limit 1`,s);
-
-                        // console.log(akunKas);
-                        // console.log(akunHutang);
-                        // console.log("=============================================");
-
-                        let sisaSaldo = !akunKas[0].sisa_saldo?akunKas[0].nominal_coa6:akunKas[0].sisa_saldo
-                        let saldoKas = sisaSaldo - cekPersetujuan[0].nominal_txpk
-                        let saldoHutang = akunHutang[0].sisa_saldo - cekPersetujuan[0].nominal_txpk
-                        
-                        let kas = {id:uuid_v4(),tanggal_transaksi:cekPersetujuan[0].createdAt,pengurangan:cekPersetujuan[0].nominal_txpk,pembelian_id:cekPersetujuan[0].pembelian_id,akun_id:akunKas[0].id,company_id,tanggal_persetujuan:tgl_persetujuan_akuntan_txpk,sisa_saldo:saldoKas,status:4,nama_transaksi:"pembayaran kewajiban vendor",referensi_bukti:cekPersetujuan[0].no_invoice_txpk,keterangan:cekPersetujuan[0].deskripsi_txpk,nama:"kas"}
-                        let hutang = {id:uuid_v4(),tanggal_transaksi:cekPersetujuan[0].createdAt,pengurangan:cekPersetujuan[0].nominal_txpk,pembelian_id:cekPersetujuan[0].pembelian_id,akun_id:akunHutang[0].id,company_id,tanggal_persetujuan:tgl_persetujuan_akuntan_txpk,sisa_saldo:saldoHutang,status:4,nama_transaksi:"pembayaran kewajiban vendor",referensi_bukti:cekPersetujuan[0].no_invoice_txpk,keterangan:cekPersetujuan[0].deskripsi_txpk,nama:"hutang"}
-
-                        // console.log(kas);
-                        // console.log(hutang);
-
-                        await generalLedger.bulkCreate([kas,hutang],{transaction:t});
-                    }
-                    await trxPengeluaranKas.update({ tgl_persetujuan_manajer_txpk, tgl_persetujuan_kasir_txpk, tgl_persetujuan_akuntan_txpk, status_bayar_txpk,status_persetujuan_txpk }, { where: { id }, transaction: t })
-
-                    await t.commit();
-                    res.status(200).json({ status: 200, message: "sukses" });
+                    } 
                 }
+                await trxPengeluaranKas.update({ tgl_persetujuan_manajer_txpk, tgl_persetujuan_kasir_txpk, tgl_persetujuan_akuntan_txpk, status_bayar_txpk,status_persetujuan_txpk }, { where: { id }, transaction: t })
+                await t.commit();
+                res.status(200).json({ status: 200, message: "sukses" });
             }
         } catch (err) {
             await t.rollback();
@@ -407,7 +402,7 @@ class Controller {
                 isi += ` and p.vendor_id = '${vendor_id}'`
             }
 
-            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,p.*,jpk.nama_jenis_pengeluaran_kas from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id left join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id join pembelian p on tp.pembelian_id = p.id where tpk."deletedAt" isnull and tpk.status_persetujuan_txpk  = ${status_persetujuan_txpk} and tpk.company_id = '${company_id}' ${isi} order by tpk."createdAt" desc`,s);
+            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,p.*,jpk.nama_jenis_pengeluaran_kas,c6.nama_coa6 from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id left join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id join pembelian p on tp.pembelian_id = p.id join coa6 c6.id = p.coa6_id where tpk."deletedAt" isnull and tpk.status_persetujuan_txpk  = ${status_persetujuan_txpk} and tpk.company_id = '${company_id}' ${isi} order by tpk."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

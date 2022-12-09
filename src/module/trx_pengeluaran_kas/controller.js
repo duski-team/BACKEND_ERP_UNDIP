@@ -479,7 +479,7 @@ class Controller {
 
     static async listpengeluaranKasUntukPegawai(req, res) {
         try {
-            let data = await sq.query(`select * from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa5 c5 on c5.id = c6.coa5_id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5."deletedAt" isnull and gl.nama_transaksi = 'pengeluaran kas untuk pegawai' and c5.company_id = '${req.dataUsers.company_id}' order by gl."createdAt" desc `, s);
+            let data = await sq.query(`select gl.id as "general_ledger_id", * from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa5 c5 on c5.id = c6.coa5_id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5."deletedAt" isnull and gl.nama_transaksi = 'pengeluaran kas untuk pegawai' and c5.company_id = '${req.dataUsers.company_id}' order by gl."createdAt" desc `, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -582,7 +582,7 @@ class Controller {
 
     static async listpengeluaranKasNonPegawai(req, res) {
         try {
-            let data = await sq.query(`select * from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa5 c5 on c5.id = c6.coa5_id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5."deletedAt" isnull and gl.nama_transaksi = 'pengeluaran kas non pegawai' and c5.company_id = '${req.dataUsers.company_id}' order by gl."createdAt" desc `, s);
+            let data = await sq.query(`select gl.id as "general_ledger_id", * from general_ledger gl join coa6 c6 on c6.id = gl.akun_id join coa5 c5 on c5.id = c6.coa5_id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5."deletedAt" isnull and gl.nama_transaksi = 'pengeluaran kas non pegawai' and c5.company_id = '${req.dataUsers.company_id}' order by gl."createdAt" desc `, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

@@ -452,7 +452,7 @@ class Controller {
             // if (!company_id) {
             //     company_id = req.dataUsers.company_id
             // }
-            let data = await sq.query(`select gl.id as "general_ledger", * from general_ledger gl join "order" o on o.id = gl.penjualan_id join coa6 c6 on c6.id = gl.akun_id where gl."deletedAt" isnull and o."deletedAt" isnull and c6."deletedAt" isnull and o.company_id = '${req.dataUsers.company_id}'`, s);
+            let data = await sq.query(`select gl.id as "general_ledger", * from general_ledger gl join "order" o on o.id = gl.penjualan_id join coa6 c6 on c6.id = gl.akun_id where gl."deletedAt" isnull and o."deletedAt" isnull and c6."deletedAt" isnull and o.company_id = '${req.dataUsers.company_id}' order by gl.tanggal_transaksi desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

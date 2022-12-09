@@ -449,7 +449,7 @@ class Controller {
     static async listPenerimaanKasDariPelanggan(req, res) {
         
         try {
-            let data = await sq.query(`select gl.tanggal_transaksi ,gl.referensi_bukti ,sum(gl.penambahan) as "penambahan" ,sum(gl.pengurangan) as "pengurangan" ,sum(gl.sisa_saldo) as "sisa_saldo" ,gl.nama_transaksi, gl.tanggal_persetujuan, gl.status from general_ledger gl join "order" o on o.id = gl.penjualan_id join coa6 c6 on c6.id = gl.akun_id where gl."deletedAt" isnull and o."deletedAt" isnull and c6."deletedAt" isnull and o.company_id = '${req.dataUsers.company_id}' group by gl.referensi_bukti ,tanggal_transaksi , gl.nama_transaksi,gl.tanggal_persetujuan, gl.status order by gl.tanggal_transaksi desc`, s);
+            let data = await sq.query(`select o.id as "order_id", * from "order" o join users u on u.id = o.customer_id left join tipe_pembayaran tp on tp.id = o.tipe_pembayaran_id where o."deletedAt" isnull order by o.tgl_order desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

@@ -637,44 +637,45 @@ class Controller {
 
         try {
             let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
-            let cekAkun = await sq.query(`select c6.id as "coa6_id", gl.id as "general_ledger_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull order by c6."kode_coa6"`, s)
-            let cekSaldo = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.status = 4 order by gl.tanggal_persetujuan desc limit 1`, s)
+            let cekAkun = await sq.query(`select c6.id as "coa6_id", gl.id as "general_ledger_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' order by c6."kode_coa6"`, s)
 
             let akunBiaya = { id, tanggal_persetujuan, sisa_saldo: 0, status }
             let akunUtangPajak = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
             let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
+            let akun_kas_id = ''
+            let pengurangan = 0
 
             for (let i = 0; i < cekAkun.length; i++) {
-                if (cekAkun[i].nama_transaksi === cekId[0].nama_transaksi) {
-                    if (cekId[0].akun_id != cekAkun[i].akun_id) {
-                        if (cekSaldo[0].sisa_saldo == 0 || cekSaldo.length == 0) {
-                            if (cekAkun[i].penambahan == 0) {
-                                akunKas.id = cekAkun[i].general_ledger_id
-                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo 
-                            }
-                            akunUtangPajak.id = cekAkun[i].general_ledger_id
-                            akunUtangPajak.sisa_saldo = cekAkun[i].penambahan
+                if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
+                    if (cekAkun[i].akun_id != cekId[0].akun_id) {
+                        if (cekAkun[i].penambahan == 0) {
+                            akun_kas_id = cekAkun[i].coa6_id 
+                            akunKas.id = cekAkun[i].general_ledger_id 
+                            pengurangan = cekAkun[i].pengurangan
                         } else {
-                            if (cekAkun[i].penambahan == 0) {
-                                akunKas.id = cekAkun[i].general_ledger_id
-                                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - cekAkun[i].pengurangan
-                            }
-                            akunUtangPajak.id = cekAkun[i].general_ledger_id
+                            akunUtangPajak.id = cekAkun[i].general_ledger_id 
                             akunUtangPajak.sisa_saldo = cekAkun[i].penambahan
                         }
-                        
                     } else {
-                        akunBiaya.sisa_saldo = cekId[0].penambahan
+                        akunBiaya.sisa_saldo = cekAkun[i].penambahan
                     }
                 }
             }
+
+            let cekSaldo = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id where gl."deletedAt" isnull and c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.id = '${akun_kas_id}' and gl.status = 4 order by gl.tanggal_persetujuan desc limit 1`, s)
+           
+            if (cekSaldo[0].sisa_saldo == 0 || cekSaldo[0].sisa_saldo == null) {
+                akunKas.sisa_saldo = cekSaldo[0].nominal_coa6 - pengurangan
+            } else {
+                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - pengurangan
+            }
+
             let pengeluaran = []
             if (akunUtangPajak.sisa_saldo == 0) {
                 pengeluaran.push(akunBiaya, akunKas)
             } else {
                 pengeluaran.push(akunBiaya, akunUtangPajak, akunKas)
             }
-            // console.log(pengeluaran);
 
             if (status == 4) {
                 await generalLedger.bulkCreate(pengeluaran, { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })

@@ -15,6 +15,7 @@ router.get('/detailsById/:id', authentification, Controller.detailsById);
 router.post('/acceptPersetujuanPembayaranKewajibanVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanVendor);
 router.post('/acceptPersetujuanPembayaranKewajibanLainKepadaVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanLainKepadaVendor);
 router.post('/pengembalianDanaInvestasi', authentification, Controller.pengeluaranKasPengembalianDanaInvestasi);
+router.post('/approvalPengeluaranKasPengembalianDanaInvestasi', authentification, Controller.approvalPengeluaranKasPengembalianDanaInvestasi);
 router.post('/pembayaranDanaInvestasi', authentification, Controller.pengeluaranKasPembayaranDanaInvestasi);
 router.post('/approvalPengeluaranKasPembayaranDanaInvestasi', authentification, Controller.approvalPengeluaranKasPembayaranDanaInvestasi);
 router.post('/pengeluaranKasUntukPegawai', authentification, Controller.pengeluaranKasUntukPegawai);

@@ -11,9 +11,13 @@ const s = { type: QueryTypes.SELECT };
 class Controller {
 
     static register(req, res) {
-        const { harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak,pembelian_id } = req.body
+        let { harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak,pembelian_id,company_id } = req.body
         
-        returBarang.create({ id: uuid_v4(), harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak,pembelian_id }).then(data => {
+        if (!company_id) {
+            company_id = req.dataUsers.company_id
+        }
+        
+        returBarang.create({ id: uuid_v4(), harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak,pembelian_id,company_id }).then(data => {
             res.status(200).json({ status: 200, message: "sukses", data });
         }).catch(err => {
             console.log(req.body);
@@ -24,13 +28,13 @@ class Controller {
 
     static update(req, res) {
 
-        const { id, harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak,pembelian_id } = req.body
+        const { id, harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak,pembelian_id,company_id } = req.body
 
         returBarang.findAll({where:{id}}).then(async data =>{
             if(data[0].status_retur >1){
                 res.status(202).json({status:204,message:"status retur lebih dari 1"})
             }else{
-                await returBarang.update({ harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak,pembelian_id }, { where: { id } }).then(data => {
+                await returBarang.update({ harga_total, jumlah, tanggal_retur, keterangan, status_retur, no_invoice, akun_pajak_id, persentase_pajak, nominal_pajak, persediaan_id, order_id, total_harga_dan_pajak,pembelian_id,company_id }, { where: { id } }).then(data => {
                     res.status(200).json({ status: 200, message: "sukses" });
                 })
             }

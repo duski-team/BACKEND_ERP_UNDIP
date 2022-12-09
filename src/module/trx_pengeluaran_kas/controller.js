@@ -402,7 +402,7 @@ class Controller {
                 isi += ` and p.vendor_id = '${vendor_id}'`
             }
 
-            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,p.*,jpk.nama_jenis_pengeluaran_kas,c6.nama_coa6 from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id left join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id join pembelian p on tp.pembelian_id = p.id join coa6 c6.id = p.coa6_id where tpk."deletedAt" isnull and tpk.status_persetujuan_txpk  = ${status_persetujuan_txpk} and tpk.company_id = '${company_id}' ${isi} order by tpk."createdAt" desc`,s);
+            let data = await sq.query(`select tpk.id as trx_pengeluaran_kas_id,tpk.*,tp.*,p.*,jpk.nama_jenis_pengeluaran_kas,c6.nama_coa6 from trx_pengeluaran_kas tpk join trx_pembelian tp on tp.id = tpk.trx_pembelian_id left join jenis_pengeluaran_kas jpk on jpk.id = tpk.jenis_pengeluaran_kas_id join pembelian p on tp.pembelian_id = p.id join coa6 on c6.id = p.coa6_id where tpk."deletedAt" isnull and tpk.status_persetujuan_txpk  = ${status_persetujuan_txpk} and tpk.company_id = '${company_id}' ${isi} order by tpk."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

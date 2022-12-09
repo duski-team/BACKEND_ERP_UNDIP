@@ -16,6 +16,6 @@ router.post('/listPersediaanBySubSubKategoriId', authentification, Controller.li
 router.get('/detailsById/:id', authentification, Controller.detailsById);
 router.get('/listPersediaanByBarangHabisPakai', authentification, Controller.listPersediaanByBarangHabisPakai);
 router.get('/listPersediaanByBarangJual', authentification, Controller.listPersediaanByBarangJual);
-router.get('/listPersediaanByBarangJualTampil', authentification, Controller.listPersediaanByBarangJualTampil);
+router.post('/listPersediaanByBarangJualTampil', Controller.listPersediaanByBarangJualTampil);
 
 module.exports = router

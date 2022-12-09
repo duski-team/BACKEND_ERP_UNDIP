@@ -319,10 +319,8 @@ class Controller {
 
     static async cekUserByNomorHp(req, res) {
         const { phone_no } = req.body
-
         try {
             let data = await users.findAll({ where: { phone_no } })
-            
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (err) {
             console.log(err);

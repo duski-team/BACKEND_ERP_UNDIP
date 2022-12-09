@@ -71,6 +71,64 @@ class Controller {
         }
     }
 
+    static async registerOrderCustomer(req, res) {
+        let { alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persen_pajak, total_pajak, biaya_admin, total_penjualan, tipe_pembayaran_id, jenis_penjualan_id, customer_id, company_id,status_va_id,bulkData } = req.body
+
+        const t = await sq.transaction();
+
+        try {
+            if(!kode_invoice){
+                kode_invoice = `INV-${moment().format('dddYYMMDDHHmmSSS')}`
+            }
+
+            let order_id = uuid_v4();
+            let barang_id = ''
+            let barangHabis = []
+            let cek = false
+
+            for (let i = 0; i < bulkData.length; i++) {
+                bulkData[i].id = uuid_v4()
+                bulkData[i].order_id = order_id
+                barang_id+=`,'${bulkData[i].persediaan_id}'`
+            }
+
+            let barang = await sq.query(`select *,(p.stock - p.stock_rusak) as total_stock from persediaan p where p."deletedAt" isnull and p.id in (${barang_id.substring(1)})`,s);
+
+            if(barang.length==0){
+                res.status(201).json({status:204,message:"data tidak ada"})
+            }else{
+                for (let j = 0; j < barang.length; j++) {
+                    for (let k = 0; k < bulkData.length; k++) {
+                        if(barang[j].id == bulkData[k].persediaan_id){
+                            if(bulkData[k].jumlah > barang[j].total_stock){
+                                barangHabis.push({persediaan_id:barang[j].id,nama_persediaan:barang[j].nama_persediaan,total_stock:barang[j].total_stock});
+                                cek = true
+                            }else{
+                                barang[j].stock-=bulkData[k].jumlah
+                            }
+                        }
+                    }
+                }
+
+                if(cek){
+                    res.status(201).json({status:204,message:"stock tidak cukup",data: barangHabis})
+                }else{
+                    let hasil = await order.create({id:order_id,alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persen_pajak, total_pajak, biaya_admin, total_penjualan, tipe_pembayaran_id, jenis_penjualan_id, customer_id, company_id,status_va_id},{transaction:t});
+                    await barangOrder.bulkCreate(bulkData,{transaction:t})
+                    await persediaan.bulkCreate(barang,{updateOnDuplicate:['stock'],transaction:t});
+                    await t.commit();
+
+                    res.status(200).json({status:200,message:"sukses",data: hasil})
+                }
+            }
+        } catch (err) {
+            await t.rollback();
+            console.log(req.body);
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
     static async update(req, res) {
         const { id, alamat_order, keterangan, no_va, kode_invoice, tgl_order, tgl_expire, persen_pajak, total_pajak, biaya_admin, total_penjualan, tipe_pembayaran_id, jenis_penjualan_id, customer_id, company_id,status_va_id,bulkData } = req.body
 

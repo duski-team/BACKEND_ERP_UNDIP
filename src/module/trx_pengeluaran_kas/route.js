@@ -16,6 +16,7 @@ router.post('/acceptPersetujuanPembayaranKewajibanVendor', authentification, Con
 router.post('/acceptPersetujuanPembayaranKewajibanLainKepadaVendor', authentification, Controller.acceptPersetujuanPembayaranKewajibanLainKepadaVendor);
 router.post('/pengembalianDanaInvestasi', authentification, Controller.pengeluaranKasPengembalianDanaInvestasi);
 router.post('/pembayaranDanaInvestasi', authentification, Controller.pengeluaranKasPembayaranDanaInvestasi);
+router.post('/approvalPengeluaranKasPembayaranDanaInvestasi', authentification, Controller.approvalPengeluaranKasPembayaranDanaInvestasi);
 router.post('/pengeluaranKasUntukPegawai', authentification, Controller.pengeluaranKasUntukPegawai);
 router.post('/approvalPengeluaranKasUntukPegawai', authentification, Controller.approvalPengeluaranKasUntukPegawai);
 router.post('/pengeluaranKasNonPegawai', authentification, Controller.pengeluaranKasNonPegawai);

@@ -465,30 +465,63 @@ class Controller {
             if (cekInvoice.length > 0) {
                 res.status(201).json({ status: 204, message: "data sudah ada" })
             } else {
-                let akunKas = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id ='${jenis_investasi_id}' order by gl.tanggal_persetujuan desc limit 1`, s);
-                let akunBank = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where c6."deletedAt" isnull and c5.company_id = '${company_id}' and c6.id ='${akun_bank_id}' order by gl.tanggal_persetujuan desc limit 1`, s);
-                let cekSaldo = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where gl."deletedAt" isnull and c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.id = '${akun_bank_id}' order by gl.tanggal_persetujuan desc limit 1`, s)
+                let jenisInvestasi = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: jenis_investasi_id, sisa_saldo: 0, status: 1, nama_transaksi: "pembayaran dana investasi", pegawai_id: req.dataUsers.id, company_id }
+                let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akun_bank_id, sisa_saldo: 0, status: 1, nama_transaksi: "pembayaran dana investasi", pegawai_id: req.dataUsers.id, company_id }
 
-                let kas = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunBank[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pengembalian dana investasi", pegawai_id: req.dataUsers.id, company_id }
-                let jenisInvestasi = { id: uuid_v4(), tanggal_transaksi, pengurangan: nominal, keterangan: deskripsi, referensi_bukti: invoice, tanggal_persetujuan: tanggal_transaksi, akun_id: akunKas[0].id, sisa_saldo: 0, status: 4, nama_transaksi: "pengembalian dana investasi", pegawai_id: req.dataUsers.id, company_id }
-
-                // console.log(cekSaldo);
-                if (cekSaldo.length == 0 || cekSaldo[0].sisa_saldo == null) {
-                    kas.sisa_saldo = cekSaldo[0].nominal_coa6 - nominal
-                    jenisInvestasi.sisa_saldo = nominal
-                } else {
-                    kas.sisa_saldo = cekSaldo[0].sisa_saldo - nominal
-                    jenisInvestasi.sisa_saldo = nominal
-                }
-
-                // console.log(kas);
-                // console.log(jenisInvestasi);
                 let hasil = await generalLedger.bulkCreate([jenisInvestasi, kas])
                 res.status(200).json({ status: 200, message: "sukses", data: hasil })
             }
         } catch (err) {
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
+    static async approvalPengeluaranKasPembayaranDanaInvestasi(req, res) {
+        const { id, tanggal_persetujuan, status } = req.body
+
+        try {
+            let cekId = await sq.query(`select * from general_ledger gl where gl."deletedAt" isnull and gl.id = '${id}'`, s)
+            let cekAkun = await sq.query(`select c6.id as "coa6_id", gl.id as "general_ledger_id", * from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id join general_ledger gl on gl.akun_id = c6.id where c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' order by c6."kode_coa6"`, s)
+
+            let akunJenisInvestasi = { id, tanggal_persetujuan, sisa_saldo: 0, status }
+            let akunKas = { id: '', tanggal_persetujuan, sisa_saldo: 0, status }
+            let akun_kas_id = ''
+            let pengurangan = 0
+            for (let i = 0; i < cekAkun.length; i++) {
+                if (cekAkun[i].referensi_bukti == cekId[0].referensi_bukti) {
+                    if (cekId[0].akun_id != cekAkun[i].akun_id) {
+                        akun_kas_id = cekAkun[i].coa6_id
+                        akunKas.id = cekAkun[i].general_ledger_id
+                        pengurangan = cekAkun[i].pengurangan
+                    } else {
+                        akunJenisInvestasi.sisa_saldo = cekAkun[i].pengurangan
+                    }
+                }
+            }
+
+            let cekSaldo = await sq.query(`select c6.*, gl.sisa_saldo from coa6 c6 join coa5 c5 on c5.id = c6.coa5_id left join general_ledger gl on gl.akun_id = c6.id and gl.status = 4 where gl."deletedAt" isnull and c6."deletedAt" isnull and c5.company_id = '${req.dataUsers.company_id}' and c6.id = '${akun_kas_id}' order by gl.tanggal_persetujuan desc limit 1`, s)
+
+            if (cekSaldo[0].sisa_saldo == 0 || cekSaldo[0].sisa_saldo == null) {
+                akunKas.sisa_saldo = cekSaldo[0].nominal_coa6 - pengurangan
+            } else {
+                akunKas.sisa_saldo = cekSaldo[0].sisa_saldo - pengurangan
+            }
+
+            console.log(cekSaldo);
+            console.log(akunJenisInvestasi);
+            console.log(akunKas);
+            if (status == 4) {
+                // await generalLedger.bulkCreate([akunJenisInvestasi, akunKas], { updateOnDuplicate: ["sisa_saldo", "status", "tanggal_persetujuan"] })
+                res.status(200).json({ status: 200, message: "sukses" })
+            } else {
+                // await generalLedger.bulkCreate([akunJenisInvestasi, akunKas], { updateOnDuplicate: ["status"] })
+                res.status(200).json({ status: 200, message: "sukses" })
+            }
+        } catch (err) {
+            console.log(req.body)
+            console.log(err)
+            res.status(500).json({ status: 500, message: "gagal", data: err })
         }
     }
 

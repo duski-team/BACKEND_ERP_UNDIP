@@ -53,9 +53,9 @@ router.use("/returBarang", require('./module/retur_barang/route'));
 
 
 
-router.get('/qr/:content', async (req, res, next) => {
+router.get('/qr', async (req, res, next) => {
     try{
-        const content = req.params.content;            
+        const content = req.query.cid;            
         const qrStream = new PassThrough();
         const result = await QRCode.toFileStream(qrStream, content,
                     {

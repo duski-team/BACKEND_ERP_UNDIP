@@ -3,6 +3,7 @@ const router = require('express').Router();
 const authentification = require('../../middleware/authentification');
 
 router.post('/register', authentification, Controller.register);
+router.post('/registerOrderCustomer', Controller.registerOrderCustomer);
 router.post('/update', authentification, Controller.update);
 router.post('/delete', authentification, Controller.delete);
 router.post('/acceptStatus', authentification, Controller.acceptStatus);

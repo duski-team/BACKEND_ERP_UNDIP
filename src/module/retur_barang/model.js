@@ -3,6 +3,7 @@ const { sq } = require('../../config/connection');
 const persediaan = require('../persediaan/model');
 const pembelian = require('../pembelian/model');
 const order = require('../order/model');
+const company = require('../company_usaha/model');
 
 const returBarang = sq.define('retur_barang', {
     id: {
@@ -58,5 +59,8 @@ order.hasMany(returBarang, { foreignKey: 'order_id' })
 
 returBarang.belongsTo(pembelian, { foreignKey: 'pembelian_id' })
 pembelian.hasMany(returBarang, { foreignKey: 'pembelian_id' })
+
+returBarang.belongsTo(company, { foreignKey: 'company_id' })
+company.hasMany(returBarang, { foreignKey: 'company_id' })
 
 module.exports = returBarang

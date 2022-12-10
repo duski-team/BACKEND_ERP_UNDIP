@@ -1,4 +1,6 @@
 const router = require("express").Router();
+const QRCode = require('qrcode')
+const { PassThrough } = require('stream');
 
 // router.use("/penugasan", require('./module/DELETE_penugasan/route'));
 // router.use("/sdm", require('./module/DELETE_sdm/route'));
@@ -48,6 +50,26 @@ router.use("/masterVendor", require('./module/master_vendor/route'));
 router.use("/generalLedger", require('./module/general_ledger/route'));
 router.use("/penugasanSdm", require('./module/penugasan_sdm/route'));
 router.use("/returBarang", require('./module/retur_barang/route'));
+
+
+
+router.get('/qr', async (req, res, next) => {
+    try{
+        const content = req.query.cid;            
+        const qrStream = new PassThrough();
+        const result = await QRCode.toFileStream(qrStream, content,
+                    {
+                        type: 'png',
+                        width: 200,
+                        errorCorrectionLevel: 'H'
+                    }
+                );
+
+        qrStream.pipe(res);
+    } catch(err){
+        console.error('Failed to return content', err);
+    }
+})
 
 
 module.exports = router;

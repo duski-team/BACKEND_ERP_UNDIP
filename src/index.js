@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { rmSync } = require("fs");
 const QRCode = require('qrcode')
 const { PassThrough } = require('stream');
 
@@ -64,7 +65,8 @@ router.get('/qr', async (req, res, next) => {
                         errorCorrectionLevel: 'H'
                     }
                 );
-
+        res.setHeader('Content-disposition','attachment; filename="qr.png"');
+        res.setHeader('Content-type', 'image/png')
         qrStream.pipe(res);
     } catch(err){
         console.error('Failed to return content', err);

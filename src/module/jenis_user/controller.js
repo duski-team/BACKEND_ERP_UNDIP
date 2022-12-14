@@ -58,6 +58,18 @@ class Controller {
         })
     }
 
+    static async listUser (req,res){
+
+        try {
+            let data = await sq.query(`select * from jenis_user ju where ju."deletedAt" isnull and ju.nama_jenis_user not ilike 'admin%'`,s);
+            
+            res.status(200).json({ status: 200, message: "sukses",data });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err });
+        }
+    }
+
     static detailsById (req,res){
         const {id} = req.params
 

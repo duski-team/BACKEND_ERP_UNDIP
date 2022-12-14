@@ -42,7 +42,7 @@ createSuperUser()
 class Controller {
 
     static async register(req, res) {
-        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, nama_usaha, location, code, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, nama_usaha, location, code, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id,kode } = req.body
 
         const t = await sq.transaction();
 
@@ -62,7 +62,7 @@ class Controller {
                 }
                 let encryptedPassword = bcrypt.hashPassword(password);
                 let perusahan_id = await company.create({ id: uuid_v4(), nama_usaha, location, code }, { transaction: t })
-                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password: encryptedPassword, register_token, resetpassword_token, variant, priority, profil_image, jenis_user_id, company_id: perusahan_id.id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id }, { transaction: t })
+                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password: encryptedPassword, register_token, resetpassword_token, variant, priority, profil_image, jenis_user_id, company_id: perusahan_id.id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id,kode }, { transaction: t })
                 await t.commit();
 
                 res.status(200).json({ status: 200, message: "sukses", data });
@@ -76,7 +76,7 @@ class Controller {
     }
 
     static async registerUser(req, res) {
-        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,kode } = req.body
 
         try {
             let cekUser = await users.findAll({ where: { [Op.or]: [{ email }, { username }] } });
@@ -93,7 +93,7 @@ class Controller {
                 }
                 let encryptedPassword = bcrypt.hashPassword(password);
                 
-                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password:encryptedPassword, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,profil_image })
+                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password:encryptedPassword, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,profil_image,kode })
 
                 res.status(200).json({ status: 200, message: "sukses", data });
             }
@@ -105,7 +105,7 @@ class Controller {
     }
 
     static update(req, res) {
-        const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+        const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id,kode } = req.body
 
         if (req.files) {
             if (req.files.file1) {
@@ -114,7 +114,7 @@ class Controller {
             }
         }
 
-        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } }).then(data => {
+        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id,kode }, { where: { id } }).then(data => {
             res.status(200).json({ status: 200, message: "sukses" });
         }).catch(err => {
             console.log(req.body);
@@ -207,7 +207,8 @@ class Controller {
                         username: cekUser[0].username,
                         jenis_user_id: cekUser[0].jenis_user_id,
                         company_id: cekUser[0].company_id,
-                        password: cekUser[0].password
+                        password: cekUser[0].password,
+                        kode: cekUser[0].kode,
                     }
                     let hasil = bcrypt.compare(password, cekUser[0].password);
                     if (hasil) {
@@ -321,6 +322,22 @@ class Controller {
         const { phone_no } = req.body
         try {
             let data = await users.findAll({ where: { phone_no } })
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
+    }
+
+    static async listUser (req,res) {
+        const {status_user} = req.body
+        try {
+            let isi = ''
+            if(status_user){
+                isi+= ` and u.status_users = ${status_user}`
+            }
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.id <> 'superadmin' and ju.nama_jenis_user <> 'admin_company' ${isi} order by u."createdAt" desc`,s);
+
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (err) {
             console.log(err);

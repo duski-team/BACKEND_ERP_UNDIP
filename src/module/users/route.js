@@ -11,6 +11,7 @@ router.post('/login', Controller.login);
 router.post('/cekEmailUsername', Controller.cekEmailUsername);
 router.post('/aceptedUser', authentification, Controller.aceptedUser);
 router.get('/list', authentification, Controller.list);
+router.post('/listUser', authentification, Controller.listUser);
 router.post('/listUserAdminCompany', authentification, Controller.listUserAdminCompany);
 router.post('/listUserByCompanyId', authentification, Controller.listUserByCompanyId);
 router.post('/listUserByJenisUserId', authentification, Controller.listUserByJenisUserId);

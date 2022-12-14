@@ -69,6 +69,9 @@ const users = sq.define('users', {
     },
     jenis_penugasan: {
         type: DataTypes.STRING
+    },
+    kode: {
+        type: DataTypes.STRING
     }
 },
     {

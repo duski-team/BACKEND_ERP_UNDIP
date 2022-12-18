@@ -205,20 +205,24 @@ class Controller {
                 if (cekUser.length == 0) {
                     res.status(201).json({ status: 204, message: "User Tidak Terdaftar" });
                 } else {
-                    let dataToken = {
-                        id: cekUser[0].id,
-                        email: cekUser[0].email,
-                        username: cekUser[0].username,
-                        jenis_user_id: cekUser[0].jenis_user_id,
-                        company_id: cekUser[0].company_id,
-                        password: cekUser[0].password,
-                        kode_role: cekUser[0].kode_role,
-                    }
-                    let hasil = bcrypt.compare(password, cekUser[0].password);
-                    if (hasil) {
-                        res.status(200).json({ status: 200, message: "sukses", token: jwt.generateToken(dataToken), data: dataToken });
-                    } else {
-                        res.status(201).json({ status: 204, message: "Password Salah" });
+                    if(cekUser[0].status_user != 2){
+                        res.status(201).json({ status: 204, message: "status bukan 2" });
+                    }else{
+                        let dataToken = {
+                            id: cekUser[0].id,
+                            email: cekUser[0].email,
+                            username: cekUser[0].username,
+                            jenis_user_id: cekUser[0].jenis_user_id,
+                            company_id: cekUser[0].company_id,
+                            password: cekUser[0].password,
+                            kode_role: cekUser[0].kode_role,
+                        }
+                        let hasil = bcrypt.compare(password, cekUser[0].password);
+                        if (hasil) {
+                            res.status(200).json({ status: 200, message: "sukses", token: jwt.generateToken(dataToken), data: dataToken });
+                        } else {
+                            res.status(201).json({ status: 204, message: "Password Salah" });
+                        }
                     }
                 }
             }

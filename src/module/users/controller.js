@@ -137,7 +137,8 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user,
+            ju.kode_role FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -153,7 +154,8 @@ class Controller {
                 company_id = req.dataUser.token
             }
 
-            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user, u.email as email_user, u.phone_no as phone_no_user, cu.email as email_company, cu.phone_no as phone_no_company FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user,
+            ju.kode_role, u.email as email_user, u.phone_no as phone_no_user, cu.email as email_company, cu.phone_no as phone_no_company FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.company_id = '${company_id}' order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -165,7 +167,8 @@ class Controller {
     static async listUserByJenisUserId(req, res) {
         const { jenis_user_id } = req.body
         try {
-            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.jenis_user_id = '${jenis_user_id}' order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user,
+            ju.kode_role FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.jenis_user_id = '${jenis_user_id}' order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -178,7 +181,8 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.id = '${id}'`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user,
+            ju.kode_role FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.id = '${id}'`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -196,7 +200,7 @@ class Controller {
             if (perusahan_id.length == 0) {
                 res.status(201).json({ status: 204, message: "Perusahaan Code Tidak Terdaftar" });
             } else {
-                let cekUser = await users.findAll({ where: { username, company_id: perusahan_id[0].id } });
+                let cekUser = await sq.query(`select u.*,ju.nama_jenis_user,ju.kode_role from users u join jenis_user ju on ju.id = u.jenis_user_id where u."deletedAt" isnull and u.username = '${username}' and u.company_id = '${perusahan_id[0].id}'`,s);
 
                 if (cekUser.length == 0) {
                     res.status(201).json({ status: 204, message: "User Tidak Terdaftar" });
@@ -207,7 +211,8 @@ class Controller {
                         username: cekUser[0].username,
                         jenis_user_id: cekUser[0].jenis_user_id,
                         company_id: cekUser[0].company_id,
-                        password: cekUser[0].password
+                        password: cekUser[0].password,
+                        kode_role: cekUser[0].kode_role,
                     }
                     let hasil = bcrypt.compare(password, cekUser[0].password);
                     if (hasil) {
@@ -250,7 +255,8 @@ class Controller {
                 isi += `and u.status_users =${status_users}`
             }
 
-            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and ju.nama_jenis_user ilike 'admin_company' ${isi} order by u."createdAt" desc`, s);
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan, jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user,
+            ju.kode_role FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and ju.nama_jenis_user ilike 'admin_company' ${isi} order by u."createdAt" desc`, s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -321,6 +327,20 @@ class Controller {
         const { phone_no } = req.body
         try {
             let data = await users.findAll({ where: { phone_no } })
+            res.status(200).json({ status: 200, message: "sukses", data })
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ status: 500, message: "gagal", data: err })
+        }
+    }
+
+    static async listUserBySatatus (req,res) {
+        const {status_user} = req.body
+        try {
+
+            let data = await sq.query(`SELECT u.id as user_id,u.*,cu.*,p.nama_pendidikan,jk.nama_jenis_kerja,k.nama_kompetensi,ju.nama_jenis_user,
+            ju.kode_role FROM users u join jenis_user ju on ju.id = u.jenis_user_id join company_usaha cu on cu.id = u.company_id left join pendidikan p on p.id = u.pendidikan_id left join jenis_kerja jk on jk.id = u.jenis_kerja_id left join kompetensi k on k.id = u.kompetensi_id where u."deletedAt" isnull and u.status_users = ${status_user} order by u."createdAt" desc`,s);
+
             res.status(200).json({ status: 200, message: "sukses", data })
         } catch (err) {
             console.log(err);

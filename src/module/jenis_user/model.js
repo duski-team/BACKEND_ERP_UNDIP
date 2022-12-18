@@ -8,6 +8,9 @@ const jenisUser = sq.define('jenis_user', {
     },
     nama_jenis_user: {
         type: DataTypes.STRING
+    },
+    kode_role: {
+        type: DataTypes.STRING
     }
 },
     {

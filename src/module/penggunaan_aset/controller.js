@@ -2,7 +2,6 @@ const { sq } = require("../../config/connection");
 const { v4: uuid_v4 } = require("uuid");
 const penggunaanAset = require("./model");
 const { QueryTypes } = require('sequelize');
-const penggunaanAset = require("./model");
 const s = { type: QueryTypes.SELECT };
 
 

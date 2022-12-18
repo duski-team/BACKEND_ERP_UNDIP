@@ -52,7 +52,7 @@ class Controller {
             if(!company_id){
                 company_id = req.dataUsers.company_id
             }
-            let cekCoa = await coa6.findAll({where:{kode_coa6,coa5_id}});
+            let cekCoa = await coa6.findAll({where:{kode_coa6,coa5_id,company_id}});
             if(cekCoa.length>0){
                 res.status(201).json({ status: 204, message: "data sudah ada" });
             }else{

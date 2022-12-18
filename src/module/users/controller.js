@@ -197,14 +197,14 @@ class Controller {
         try {
             let perusahan_id = await company.findAll({ where: { code } });
             let cekUser = await sq.query(`select u.*,ju.nama_jenis_user,ju.kode_role from users u join jenis_user ju on ju.id = u.jenis_user_id where u."deletedAt" isnull and u.username = '${username}' and u.company_id = '${perusahan_id[0].id}'`,s);
-            
+
             if (perusahan_id.length == 0) {
                 res.status(201).json({ status: 204, message: "Perusahaan Code Tidak Terdaftar" });
             } else {
                 if (cekUser.length == 0) {
                     res.status(201).json({ status: 204, message: "User Tidak Terdaftar" });
                 } else {
-                    if(cekUser[0].status_user != 2){
+                    if(cekUser[0].status_users != 2){
                         res.status(201).json({ status: 204, message: "status bukan 2" });
                     }else{
                         let dataToken = {

@@ -13,7 +13,7 @@ const penggunaanAset = sq.define('penggunaan_aset', {
     tgl_persetujuan_manager: {
         type: DataTypes.DATE
     },
-    status_persetujuan_manager: {
+    status_persetujuan_manager: {  //1 dibuat, 0 ditolak, 2 di setujui
         type: DataTypes.INTEGER
     },
     status_barang: {

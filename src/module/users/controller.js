@@ -123,7 +123,7 @@ class Controller {
 
         try {
             let cekEmail = await sq.query(`select * from users u where u."deletedAt" isnull and u.id <> '${id}' and u.email ilike '${email}'`, s);
-            let cekNIK = await sq.query(`select * from users u where u."deletedAt" isnull and u.id <> '${id}' u.nik ilike '${nik}'`, s);
+            let cekNIK = await sq.query(`select * from users u where u."deletedAt" isnull and u.id <> '${id}' and u.nik ilike '${nik}'`, s);
             
             
             if(cekEmail.length > 0 || cekNIK.length > 0){

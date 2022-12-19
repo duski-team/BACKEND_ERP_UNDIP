@@ -205,7 +205,7 @@ class Controller {
                     res.status(201).json({ status: 204, message: "User Tidak Terdaftar" });
                 } else {
                     if(cekUser[0].status_users != 2){
-                        res.status(201).json({ status: 204, message: "Anda belum terverifikasi" });
+                        res.status(201).json({ status: 204, message: "Anda Belum Terverifikasi" });
                     }else{
                         let dataToken = {
                             id: cekUser[0].id,

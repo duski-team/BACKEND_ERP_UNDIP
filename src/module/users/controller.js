@@ -79,10 +79,24 @@ class Controller {
         const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,status_users } = req.body
 
         try {
-            let cekUser = await users.findAll({ where: { [Op.or]: [{ email }, { username }] } });
+            // console.log(req.body);
+            let cekUser = await sq.query(`select * from users u where u."deletedAt" isnull and u.email = '${email}' or u.username = '${username}' or u.phone_no = '${phone_no}' or u.nik = '${nik}'`, s);
+            // console.log(cekUser);
 
             if (cekUser.length > 0) {
-                res.status(201).json({ status: 204, message: "data sudah ada" });
+                let msg = ''
+                for (let i = 0; i < cekUser.length; i++) {
+                    if (cekUser[i].email == email) {
+                        msg = 'email sudah ada'
+                    } else if (cekUser[i].username == username){
+                        msg = 'username sudah ada'
+                    } else if (cekUser[i].phone_no == phone_no) {
+                        msg = 'no phone sudah ada'
+                    } else {
+                        msg = 'nik sudah ada'
+                    }
+                }
+                res.status(201).json({ status: 204, message: msg });
             } else {
                 let profil_image = "";
 
@@ -104,23 +118,41 @@ class Controller {
         }
     }
 
-    static update(req, res) {
+    static async update(req, res) {
         const { id, email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
 
-        if (req.files) {
-            if (req.files.file1) {
-                let profil_image = req.files.file1[0].filename;
-                users.update({ profil_image }, { where: { id } })
+        try {
+            let cekUser = await sq.query(`select * from users u where u."deletedAt" isnull and u.email = '${email}' or u.username = '${username}' or u.phone_no = '${phone_no}' or u.nik = '${nik}'`, s);
+            if (cekUser.length > 0) {
+                let msg = ''
+                for (let i = 0; i < cekUser.length; i++) {
+                    if (cekUser[i].email == email) {
+                        msg = 'email sudah ada'
+                    } else if (cekUser[i].username == username){
+                        msg = 'username sudah ada'
+                    } else if (cekUser[i].phone_no == phone_no) {
+                        msg = 'no phone sudah ada'
+                    } else {
+                        msg = 'nik sudah ada'
+                    }
+                }
+                res.status(201).json({ status: 204, message: msg });
+            } else {
+                if (req.files) {
+                    if (req.files.file1) {
+                        let profil_image = req.files.file1[0].filename;
+                        users.update({ profil_image }, { where: { id } })
+                    }
+                }
+        
+                await users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } })
+                res.status(200).json({ status: 200, message: "sukses" });
             }
-        }
-
-        users.update({ email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority, jenis_user_id, company_id, nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan, pendidikan_id, jenis_kerja_id, kompetensi_id }, { where: { id } }).then(data => {
-            res.status(200).json({ status: 200, message: "sukses" });
-        }).catch(err => {
+        } catch (err) {
             console.log(req.body);
             console.log(err);
             res.status(500).json({ status: 500, message: "gagal", data: err });
-        })
+        }
     }
 
     static delete(req, res) {

@@ -194,7 +194,7 @@ class Controller {
 
     static async list(req, res) {
         try {
-            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id from persediaan p 
+            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id,(p.stock- p.stock_rusak) as total_stock from persediaan p 
             join coa6 c on c.id = p.coa6_id 
             join kategori k on k.id = p.kategori_id 
             join sub_kategori sk on sk.id = p.sub_kategori_id 
@@ -211,7 +211,7 @@ class Controller {
     static async listPersediaanByCoa6Id(req, res) {
         const { coa6_id } = req.body
         try {
-            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id from persediaan p 
+            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id,(p.stock- p.stock_rusak) as total_stock from persediaan p 
             join coa6 c on c.id = p.coa6_id 
             join kategori k on k.id = p.kategori_id 
             join sub_kategori sk on sk.id = p.sub_kategori_id 
@@ -228,7 +228,7 @@ class Controller {
     static async listPersediaanByKategoriId(req, res) {
         const { kategori_id } = req.body
         try {
-            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id from persediaan p 
+            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id,(p.stock- p.stock_rusak) as total_stock from persediaan p 
             join coa6 c on c.id = p.coa6_id 
             join kategori k on k.id = p.kategori_id 
             join sub_kategori sk on sk.id = p.sub_kategori_id 
@@ -245,7 +245,7 @@ class Controller {
     static async listPersediaanBySubKategoriId(req, res) {
         const { sub_kategori_id } = req.body
         try {
-            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id from persediaan p 
+            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id,(p.stock- p.stock_rusak) as total_stock from persediaan p 
             join coa6 c on c.id = p.coa6_id 
             join kategori k on k.id = p.kategori_id 
             join sub_kategori sk on sk.id = p.sub_kategori_id 
@@ -262,7 +262,7 @@ class Controller {
     static async listPersediaanBySubSubKategoriId(req, res) {
         const { sub_sub_kategori_id } = req.body
         try {
-            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id from persediaan p 
+            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id,(p.stock- p.stock_rusak) as total_stock from persediaan p 
             join coa6 c on c.id = p.coa6_id 
             join kategori k on k.id = p.kategori_id 
             join sub_kategori sk on sk.id = p.sub_kategori_id 
@@ -280,7 +280,7 @@ class Controller {
         const { id } = req.params
 
         try {
-            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id from persediaan p 
+            let data = await sq.query(`select p.id as persedian_id,p.*,c.*,k.nama_kategori,sk.nama_sub_kategori,sk.kategori_id,ssk.nama_sub_sub_kategori,ssk.sub_kategori_id,(p.stock- p.stock_rusak) as total_stock from persediaan p 
             join coa6 c on c.id = p.coa6_id 
             join kategori k on k.id = p.kategori_id 
             join sub_kategori sk on sk.id = p.sub_kategori_id 
@@ -296,7 +296,7 @@ class Controller {
 
     static async listPersediaanByBarangJual(req,res){
         try {
-            let data = await sq.query(`select p.id as persediaan_id, *, left(c6.kode_coa6,7) as kode_coa4 
+            let data = await sq.query(`select p.id as persediaan_id, *, left(c6.kode_coa6,7) as kode_coa4,(p.stock- p.stock_rusak) as total_stock 
             from persediaan p join coa6 c6 on c6.id = p.coa6_id 
             left join master_satuan ms on ms.id = p.master_satuan_id 
             where p."deletedAt" isnull and c6."deletedAt" isnull 
@@ -311,7 +311,7 @@ class Controller {
 
     static async listPersediaanByBarangHabisPakai(req,res){
         try {
-            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.2' order by p."createdAt" desc`,s);
+            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4,(p.stock- p.stock_rusak) as total_stock from persediaan p join coa6 c6 on c6.id = p.coa6_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${req.dataUsers.company_id}' and left(c6.kode_coa6,7) = '1.1.4.2' order by p."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {
@@ -323,7 +323,7 @@ class Controller {
     static async listPersediaanByBarangJualTampil(req,res){
         let { company_id } = req.body
         try {
-            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4 from persediaan p join coa6 c6 on c6.id = p.coa6_id left join master_satuan ms on ms.id = p.master_satuan_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${company_id}' and left(c6.kode_coa6,7) = '1.1.4.1' and p.status_persediaan = 1 order by p."createdAt" desc`,s);
+            let data = await sq.query(`select p.id as persediaan_id,*,left(c6.kode_coa6,7)as kode_coa4,(p.stock- p.stock_rusak) as total_stock from persediaan p join coa6 c6 on c6.id = p.coa6_id left join master_satuan ms on ms.id = p.master_satuan_id where p."deletedAt" isnull and c6."deletedAt" isnull and p.company_id = '${company_id}' and left(c6.kode_coa6,7) = '1.1.4.1' and p.status_persediaan = 1 order by p."createdAt" desc`,s);
 
             res.status(200).json({ status: 200, message: "sukses", data });
         } catch (err) {

@@ -76,7 +76,7 @@ class Controller {
     }
 
     static async registerUser(req, res) {
-        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id } = req.body
+        const { email, username, firstname, lastname, phone_no, password, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,status_users } = req.body
 
         try {
             let cekUser = await users.findAll({ where: { [Op.or]: [{ email }, { username }] } });
@@ -93,7 +93,7 @@ class Controller {
                 }
                 let encryptedPassword = bcrypt.hashPassword(password);
                 
-                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password:encryptedPassword, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,profil_image })
+                let data = await users.create({ id: uuid_v4(), email, username, firstname, lastname, phone_no, password:encryptedPassword, register_token, resetpassword_token, variant, priority,nik, alamat_users, waktu_masuk, waktu_keluar, tanggal_masuk, tanggal_keluar, jenis_penugasan,jenis_user_id, company_id, pendidikan_id, jenis_kerja_id, kompetensi_id,profil_image,status_users })
 
                 res.status(200).json({ status: 200, message: "sukses", data });
             }
